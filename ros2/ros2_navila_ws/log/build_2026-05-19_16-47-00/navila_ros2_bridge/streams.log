@@ -1,0 +1,47 @@
+[0.593s] Invoking command in '/home/ros_ws/src/navila_ros2_bridge': PYTHONPATH=/home/ros_ws/build/navila_ros2_bridge/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ros_ws/install/navila_ros2_bridge/lib/python3.10/site-packages:${PYTHONPATH} _=/usr/bin/env /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/navila_ros2_bridge build --build-base /home/ros_ws/build/navila_ros2_bridge/build install --record /home/ros_ws/build/navila_ros2_bridge/install.log --single-version-externally-managed install_data
+[0.828s] running egg_info
+[0.828s] creating ../../build/navila_ros2_bridge/navila_ros2_bridge.egg-info
+[0.838s] writing ../../build/navila_ros2_bridge/navila_ros2_bridge.egg-info/PKG-INFO
+[0.839s] writing dependency_links to ../../build/navila_ros2_bridge/navila_ros2_bridge.egg-info/dependency_links.txt
+[0.839s] writing entry points to ../../build/navila_ros2_bridge/navila_ros2_bridge.egg-info/entry_points.txt
+[0.839s] writing requirements to ../../build/navila_ros2_bridge/navila_ros2_bridge.egg-info/requires.txt
+[0.839s] writing top-level names to ../../build/navila_ros2_bridge/navila_ros2_bridge.egg-info/top_level.txt
+[0.839s] writing manifest file '../../build/navila_ros2_bridge/navila_ros2_bridge.egg-info/SOURCES.txt'
+[0.857s] reading manifest file '../../build/navila_ros2_bridge/navila_ros2_bridge.egg-info/SOURCES.txt'
+[0.858s] writing manifest file '../../build/navila_ros2_bridge/navila_ros2_bridge.egg-info/SOURCES.txt'
+[0.858s] running build
+[0.858s] running build_py
+[0.858s] creating /home/ros_ws/build/navila_ros2_bridge/build
+[0.858s] creating /home/ros_ws/build/navila_ros2_bridge/build/lib
+[0.858s] creating /home/ros_ws/build/navila_ros2_bridge/build/lib/navila_ros2_bridge
+[0.858s] copying navila_ros2_bridge/action_to_cmdvel_node.py -> /home/ros_ws/build/navila_ros2_bridge/build/lib/navila_ros2_bridge
+[0.859s] copying navila_ros2_bridge/navila_node.py -> /home/ros_ws/build/navila_ros2_bridge/build/lib/navila_ros2_bridge
+[0.859s] copying navila_ros2_bridge/instruction_node.py -> /home/ros_ws/build/navila_ros2_bridge/build/lib/navila_ros2_bridge
+[0.859s] copying navila_ros2_bridge/__init__.py -> /home/ros_ws/build/navila_ros2_bridge/build/lib/navila_ros2_bridge
+[0.859s] running install
+[0.863s] running install_lib
+[0.873s] creating /home/ros_ws/install/navila_ros2_bridge/lib/python3.10/site-packages/navila_ros2_bridge
+[0.873s] copying /home/ros_ws/build/navila_ros2_bridge/build/lib/navila_ros2_bridge/action_to_cmdvel_node.py -> /home/ros_ws/install/navila_ros2_bridge/lib/python3.10/site-packages/navila_ros2_bridge
+[0.873s] copying /home/ros_ws/build/navila_ros2_bridge/build/lib/navila_ros2_bridge/navila_node.py -> /home/ros_ws/install/navila_ros2_bridge/lib/python3.10/site-packages/navila_ros2_bridge
+[0.873s] copying /home/ros_ws/build/navila_ros2_bridge/build/lib/navila_ros2_bridge/instruction_node.py -> /home/ros_ws/install/navila_ros2_bridge/lib/python3.10/site-packages/navila_ros2_bridge
+[0.873s] copying /home/ros_ws/build/navila_ros2_bridge/build/lib/navila_ros2_bridge/__init__.py -> /home/ros_ws/install/navila_ros2_bridge/lib/python3.10/site-packages/navila_ros2_bridge
+[0.873s] byte-compiling /home/ros_ws/install/navila_ros2_bridge/lib/python3.10/site-packages/navila_ros2_bridge/action_to_cmdvel_node.py to action_to_cmdvel_node.cpython-310.pyc
+[0.873s] byte-compiling /home/ros_ws/install/navila_ros2_bridge/lib/python3.10/site-packages/navila_ros2_bridge/navila_node.py to navila_node.cpython-310.pyc
+[0.874s] byte-compiling /home/ros_ws/install/navila_ros2_bridge/lib/python3.10/site-packages/navila_ros2_bridge/instruction_node.py to instruction_node.cpython-310.pyc
+[0.875s] byte-compiling /home/ros_ws/install/navila_ros2_bridge/lib/python3.10/site-packages/navila_ros2_bridge/__init__.py to __init__.cpython-310.pyc
+[0.875s] running install_data
+[0.875s] creating /home/ros_ws/install/navila_ros2_bridge/share/ament_index
+[0.875s] creating /home/ros_ws/install/navila_ros2_bridge/share/ament_index/resource_index
+[0.875s] creating /home/ros_ws/install/navila_ros2_bridge/share/ament_index/resource_index/packages
+[0.875s] copying resource/navila_ros2_bridge -> /home/ros_ws/install/navila_ros2_bridge/share/ament_index/resource_index/packages
+[0.875s] copying package.xml -> /home/ros_ws/install/navila_ros2_bridge/share/navila_ros2_bridge
+[0.875s] creating /home/ros_ws/install/navila_ros2_bridge/share/navila_ros2_bridge/launch
+[0.875s] copying launch/navila.launch.py -> /home/ros_ws/install/navila_ros2_bridge/share/navila_ros2_bridge/launch
+[0.875s] running install_egg_info
+[0.890s] Copying ../../build/navila_ros2_bridge/navila_ros2_bridge.egg-info to /home/ros_ws/install/navila_ros2_bridge/lib/python3.10/site-packages/navila_ros2_bridge-0.0.1-py3.10.egg-info
+[0.891s] running install_scripts
+[0.932s] Installing action_to_cmdvel_node script to /home/ros_ws/install/navila_ros2_bridge/lib/navila_ros2_bridge
+[0.932s] Installing instruction_node script to /home/ros_ws/install/navila_ros2_bridge/lib/navila_ros2_bridge
+[0.932s] Installing navila_node script to /home/ros_ws/install/navila_ros2_bridge/lib/navila_ros2_bridge
+[0.932s] writing list of installed files to '/home/ros_ws/build/navila_ros2_bridge/install.log'
+[0.958s] Invoked command in '/home/ros_ws/src/navila_ros2_bridge' returned '0': PYTHONPATH=/home/ros_ws/build/navila_ros2_bridge/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ros_ws/install/navila_ros2_bridge/lib/python3.10/site-packages:${PYTHONPATH} _=/usr/bin/env /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/navila_ros2_bridge build --build-base /home/ros_ws/build/navila_ros2_bridge/build install --record /home/ros_ws/build/navila_ros2_bridge/install.log --single-version-externally-managed install_data

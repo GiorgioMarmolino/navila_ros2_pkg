@@ -1,0 +1,7 @@
+Metadata-Version: 2.1
+Name: navila-ros2-bridge
+Version: 0.0.1
+Summary: ROS 2 bridge between NaVILA VLA model and Husky robot
+Maintainer: Your Name
+Maintainer-email: you@example.com
+License: Apache-2.0

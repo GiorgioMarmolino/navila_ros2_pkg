@@ -1,0 +1,98 @@
+<?xml version="1.0"?>
+<!-- Copyright (C) 2024, Federico Rollo, Simone Giampà, Andrea Maimone -->
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+    <xacro:macro name="zed_gazebo" params="tf_prefix:=zed sim_camera_left:=false sim_camera_right:=false  sim_camera_depth:=false">
+
+        <xacro:property name="deg_to_rad" value="${pi/180.0}" />
+
+        <xacro:property name="width_fhd" value="1920" />
+        <xacro:property name="height_fhd" value="1080" />
+        <xacro:property name="fps_fhd" value="30" />
+        <xacro:property name="width_2k" value="2208" />
+        <xacro:property name="height_2k" value="1242" />
+        <xacro:property name="fps_2k" value="15" />
+
+        <xacro:if value="${sim_camera_left}">
+
+            <gazebo reference="${tf_prefix}_left_camera_frame">
+                <sensor name="${tf_prefix}_left_color" type="camera">
+                    <camera name="${tf_prefix}_left">
+                        <camera_info_topic>${tf_prefix}_left/color/camera_info</camera_info_topic>
+                        <horizontal_fov>${110*deg_to_rad}</horizontal_fov>
+                        <vertical_fov>${70*deg_to_rad}</vertical_fov>
+                        <image>
+                            <width>${width_2k}</width>
+                            <height>${height_2k}</height>
+                            <format>RGB_INT8</format>
+                        </image>
+                    </camera>
+                    <topic>${tf_prefix}/left/color/image_raw</topic>
+                    <gz_frame_id>${tf_prefix}_left_camera_frame_optical</gz_frame_id>
+                    <always_on>1</always_on>
+                    <update_rate>${fps_2k}</update_rate>
+                    <visualize>0</visualize>
+                </sensor>
+            </gazebo>
+
+        </xacro:if>
+
+        <xacro:if value="${sim_camera_right}">
+
+            <gazebo reference="${tf_prefix}_right_camera_frame">
+                <sensor name="${tf_prefix}_right_color" type="camera">
+                    <camera name="${tf_prefix}_right">
+                        <camera_info_topic>${tf_prefix}_right/color/camera_info</camera_info_topic>
+                        <horizontal_fov>${110*deg_to_rad}</horizontal_fov>
+                        <vertical_fov>${70*deg_to_rad}</vertical_fov>
+                        <image>
+                            <width>${width_2k}</width>
+                            <height>${height_2k}</height>
+                            <format>RGB_INT8</format>
+                        </image>
+                    </camera>
+                    <topic>${tf_prefix}/right/color/image_raw</topic>
+                    <gz_frame_id>${tf_prefix}_right_camera_frame_optical</gz_frame_id>
+                    <always_on>1</always_on>
+                    <update_rate>${fps_2k}</update_rate>
+                    <visualize>0</visualize>
+                </sensor>
+            </gazebo>
+
+        </xacro:if>
+
+        <xacro:if value="${sim_camera_depth}">
+
+            <gazebo reference="${tf_prefix}_left_camera_frame">
+                <sensor name="${tf_prefix}_depth_sensor" type="depth_camera">
+                    <camera name="${tf_prefix}_depth_camera">
+                        <camera_info_topic>${tf_prefix}/depth/camera_info</camera_info_topic>
+                        <horizontal_fov>${110*deg_to_rad}</horizontal_fov>
+                        <vertical_fov>${70*deg_to_rad}</vertical_fov>
+                        <image>
+                            <width>${width_2k}</width>
+                            <height>${height_2k}</height>
+                        </image>
+                        <clip>
+                            <near>0.5</near>
+                            <far>6.0</far>
+                        </clip>
+                        <noise>
+                            <type>gaussian</type>
+                            <mean>0.0</mean>
+                            <stddev>0.01</stddev>
+                        </noise>
+                    </camera>
+                    <topic>${tf_prefix}/depth/image_raw</topic>
+                    <gz_frame_id>${tf_prefix}_left_camera_frame_optical</gz_frame_id>
+                    <always_on>1</always_on>
+                    <update_rate>${fps_2k}</update_rate>
+                    <visualize>0</visualize>
+                </sensor>
+            </gazebo>
+
+        </xacro:if>
+
+    </xacro:macro>
+
+</robot>

@@ -1,0 +1,75 @@
+[0.012s] Invoking command in '/home/ros_ws/build/clearpath_diagnostics': CMAKE_PREFIX_PATH=/opt/ros/humble _=/usr/bin/env /usr/bin/cmake /home/ros_ws/src/husky_bringup/clearpath_diagnostics -DCMAKE_INSTALL_PREFIX=/home/ros_ws/install/clearpath_diagnostics
+[0.053s] -- The C compiler identification is GNU 11.4.0
+[0.102s] -- The CXX compiler identification is GNU 11.4.0
+[0.107s] -- Detecting C compiler ABI info
+[0.155s] -- Detecting C compiler ABI info - done
+[0.161s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.161s] -- Detecting C compile features
+[0.161s] -- Detecting C compile features - done
+[0.163s] -- Detecting CXX compiler ABI info
+[0.225s] -- Detecting CXX compiler ABI info - done
+[0.230s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.231s] -- Detecting CXX compile features
+[0.231s] -- Detecting CXX compile features - done
+[0.233s] -- Found ament_cmake: 1.3.14 (/opt/ros/humble/share/ament_cmake/cmake)
+[0.352s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[0.487s] -- Found ament_lint_auto: 0.12.15 (/opt/ros/humble/share/ament_lint_auto/cmake)
+[0.554s] -- Added test 'flake8' to check Python code syntax and style conventions
+[0.556s] -- Added test 'lint_cmake' to check CMake code style
+[0.556s] -- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257
+[0.556s] -- Added test 'xmllint' to check XML markup files
+[0.557s] -- Configuring done
+[0.559s] -- Generating done
+[0.561s] -- Build files have been written to: /home/ros_ws/build/clearpath_diagnostics
+[0.582s] Invoked command in '/home/ros_ws/build/clearpath_diagnostics' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble _=/usr/bin/env /usr/bin/cmake /home/ros_ws/src/husky_bringup/clearpath_diagnostics -DCMAKE_INSTALL_PREFIX=/home/ros_ws/install/clearpath_diagnostics
+[0.582s] Invoking command in '/home/ros_ws/build/clearpath_diagnostics': CMAKE_PREFIX_PATH=/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --build /home/ros_ws/build/clearpath_diagnostics -- -j16 -l16
+[0.625s] Built target ament_cmake_python_copy_clearpath_diagnostics
+[0.783s] running egg_info
+[0.783s] creating clearpath_diagnostics.egg-info
+[0.783s] writing clearpath_diagnostics.egg-info/PKG-INFO
+[0.784s] writing dependency_links to clearpath_diagnostics.egg-info/dependency_links.txt
+[0.784s] writing top-level names to clearpath_diagnostics.egg-info/top_level.txt
+[0.784s] writing manifest file 'clearpath_diagnostics.egg-info/SOURCES.txt'
+[0.785s] reading manifest file 'clearpath_diagnostics.egg-info/SOURCES.txt'
+[0.785s] writing manifest file 'clearpath_diagnostics.egg-info/SOURCES.txt'
+[0.808s] Built target ament_cmake_python_build_clearpath_diagnostics_egg
+[0.816s] Invoked command in '/home/ros_ws/build/clearpath_diagnostics' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --build /home/ros_ws/build/clearpath_diagnostics -- -j16 -l16
+[0.817s] Invoking command in '/home/ros_ws/build/clearpath_diagnostics': CMAKE_PREFIX_PATH=/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --install /home/ros_ws/build/clearpath_diagnostics
+[0.823s] -- Install configuration: ""
+[0.823s] -- Installing: /home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/environment/pythonpath.sh
+[0.823s] -- Installing: /home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/environment/pythonpath.dsv
+[0.824s] -- Installing: /home/ros_ws/install/clearpath_diagnostics/local/lib/python3.10/dist-packages/clearpath_diagnostics-1.3.6-py3.10.egg-info
+[0.824s] -- Installing: /home/ros_ws/install/clearpath_diagnostics/local/lib/python3.10/dist-packages/clearpath_diagnostics-1.3.6-py3.10.egg-info/dependency_links.txt
+[0.824s] -- Installing: /home/ros_ws/install/clearpath_diagnostics/local/lib/python3.10/dist-packages/clearpath_diagnostics-1.3.6-py3.10.egg-info/SOURCES.txt
+[0.824s] -- Installing: /home/ros_ws/install/clearpath_diagnostics/local/lib/python3.10/dist-packages/clearpath_diagnostics-1.3.6-py3.10.egg-info/top_level.txt
+[0.824s] -- Installing: /home/ros_ws/install/clearpath_diagnostics/local/lib/python3.10/dist-packages/clearpath_diagnostics-1.3.6-py3.10.egg-info/PKG-INFO
+[0.824s] -- Installing: /home/ros_ws/install/clearpath_diagnostics/local/lib/python3.10/dist-packages/clearpath_diagnostics
+[0.824s] -- Installing: /home/ros_ws/install/clearpath_diagnostics/local/lib/python3.10/dist-packages/clearpath_diagnostics/diagnostics_updater
+[0.824s] -- Installing: /home/ros_ws/install/clearpath_diagnostics/local/lib/python3.10/dist-packages/clearpath_diagnostics/battery_state_control
+[0.824s] -- Installing: /home/ros_ws/install/clearpath_diagnostics/local/lib/python3.10/dist-packages/clearpath_diagnostics/__init__.py
+[0.825s] -- Installing: /home/ros_ws/install/clearpath_diagnostics/local/lib/python3.10/dist-packages/clearpath_diagnostics/battery_state_estimator
+[0.849s] Listing '/home/ros_ws/install/clearpath_diagnostics/local/lib/python3.10/dist-packages/clearpath_diagnostics'...
+[0.849s] Compiling '/home/ros_ws/install/clearpath_diagnostics/local/lib/python3.10/dist-packages/clearpath_diagnostics/__init__.py'...
+[0.854s] -- Installing: /home/ros_ws/install/clearpath_diagnostics/lib/clearpath_diagnostics/diagnostics_updater
+[0.854s] -- Installing: /home/ros_ws/install/clearpath_diagnostics/lib/clearpath_diagnostics/battery_state_control
+[0.854s] -- Installing: /home/ros_ws/install/clearpath_diagnostics/lib/clearpath_diagnostics/battery_state_estimator
+[0.854s] -- Installing: /home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/config
+[0.854s] -- Installing: /home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/config/diagnostics.yaml
+[0.854s] -- Installing: /home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/launch
+[0.854s] -- Installing: /home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/launch/diagnostics.launch.py
+[0.855s] -- Installing: /home/ros_ws/install/clearpath_diagnostics/share/ament_index/resource_index/package_run_dependencies/clearpath_diagnostics
+[0.855s] -- Installing: /home/ros_ws/install/clearpath_diagnostics/share/ament_index/resource_index/parent_prefix_path/clearpath_diagnostics
+[0.855s] -- Installing: /home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/environment/ament_prefix_path.sh
+[0.855s] -- Installing: /home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/environment/ament_prefix_path.dsv
+[0.855s] -- Installing: /home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/environment/path.sh
+[0.855s] -- Installing: /home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/environment/path.dsv
+[0.855s] -- Installing: /home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/local_setup.bash
+[0.855s] -- Installing: /home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/local_setup.sh
+[0.855s] -- Installing: /home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/local_setup.zsh
+[0.855s] -- Installing: /home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/local_setup.dsv
+[0.856s] -- Installing: /home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/package.dsv
+[0.856s] -- Installing: /home/ros_ws/install/clearpath_diagnostics/share/ament_index/resource_index/packages/clearpath_diagnostics
+[0.856s] -- Installing: /home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/cmake/clearpath_diagnosticsConfig.cmake
+[0.856s] -- Installing: /home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/cmake/clearpath_diagnosticsConfig-version.cmake
+[0.856s] -- Installing: /home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/package.xml
+[0.858s] Invoked command in '/home/ros_ws/build/clearpath_diagnostics' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --install /home/ros_ws/build/clearpath_diagnostics

@@ -1,0 +1,6 @@
+setup.py
+clearpath_diagnostics/__init__.py
+clearpath_diagnostics.egg-info/PKG-INFO
+clearpath_diagnostics.egg-info/SOURCES.txt
+clearpath_diagnostics.egg-info/dependency_links.txt
+clearpath_diagnostics.egg-info/top_level.txt

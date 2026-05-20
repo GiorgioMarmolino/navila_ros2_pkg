@@ -1,0 +1,106 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="a200-1029">
+
+  <!-- Common -->
+  <xacro:include filename="$(find clearpath_platform_description)/urdf/common.urdf.xacro"/>
+
+  <!-- Platform -->
+  <xacro:include filename="$(find clearpath_platform_description)/urdf/a200/a200.urdf.xacro"/>
+  <xacro:a200 wheel="default"/>
+
+
+  <!-- Attachments -->
+
+  <xacro:include filename="$(find clearpath_platform_description)/urdf/a200/attachments/bumper.urdf.xacro"/>
+  <xacro:bumper name="front_bumper" model="default" parent_link="front_bumper_mount" extension="0.0">
+    <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+  </xacro:bumper>
+
+  <xacro:include filename="$(find clearpath_platform_description)/urdf/a200/attachments/bumper.urdf.xacro"/>
+  <xacro:bumper name="rear_bumper" model="default" parent_link="rear_bumper_mount" extension="0.0">
+    <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+  </xacro:bumper>
+
+  <xacro:include filename="$(find clearpath_platform_description)/urdf/a200/attachments/top_plate.urdf.xacro"/>
+  <xacro:top_plate name="top_plate" model="pacs" parent_link="default_mount">
+    <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+  </xacro:top_plate>
+
+  <xacro:include filename="$(find clearpath_platform_description)/urdf/a200/attachments/sensor_arch.urdf.xacro"/>
+  <xacro:sensor_arch name="sensor_arch" model="sensor_arch_300" parent_link="default_mount">
+    <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+  </xacro:sensor_arch>
+
+
+  <!-- Links -->
+
+  <xacro:include filename="$(find clearpath_platform_description)/urdf/links/box.urdf.xacro"/>
+  <xacro:box name="user_bay_cover" parent_link="top_plate_link" size="0.4 0.4 0.002">
+    <origin xyz="0.0 0.0 0.00735" rpy="0.0 0.0 0.0"/>
+  </xacro:box>
+
+  <!-- Sensors -->
+
+  <!-- lidar3d_0 -->
+  <xacro:include filename="$(find clearpath_sensors_description)/urdf/velodyne_lidar.urdf.xacro"/>
+  <xacro:velodyne_lidar name="lidar3d_0" parent_link="sensor_arch_lidar_mount" ang_res_h="0.4" 
+    ang_res_v="2.0" min_ang_h="-3.141592" max_ang_h="3.141592" min_ang_v="-0.261799" 
+    max_ang_v="0.261799" min_range="0.9" max_range="130.0" update_rate="50"
+  >
+    <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+  </xacro:velodyne_lidar>
+
+  <!-- imu_0 -->
+  <xacro:include filename="$(find clearpath_sensors_description)/urdf/redshift_um7.urdf.xacro"/>
+  <xacro:redshift_um7 name="imu_0" parent_link="base_link" update_rate="100">
+    <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+  </xacro:redshift_um7>
+
+  <!-- gps_0 -->
+  <!-- <xacro:include filename="$(find clearpath_sensors_description)/urdf/swiftnav_duro.urdf.xacro"/>
+  <xacro:swiftnav_duro name="gps_0" parent_link="sensor_arch_mount">
+    <origin xyz="0.0 -0.25 0.0" rpy="0.0 0.0 0.0"/>
+  </xacro:swiftnav_duro> -->
+
+  <!-- gps_0 -->
+  <xacro:include filename="$(find clearpath_sensors_description)/urdf/ublox_antenna.urdf.xacro"/>
+  <xacro:ublox_antenna name="gps" parent_link="sensor_arch_mount">
+    <origin xyz="0.0 -0.234 0.022" rpy="0.0 0.0 0.0"/>
+  </xacro:ublox_antenna>
+
+  <!-- Cameras -->
+
+  <!-- Intel Cameras -->
+  <xacro:include filename="$(find clearpath_sensors_description)/urdf/realsense_d455.urdf.xacro"/>
+  <!-- front_camera -->
+  <xacro:arg name="enable_front_camera_color" default="$(optenv ENABLE_FRONT_CAMERA_COLOR false)" />
+  <xacro:arg name="enable_front_camera_depth" default="$(optenv ENABLE_FRONT_CAMERA_DEPTH false)" />
+  <xacro:realsense_d455 name="front_camera" parent="sensor_arch_front_camera_mount"
+    sim_camera_color="$(arg enable_front_camera_color)" 
+    sim_camera_depth="$(arg enable_front_camera_depth)">
+    <origin xyz="0.01025 0.0 -0.0145" rpy="0.0 0.0 0.0"/>
+  </xacro:realsense_d455>
+  <!-- rear_camera -->
+  <xacro:arg name="enable_rear_camera_color" default="$(optenv ENABLE_REAR_CAMERA_COLOR false)" />
+  <xacro:arg name="enable_rear_camera_depth" default="$(optenv ENABLE_REAR_CAMERA_DEPTH false)" />
+  <xacro:realsense_d455 name="rear_camera" parent="sensor_arch_rear_camera_mount"
+    sim_camera_color="$(arg enable_rear_camera_color)" 
+    sim_camera_depth="$(arg enable_rear_camera_depth)"  >
+    <origin xyz="0.01025 0.0 -0.0145" rpy="0.0 0.0 0.0"/>
+  </xacro:realsense_d455>
+
+  <!-- ZED2i Camera -->
+  <!-- <xacro:arg name="enable_front_camera_color" default="$(optenv ENABLE_FRONT_CAMERA_COLOR false)" />
+  <xacro:arg name="enable_front_camera_depth" default="$(optenv ENABLE_FRONT_CAMERA_DEPTH false)" />
+  <xacro:include filename="$(find clearpath_sensors_description)/urdf/zed.urdf.xacro"/>
+  <xacro:sensor_zed model="zed2i" parent="sensor_arch_zed_camera_mount"
+    sim_camera_left="$(arg enable_front_camera_color)" 
+    sim_camera_right="$(arg enable_front_camera_color)" 
+    sim_camera_depth="$(arg enable_front_camera_depth)"
+  >
+    <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+  </xacro:sensor_zed>  -->
+  
+  
+
+</robot>

@@ -1,0 +1,112 @@
+-- The C compiler identification is GNU 11.4.0
+-- The CXX compiler identification is GNU 11.4.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Found ament_cmake: 1.3.14 (/opt/ros/humble/share/ament_cmake/cmake)
+-- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+-- Found ament_lint_auto: 0.12.15 (/opt/ros/humble/share/ament_lint_auto/cmake)
+-- Added test 'flake8' to check Python code syntax and style conventions
+-- Added test 'lint_cmake' to check CMake code style
+-- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257
+-- Added test 'xmllint' to check XML markup files
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/ros_ws/build/husky_simulator
+-- Install configuration: ""
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/config
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/config/gui.config
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/geotif
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/geotif/pipeline_geo.tif
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/geotif/solar_farm_geo.tif
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/geotif/orchard_geo.tif
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/launch
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/launch/simulation.launch.py
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/launch/robot_spawn.launch.py
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/launch/gz_sim.launch.py
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/orchard
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/orchard/orchard_trunks.dae
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/orchard/orchard_leaves.dae
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/orchard/RustPlain007_COL_VAR1_3K.jpg.001.jpg
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/orchard/GroundMoss001_COL_1K.jpg.001.jpg
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/orchard/GroundTireTracks001_COL_3K.jpg.001.jpg
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/orchard/Ground.png
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/orchard/orchard_world.dae
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/orchard/GroundForest003_COL_VAR1_3K.jpg.001.jpg
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/office
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/office/whiteboard.jpg
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/office/ConcreteWall001_COL_VAR1_3K.jpg.002.jpg
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/office/WoodPlanksWorn33_COL_VAR1_3K.jpg.002.jpg
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/office/TilesRectangularMirrorGray001_COL_3K.jpg.001.jpg
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/office/GroundClay002_COL_VAR1_3K.jpg.001.jpg
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/office/InteriorDesignRugStarryNight001_COL_VAR1_3K.jpg.001.jpg
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/office/concrete_bag.jpg
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/office/Bricks01_COL_VAR1_3K.jpg.002.jpg
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/office/cardboard.jpg
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/office/MetalSpottyDiscoloration001_COL_3K_METALNESS.jpg.002.jpg
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/office/Tiles05_COL_VAR1_3K.jpg.001.jpg
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/office/WoodFlooring044_COL_3K.jpg.001.jpg
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/office/MetalCorrodedHeavy001_COL_3K_METALNESS.jpg.002.jpg
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/office/WoodFlooringMahoganyAfricanSanded001_COL_3K.jpg.001.jpg
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/office/cp_walls.jpg
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/office/office_construction.dae
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/office/office.dae
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/office/MetalCorrugatedIronSheet002_METALNESS_3K_METALNESS.jpg.002.jpg
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/office/WoodFlooring061_COL_3K.jpg.001.jpg
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/accessories
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/accessories/base_station_with_tripod.stl
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/accessories/base_station.stl
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/accessories/base_station.dae
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/accessories/wibotic_tr301.stl
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/accessories/wibotic_tr301.dae
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/accessories/base_station_with_tripod.dae
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/solar_farm
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/solar_farm/WoodPlanksWorn33_COL_VAR1_3K.jpg
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/solar_farm/WoodPlanksWornRed33_COL_VAR1_3K.jpg
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/solar_farm/SolarPanelsPolycrystallineTypeBFramedClean001_COL_3K.jpg
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/solar_farm/WoodPlanksWornWhite33_COL_VAR1_3K.jpg
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/solar_farm/AgriBakeLarge.jpg
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/solar_farm/agriculture_world.dae
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/solar_farm/MetalCorrugatedIronSheet002_METALNESS_3K_METALNESS.jpg
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/pipeline
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/pipeline/InspectionBakeLarge.jpg
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/pipeline/SolarPanelsPolycrystallineTypeBFramedClean001_COL_3K.jpg.001.jpg
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/pipeline/WoodPlanksWorn33_COL_VAR1_3K.jpg
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/pipeline/ConcreteWall001_COL_VAR1_3K.jpg.001.jpg
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/pipeline/WoodPlanksWorn33_COL_VAR1_3K.jpg.001.jpg
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/pipeline/ConcreteWall001_COL_VAR1_3K.jpg
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/pipeline/SolarPanelsPolycrystallineTypeBFramedClean001_COL_3K.jpg
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/pipeline/inspection_water.dae
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/pipeline/MetalSpottyDiscoloration001_COL_3K_METALNESS.jpg.001.jpg
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/pipeline/inspection_world.dae
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/meshes/pipeline/MetalSpottyDiscoloration001_COL_3K_METALNESS.jpg
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/worlds
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/worlds/solar_farm.sdf
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/worlds/construction.sdf
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/worlds/orchard.sdf
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/worlds/warehouse.sdf
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/worlds/office.sdf
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/worlds/pipeline.sdf
+-- Installing: /home/ros_ws/install/husky_simulator/share/ament_index/resource_index/package_run_dependencies/husky_simulator
+-- Installing: /home/ros_ws/install/husky_simulator/share/ament_index/resource_index/parent_prefix_path/husky_simulator
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/environment/ament_prefix_path.sh
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/environment/ament_prefix_path.dsv
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/environment/path.sh
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/environment/path.dsv
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/local_setup.bash
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/local_setup.sh
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/local_setup.zsh
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/local_setup.dsv
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/package.dsv
+-- Installing: /home/ros_ws/install/husky_simulator/share/ament_index/resource_index/packages/husky_simulator
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/cmake/husky_simulatorConfig.cmake
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/cmake/husky_simulatorConfig-version.cmake
+-- Installing: /home/ros_ws/install/husky_simulator/share/husky_simulator/package.xml
