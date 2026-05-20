@@ -12,6 +12,26 @@ Publishes:
     /navila/action      (std_msgs/String)  — discrete action: forward/left/right/stop
 """
 
+
+
+# =============================================================================
+import sys
+from unittest.mock import MagicMock
+
+# Mock deepspeed completo — non serve per inferenza ma solo per training (non effettuato)
+mock_ds = MagicMock()
+mock_ds.__spec__ = "deepspeed"
+mock_ds.__version__ = "0.0.0"
+sys.modules['deepspeed'] = mock_ds
+sys.modules['deepspeed.comm'] = mock_ds
+sys.modules['deepspeed.runtime'] = mock_ds
+sys.modules['deepspeed.runtime.zero'] = mock_ds
+sys.modules['deepspeed.runtime.zero.partition_parameters'] = mock_ds
+sys.modules['deepspeed.runtime.activation_checkpointing'] = mock_ds
+sys.modules['deepspeed.runtime.activation_checkpointing.checkpointing'] = mock_ds
+# =============================================================================
+
+
 import os
 import threading
 
@@ -35,14 +55,23 @@ from PIL import Image as PILImage
 
 def load_navila_model(model_path: str):
     import torch
-    # from transformers import BitsAndBytesConfig
+    from transformers import BitsAndBytesConfig
     from llava.model.builder import load_pretrained_model
     from llava.mm_utils import get_model_name_from_path
     from huggingface_hub import snapshot_download
 
     HF_MODEL_ID = "a8cheng/navila-llama3-8b-8f"
+
+
     torch.cuda.empty_cache()
     
+    #-----------------------------------------------------------------------------
+    # Il modulo deepspeed non funziona correttamente con cudnn8-runtime perché mancano alcune librerie di sviluppo CUDA che deepspeed richiede anche a runtime.Il modulo deepspeed non funziona correttamente con cudnn8-runtime perché mancano alcune librerie di sviluppo CUDA che deepspeed richiede anche a runtime. DS_ACCELERATOR riguarda solo deepspeed, non PyTorch. Il modello NaVILA per l'inferenza usa PyTorch direttamente sulla GPU, deepspeed non è coinvolto.
+    os.environ["DS_SKIP_CUDA_CHECK"] = "1"
+    os.environ["DS_ACCELERATOR"] = "cpu" 
+    #-----------------------------------------------------------------------------
+    
+
     if not os.path.exists(os.path.join(model_path, "config.json")):
         print(f"[NaVILA] Downloading model from HuggingFace: {HF_MODEL_ID}")
         snapshot_download(
@@ -54,30 +83,21 @@ def load_navila_model(model_path: str):
     else:
         print(f"[NaVILA] Model found at: {model_path}")
 
-    # bnb_config = BitsAndBytesConfig(
-    #     load_in_4bit=True,
-    #     bnb_4bit_compute_dtype=torch.float16,
-    #     bnb_4bit_use_double_quant=True,
-    #     bnb_4bit_quant_type="nf4",
-    # )
-
     model_name = get_model_name_from_path(model_path)
     tokenizer, model, image_processor, context_len = load_pretrained_model(
         model_path=model_path,
         model_base=None,
         model_name=model_name,
-        
-        # cpu - cuda - auto - balanced - sequential
-        device_map="auto", # automatic distribution between CPU and GPU ('auto')
+        # quantization_config=bnb_config,
 
+        device_map="auto", # cpu-cuda-auto-balanced-sequential
         offload_folder="offload",
+        max_memory={0: "6GiB", "cpu": "12GiB"},
     )
-
-
 
     model.eval()
 
-    
+    print(next(model.parameters()).device)
     print("[NaVILA] Model loaded successfully.")
     return model, tokenizer, image_processor
 

@@ -6,10 +6,9 @@ import os
 package_name = 'navila_ros2_bridge'
 
 setup(
-    # 👇 NOME DISTRIBUZIONE: usa trattini per entry points
-    name='navila-ros2-bridge',  # ← Cambiato da package_name a stringa con hyphen
+    name='navila-ros2-bridge',
     version='0.0.1',
-    packages=[package_name],    # ← Rimane con underscore per l'import Python
+    packages=[package_name],
     data_files=[
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
@@ -19,8 +18,8 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='Your Name',
-    maintainer_email='you@example.com',
+    maintainer='Giorgio Marmolino',
+    maintainer_email='giorgio.marmolino@gmail.com',
     description='ROS 2 bridge between NaVILA VLA model and Husky robot',
     license='Apache-2.0',
     entry_points={
