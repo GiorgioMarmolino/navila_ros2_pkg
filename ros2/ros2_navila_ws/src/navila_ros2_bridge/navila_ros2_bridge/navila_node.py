@@ -115,7 +115,109 @@ ACTION_MAP = {
     4: "stop",   # fallback
 }
 
+# =============================================================================
+# Action parser
+# =============================================================================
+ddef parse_navila_output(output_text: str) -> str:
+    import re
 
+    text = output_text.strip().lower()
+
+    PATTERNS = {
+        "forward_fast": [
+            (r"\bfast\b",               3),
+            (r"\bquickly\b",            3),
+            (r"\bspeed up\b",           3),
+            (r"\bfull speed\b",         4),
+            (r"\brapidly\b",            2),
+            (r"\brun\b",                2),
+            (r"\bhurry\b",              2),
+            (r"\bacceler\w*\b",         2),   # accelerate, acceleration
+        ],
+        "backward": [
+            (r"\bbackward[s]?\b",       3),
+            (r"\bback up\b",            3),
+            (r"\breverse\b",            3),
+            (r"\bretreat\b",            2),
+            (r"\bback\b",               1),
+        ],
+        "curve_left": [
+            (r"\bcurve left\b",         4),
+            (r"\bear left\b",           4),
+            (r"\bveer left\b",          4),
+            (r"\bslightly left\b",      4),
+            (r"\bbear to the left\b",   4),
+            (r"\bdiagonal.*left\b",     3),
+        ],
+        "curve_right": [
+            (r"\bcurve right\b",        4),
+            (r"\bear right\b",          4),
+            (r"\bveer right\b",         4),
+            (r"\bslightly right\b",     4),
+            (r"\bbear to the right\b",  4),
+            (r"\bdiagonal.*right\b",    3),
+        ],
+        "turn_left": [
+            (r"\bturn left\b",          3),
+            (r"\brotate left\b",        3),
+            (r"\bspin left\b",          3),
+            (r"\bleft\b",               1),
+        ],
+        "turn_right": [
+            (r"\bturn right\b",         3),
+            (r"\brotate right\b",       3),
+            (r"\bspin right\b",         3),
+            (r"\bright\b",              1),
+        ],
+        "forward": [
+            (r"\bforward\b",            2),
+            (r"\bstraight\b",           2),
+            (r"\bproceed\b",            1),
+            (r"\bcontinue\b",           1),
+            (r"\badvance\b",            1),
+            (r"\bmove ahead\b",         2),
+        ],
+        "stop": [
+            (r"\bstop\b",               3),
+            (r"\bhalt\b",               3),
+            (r"\bwait\b",               2),
+            (r"\bdo not move\b",        3),
+            (r"\bstay\b",               1),
+            (r"\bfreeze\b",             3),
+            (r"\bstand still\b",        3),
+        ],
+    }
+
+    scores = {action: 0 for action in PATTERNS}
+
+    for action, signals in PATTERNS.items():
+        for pattern, weight in signals:
+            if re.search(pattern, text):
+                scores[action] += weight
+
+    # "forward_fast" richiede anche un segnale di movimento in avanti —
+    # senza "forward/straight/proceed" i segnali di velocità da soli
+    # potrebbero matchare frasi fuori contesto ("run the program")
+    if scores["forward_fast"] > 0:
+        has_forward_signal = any(
+            re.search(pat, text)
+            for pat, _ in PATTERNS["forward"]
+        )
+        if not has_forward_signal:
+            scores["forward_fast"] = 0
+
+    best_action = max(scores, key=lambda a: scores[a])
+    best_score  = scores[best_action]
+
+    if best_score == 0:
+        return "stop"
+
+    return best_action
+
+
+# =============================================================================
+# NaVILA Inference
+# =============================================================================
 def run_navila_inference(model, tokenizer, image_processor, frame_rgb, goal: str) -> str:
     """
     Esegue l'inferenza NaVILA dato un frame RGB e un goal testuale.
@@ -159,15 +261,17 @@ def run_navila_inference(model, tokenizer, image_processor, frame_rgb, goal: str
 
     output_text = tokenizer.decode(output_ids[0], skip_special_tokens=True).strip().lower()
 
-    # Mappa output testuale → azione discreta
-    if "forward" in output_text or "straight" in output_text:
-        return "forward"
-    elif "left" in output_text or "turn left" in output_text:
-        return "left"
-    elif "right" in output_text or "turn right" in output_text:
-        return "right"
-    else:
-        return "stop"
+    # # Mappa output testuale → azione discreta
+    # if "forward" in output_text or "straight" in output_text:
+    #     return "forward"
+    # elif "left" in output_text or "turn left" in output_text:
+    #     return "left"
+    # elif "right" in output_text or "turn right" in output_text:
+    #     return "right"
+    # else:
+    #     return "stop"
+
+    return parse_navila_output(output_text) #sostituito perchè più robusto
 
 
 # =============================================================================
