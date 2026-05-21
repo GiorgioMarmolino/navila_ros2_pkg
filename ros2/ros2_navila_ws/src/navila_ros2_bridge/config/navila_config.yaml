@@ -1,0 +1,6 @@
+navila_super_node:
+  ros__parameters:
+    model_path: "/models"
+    inference_rate_hz: 2.0
+    use_phi3: false
+    phi3_4bit: true

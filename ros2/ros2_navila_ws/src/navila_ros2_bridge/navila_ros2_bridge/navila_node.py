@@ -103,22 +103,9 @@ def load_navila_model(model_path: str):
 
 
 # =============================================================================
-# Action mapping
-# =============================================================================
-
-# NaVILA outputs a discrete action token — map it to a string
-ACTION_MAP = {
-    0: "stop",
-    1: "forward",
-    2: "left",
-    3: "right",
-    4: "stop",   # fallback
-}
-
-# =============================================================================
 # Action parser
 # =============================================================================
-ddef parse_navila_output(output_text: str) -> str:
+def parse_navila_output(output_text: str) -> str:
     import re
 
     text = output_text.strip().lower()

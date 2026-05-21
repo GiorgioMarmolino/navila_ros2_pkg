@@ -10,11 +10,16 @@ setup(
     version='0.0.1',
     packages=[package_name],
     data_files=[
-        ('share/ament_index/resource_index/packages',
+        ('share/ament_index/resource_index/packages',       # package index
             ['resource/' + package_name]),
-        ('share/' + package_name, ['package.xml']),
-        (os.path.join('share', package_name, 'launch'), 
+        
+        ('share/' + package_name, ['package.xml']),         # package XML
+        
+        (os.path.join('share', package_name, 'launch'),     # launch files
             glob(os.path.join('launch', '*.launch.py'))),
+        
+        (os.path.join('share', package_name, 'config'),     # config files
+            glob('config/*.yaml')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -24,7 +29,8 @@ setup(
     license='Apache-2.0',
     entry_points={
         'console_scripts': [
-            'navila_node = navila_ros2_bridge.navila_node:main',
+            # 'navila_node = navila_ros2_bridge.navila_node:main',
+            'navila_super_node = navila_ros2_bridge.navila_super_node:main',
             'action_to_cmdvel_node = navila_ros2_bridge.action_to_cmdvel_node:main',
             'instruction_node = navila_ros2_bridge.instruction_node:main',
         ],
