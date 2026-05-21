@@ -1,1 +1,0 @@
-/home/ros_ws/src/husky_bringup/clearpath_sensors/launch/hokuyo_ust.launch.py

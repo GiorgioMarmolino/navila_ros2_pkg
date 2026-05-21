@@ -1,1 +1,0 @@
-/home/ros_ws/src/husky_bringup/clearpath_sensors/launch/microstrain_imu.launch.py

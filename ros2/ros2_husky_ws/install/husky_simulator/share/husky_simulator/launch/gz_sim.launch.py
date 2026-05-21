@@ -1,1 +1,0 @@
-/home/ros_ws/src/husky_simulator/launch/gz_sim.launch.py

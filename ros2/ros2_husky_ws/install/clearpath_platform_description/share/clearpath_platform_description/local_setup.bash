@@ -1,1 +1,0 @@
-/home/ros_ws/build/clearpath_platform_description/ament_cmake_environment_hooks/local_setup.bash

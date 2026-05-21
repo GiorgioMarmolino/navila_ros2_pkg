@@ -1,1 +1,0 @@
-/home/ros_ws/build/clearpath_control/ament_cmake_core/clearpath_controlConfig-version.cmake

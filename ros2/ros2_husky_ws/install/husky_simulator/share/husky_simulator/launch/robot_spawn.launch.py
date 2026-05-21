@@ -1,1 +1,0 @@
-/home/ros_ws/src/husky_simulator/launch/robot_spawn.launch.py

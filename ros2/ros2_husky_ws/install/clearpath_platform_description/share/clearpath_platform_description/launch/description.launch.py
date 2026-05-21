@@ -1,1 +1,0 @@
-/home/ros_ws/src/husky_description/clearpath_platform_description/launch/description.launch.py

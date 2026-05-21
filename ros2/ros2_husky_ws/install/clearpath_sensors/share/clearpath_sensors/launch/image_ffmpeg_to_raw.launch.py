@@ -1,1 +1,0 @@
-/home/ros_ws/src/husky_bringup/clearpath_sensors/launch/image_ffmpeg_to_raw.launch.py

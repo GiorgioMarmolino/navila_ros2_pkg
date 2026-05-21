@@ -1,1 +1,0 @@
-/home/ros_ws/src/husky_bringup/husky_bringup/launch/sensors/lidar3d_0.launch.py

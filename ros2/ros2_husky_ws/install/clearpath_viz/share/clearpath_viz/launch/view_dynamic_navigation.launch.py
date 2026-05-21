@@ -1,1 +1,0 @@
-/home/ros_ws/src/husky_description/clearpath_viz/launch/view_dynamic_navigation.launch.py

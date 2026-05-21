@@ -1,1 +1,0 @@
-/home/ros_ws/src/husky_bringup/clearpath_control/launch/teleop_base.launch.py

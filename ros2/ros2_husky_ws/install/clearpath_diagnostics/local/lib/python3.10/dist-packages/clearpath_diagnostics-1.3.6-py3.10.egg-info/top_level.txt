@@ -1,1 +1,0 @@
-/home/ros_ws/build/clearpath_diagnostics/ament_cmake_python/clearpath_diagnostics/clearpath_diagnostics.egg-info/top_level.txt

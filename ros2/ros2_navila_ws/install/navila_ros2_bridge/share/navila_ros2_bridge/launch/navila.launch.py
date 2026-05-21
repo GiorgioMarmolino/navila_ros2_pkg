@@ -1,1 +1,0 @@
-/home/ros_ws/build/navila_ros2_bridge/launch/navila.launch.py
