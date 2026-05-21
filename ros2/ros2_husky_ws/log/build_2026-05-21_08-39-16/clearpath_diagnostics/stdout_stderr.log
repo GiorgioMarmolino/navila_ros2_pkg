@@ -1,0 +1,67 @@
+-- The C compiler identification is GNU 11.4.0
+-- The CXX compiler identification is GNU 11.4.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Found ament_cmake: 1.3.14 (/opt/ros/humble/share/ament_cmake/cmake)
+-- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+-- Override CMake install command with custom implementation using symlinks instead of copying resources
+-- Found ament_lint_auto: 0.12.15 (/opt/ros/humble/share/ament_lint_auto/cmake)
+-- Added test 'flake8' to check Python code syntax and style conventions
+-- Added test 'lint_cmake' to check CMake code style
+-- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257
+-- Added test 'xmllint' to check XML markup files
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/ros_ws/build/clearpath_diagnostics
+Built target ament_cmake_python_symlink_clearpath_diagnostics
+running egg_info
+creating clearpath_diagnostics.egg-info
+writing clearpath_diagnostics.egg-info/PKG-INFO
+writing dependency_links to clearpath_diagnostics.egg-info/dependency_links.txt
+writing top-level names to clearpath_diagnostics.egg-info/top_level.txt
+writing manifest file 'clearpath_diagnostics.egg-info/SOURCES.txt'
+reading manifest file 'clearpath_diagnostics.egg-info/SOURCES.txt'
+writing manifest file 'clearpath_diagnostics.egg-info/SOURCES.txt'
+Built target ament_cmake_python_build_clearpath_diagnostics_egg
+-- Install configuration: ""
+-- Execute custom install script
+-- Symlinking: /home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/environment/pythonpath.sh
+-- Symlinking: /home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/environment/pythonpath.dsv
+-- Symlinking: /home/ros_ws/install/clearpath_diagnostics/local/lib/python3.10/dist-packages/clearpath_diagnostics-1.3.6-py3.10.egg-info/PKG-INFO
+-- Symlinking: /home/ros_ws/install/clearpath_diagnostics/local/lib/python3.10/dist-packages/clearpath_diagnostics-1.3.6-py3.10.egg-info/SOURCES.txt
+-- Symlinking: /home/ros_ws/install/clearpath_diagnostics/local/lib/python3.10/dist-packages/clearpath_diagnostics-1.3.6-py3.10.egg-info/dependency_links.txt
+-- Symlinking: /home/ros_ws/install/clearpath_diagnostics/local/lib/python3.10/dist-packages/clearpath_diagnostics-1.3.6-py3.10.egg-info/top_level.txt
+-- Symlinking: /home/ros_ws/install/clearpath_diagnostics/local/lib/python3.10/dist-packages/clearpath_diagnostics/__init__.py
+-- Symlinking: /home/ros_ws/install/clearpath_diagnostics/local/lib/python3.10/dist-packages/clearpath_diagnostics/battery_state_control
+-- Symlinking: /home/ros_ws/install/clearpath_diagnostics/local/lib/python3.10/dist-packages/clearpath_diagnostics/battery_state_estimator
+-- Symlinking: /home/ros_ws/install/clearpath_diagnostics/local/lib/python3.10/dist-packages/clearpath_diagnostics/diagnostics_updater
+-- Symlinking: /home/ros_ws/install/clearpath_diagnostics/lib/clearpath_diagnostics/diagnostics_updater
+-- Symlinking: /home/ros_ws/install/clearpath_diagnostics/lib/clearpath_diagnostics/battery_state_control
+-- Symlinking: /home/ros_ws/install/clearpath_diagnostics/lib/clearpath_diagnostics/battery_state_estimator
+-- Symlinking: /home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/config/diagnostics.yaml
+-- Symlinking: /home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/launch/diagnostics.launch.py
+-- Symlinking: /home/ros_ws/install/clearpath_diagnostics/share/ament_index/resource_index/package_run_dependencies/clearpath_diagnostics
+-- Symlinking: /home/ros_ws/install/clearpath_diagnostics/share/ament_index/resource_index/parent_prefix_path/clearpath_diagnostics
+-- Symlinking: /home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/environment/ament_prefix_path.sh
+-- Symlinking: /home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/environment/ament_prefix_path.dsv
+-- Symlinking: /home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/environment/path.sh
+-- Symlinking: /home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/environment/path.dsv
+-- Symlinking: /home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/local_setup.bash
+-- Symlinking: /home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/local_setup.sh
+-- Symlinking: /home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/local_setup.zsh
+-- Symlinking: /home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/local_setup.dsv
+-- Symlinking: /home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/package.dsv
+-- Symlinking: /home/ros_ws/install/clearpath_diagnostics/share/ament_index/resource_index/packages/clearpath_diagnostics
+-- Symlinking: /home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/cmake/clearpath_diagnosticsConfig.cmake
+-- Symlinking: /home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/cmake/clearpath_diagnosticsConfig-version.cmake
+-- Symlinking: /home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/package.xml
+Listing '/home/ros_ws/install/clearpath_diagnostics/local/lib/python3.10/dist-packages/clearpath_diagnostics'...
+Compiling '/home/ros_ws/install/clearpath_diagnostics/local/lib/python3.10/dist-packages/clearpath_diagnostics/__init__.py'...

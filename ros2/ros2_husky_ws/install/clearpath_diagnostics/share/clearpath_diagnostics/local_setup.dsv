@@ -1,3 +1,1 @@
-source;share/clearpath_diagnostics/environment/ament_prefix_path.sh
-source;share/clearpath_diagnostics/environment/path.sh
-source;share/clearpath_diagnostics/environment/pythonpath.sh
+/home/ros_ws/build/clearpath_diagnostics/ament_cmake_environment_hooks/local_setup.dsv

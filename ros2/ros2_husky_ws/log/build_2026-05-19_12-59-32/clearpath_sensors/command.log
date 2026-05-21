@@ -1,6 +1,0 @@
-Invoking command in '/home/ros_ws/build/clearpath_sensors': CMAKE_PREFIX_PATH=/opt/ros/humble _=/usr/bin/env /usr/bin/cmake /home/ros_ws/src/husky_bringup/clearpath_sensors -DCMAKE_INSTALL_PREFIX=/home/ros_ws/install/clearpath_sensors
-Invoked command in '/home/ros_ws/build/clearpath_sensors' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble _=/usr/bin/env /usr/bin/cmake /home/ros_ws/src/husky_bringup/clearpath_sensors -DCMAKE_INSTALL_PREFIX=/home/ros_ws/install/clearpath_sensors
-Invoking command in '/home/ros_ws/build/clearpath_sensors': CMAKE_PREFIX_PATH=/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --build /home/ros_ws/build/clearpath_sensors -- -j16 -l16
-Invoked command in '/home/ros_ws/build/clearpath_sensors' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --build /home/ros_ws/build/clearpath_sensors -- -j16 -l16
-Invoking command in '/home/ros_ws/build/clearpath_sensors': CMAKE_PREFIX_PATH=/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --install /home/ros_ws/build/clearpath_sensors
-Invoked command in '/home/ros_ws/build/clearpath_sensors' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --install /home/ros_ws/build/clearpath_sensors

@@ -1,0 +1,16 @@
+/home/ros_ws/install/husky_description/share/husky_description/urdf/robot.urdf.xacro
+/home/ros_ws/install/husky_description/share/ament_index/resource_index/package_run_dependencies/husky_description
+/home/ros_ws/install/husky_description/share/ament_index/resource_index/parent_prefix_path/husky_description
+/home/ros_ws/install/husky_description/share/husky_description/environment/ament_prefix_path.sh
+/home/ros_ws/install/husky_description/share/husky_description/environment/ament_prefix_path.dsv
+/home/ros_ws/install/husky_description/share/husky_description/environment/path.sh
+/home/ros_ws/install/husky_description/share/husky_description/environment/path.dsv
+/home/ros_ws/install/husky_description/share/husky_description/local_setup.bash
+/home/ros_ws/install/husky_description/share/husky_description/local_setup.sh
+/home/ros_ws/install/husky_description/share/husky_description/local_setup.zsh
+/home/ros_ws/install/husky_description/share/husky_description/local_setup.dsv
+/home/ros_ws/install/husky_description/share/husky_description/package.dsv
+/home/ros_ws/install/husky_description/share/ament_index/resource_index/packages/husky_description
+/home/ros_ws/install/husky_description/share/husky_description/cmake/husky_descriptionConfig.cmake
+/home/ros_ws/install/husky_description/share/husky_description/cmake/husky_descriptionConfig-version.cmake
+/home/ros_ws/install/husky_description/share/husky_description/package.xml

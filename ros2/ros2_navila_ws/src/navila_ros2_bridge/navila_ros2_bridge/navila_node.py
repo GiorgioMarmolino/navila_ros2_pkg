@@ -92,7 +92,7 @@ def load_navila_model(model_path: str):
 
         device_map="auto", # cpu-cuda-auto-balanced-sequential
         offload_folder="offload",
-        max_memory={0: "6GiB", "cpu": "12GiB"},
+        # max_memory={0: "6GiB", "cpu": "12GiB"},
     )
 
     model.eval()

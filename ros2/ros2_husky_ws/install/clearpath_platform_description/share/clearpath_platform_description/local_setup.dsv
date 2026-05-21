@@ -1,2 +1,1 @@
-source;share/clearpath_platform_description/environment/ament_prefix_path.sh
-source;share/clearpath_platform_description/environment/path.sh
+/home/ros_ws/build/clearpath_platform_description/ament_cmake_environment_hooks/local_setup.dsv

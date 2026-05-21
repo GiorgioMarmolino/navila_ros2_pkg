@@ -1,0 +1,770 @@
+[0.076s] DEBUG:colcon:Command line arguments: ['/usr/bin/colcon', 'build', '--symlink-install']
+[0.076s] DEBUG:colcon:Parsed command line arguments: Namespace(log_base=None, log_level=None, verb_name='build', build_base='build', install_base='install', merge_install=False, symlink_install=True, test_result_base=None, continue_on_error=False, executor='parallel', parallel_workers=16, event_handlers=None, ignore_user_meta=False, metas=['./colcon.meta'], base_paths=['.'], packages_ignore=None, packages_ignore_regex=None, paths=None, packages_up_to=None, packages_up_to_regex=None, packages_above=None, packages_above_and_dependencies=None, packages_above_depth=None, packages_select_by_dep=None, packages_skip_by_dep=None, packages_skip_up_to=None, packages_select_build_failed=False, packages_skip_build_finished=False, packages_select_test_failures=False, packages_skip_test_passed=False, packages_select=None, packages_skip=None, packages_select_regex=None, packages_skip_regex=None, packages_start=None, packages_end=None, cmake_args=None, cmake_target=None, cmake_target_skip_unavailable=False, cmake_clean_cache=False, cmake_clean_first=False, cmake_force_configure=False, ament_cmake_args=None, catkin_cmake_args=None, catkin_skip_building_tests=False, mixin_files=None, mixin=None, verb_parser=<colcon_mixin.mixin.mixin_argument.MixinArgumentDecorator object at 0x7c5aa637ab00>, verb_extension=<colcon_core.verb.build.BuildVerb object at 0x7c5aa637a5f0>, main=<bound method BuildVerb.main of <colcon_core.verb.build.BuildVerb object at 0x7c5aa637a5f0>>, mixin_verb=('build',))
+[0.156s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) check parameters
+[0.157s] INFO:colcon.colcon_metadata.package_discovery.colcon_meta:Using configuration from '/root/.colcon/metadata/default/Gazebo.meta'
+[0.157s] INFO:colcon.colcon_metadata.package_discovery.colcon_meta:Using configuration from '/root/.colcon/metadata/default/fastdds.meta'
+[0.157s] INFO:colcon.colcon_metadata.package_discovery.colcon_meta:Using configuration from '/root/.colcon/metadata/default/fastrtps.meta'
+[0.157s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) check parameters
+[0.157s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) check parameters
+[0.157s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) check parameters
+[0.157s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) discover
+[0.157s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) discover
+[0.157s] INFO:colcon.colcon_core.package_discovery:Crawling recursively for packages in '/home/ros_ws'
+[0.158s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ignore', 'ignore_ament_install']
+[0.158s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore'
+[0.158s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore_ament_install'
+[0.158s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_pkg']
+[0.158s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_pkg'
+[0.158s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_meta']
+[0.158s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_meta'
+[0.158s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ros']
+[0.158s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ros'
+[0.166s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['cmake', 'python']
+[0.166s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'cmake'
+[0.166s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python'
+[0.166s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['python_setup_py']
+[0.166s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python_setup_py'
+[0.166s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extensions ['ignore', 'ignore_ament_install']
+[0.166s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extension 'ignore'
+[0.166s] Level 1:colcon.colcon_core.package_identification:_identify(build) ignored
+[0.166s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extensions ['ignore', 'ignore_ament_install']
+[0.166s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extension 'ignore'
+[0.166s] Level 1:colcon.colcon_core.package_identification:_identify(install) ignored
+[0.166s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extensions ['ignore', 'ignore_ament_install']
+[0.166s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extension 'ignore'
+[0.166s] Level 1:colcon.colcon_core.package_identification:_identify(log) ignored
+[0.166s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['ignore', 'ignore_ament_install']
+[0.166s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ignore'
+[0.166s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ignore_ament_install'
+[0.166s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['colcon_pkg']
+[0.166s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'colcon_pkg'
+[0.166s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['colcon_meta']
+[0.166s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'colcon_meta'
+[0.166s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['ros']
+[0.167s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ros'
+[0.167s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['cmake', 'python']
+[0.167s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'cmake'
+[0.167s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'python'
+[0.167s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['python_setup_py']
+[0.167s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'python_setup_py'
+[0.167s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup) by extensions ['ignore', 'ignore_ament_install']
+[0.167s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup) by extension 'ignore'
+[0.167s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup) by extension 'ignore_ament_install'
+[0.167s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup) by extensions ['colcon_pkg']
+[0.167s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup) by extension 'colcon_pkg'
+[0.167s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup) by extensions ['colcon_meta']
+[0.167s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup) by extension 'colcon_meta'
+[0.167s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup) by extensions ['ros']
+[0.167s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup) by extension 'ros'
+[0.167s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup) by extensions ['cmake', 'python']
+[0.167s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup) by extension 'cmake'
+[0.167s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup) by extension 'python'
+[0.167s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup) by extensions ['python_setup_py']
+[0.167s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup) by extension 'python_setup_py'
+[0.167s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/clearpath_common) by extensions ['ignore', 'ignore_ament_install']
+[0.167s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/clearpath_common) by extension 'ignore'
+[0.167s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/clearpath_common) by extension 'ignore_ament_install'
+[0.167s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/clearpath_common) by extensions ['colcon_pkg']
+[0.167s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/clearpath_common) by extension 'colcon_pkg'
+[0.167s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/clearpath_common) by extensions ['colcon_meta']
+[0.167s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/clearpath_common) by extension 'colcon_meta'
+[0.167s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/clearpath_common) by extensions ['ros']
+[0.167s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/clearpath_common) by extension 'ros'
+[0.169s] DEBUG:colcon.colcon_core.package_identification:Package 'src/husky_bringup/clearpath_common' with type 'ros.ament_cmake' and name 'clearpath_common'
+[0.169s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/clearpath_control) by extensions ['ignore', 'ignore_ament_install']
+[0.169s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/clearpath_control) by extension 'ignore'
+[0.169s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/clearpath_control) by extension 'ignore_ament_install'
+[0.169s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/clearpath_control) by extensions ['colcon_pkg']
+[0.169s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/clearpath_control) by extension 'colcon_pkg'
+[0.169s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/clearpath_control) by extensions ['colcon_meta']
+[0.169s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/clearpath_control) by extension 'colcon_meta'
+[0.169s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/clearpath_control) by extensions ['ros']
+[0.169s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/clearpath_control) by extension 'ros'
+[0.169s] DEBUG:colcon.colcon_core.package_identification:Package 'src/husky_bringup/clearpath_control' with type 'ros.ament_cmake' and name 'clearpath_control'
+[0.169s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/clearpath_diagnostics) by extensions ['ignore', 'ignore_ament_install']
+[0.170s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/clearpath_diagnostics) by extension 'ignore'
+[0.170s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/clearpath_diagnostics) by extension 'ignore_ament_install'
+[0.170s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/clearpath_diagnostics) by extensions ['colcon_pkg']
+[0.170s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/clearpath_diagnostics) by extension 'colcon_pkg'
+[0.170s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/clearpath_diagnostics) by extensions ['colcon_meta']
+[0.170s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/clearpath_diagnostics) by extension 'colcon_meta'
+[0.170s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/clearpath_diagnostics) by extensions ['ros']
+[0.170s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/clearpath_diagnostics) by extension 'ros'
+[0.170s] DEBUG:colcon.colcon_core.package_identification:Package 'src/husky_bringup/clearpath_diagnostics' with type 'ros.ament_cmake' and name 'clearpath_diagnostics'
+[0.170s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/clearpath_sensors) by extensions ['ignore', 'ignore_ament_install']
+[0.170s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/clearpath_sensors) by extension 'ignore'
+[0.170s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/clearpath_sensors) by extension 'ignore_ament_install'
+[0.170s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/clearpath_sensors) by extensions ['colcon_pkg']
+[0.170s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/clearpath_sensors) by extension 'colcon_pkg'
+[0.170s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/clearpath_sensors) by extensions ['colcon_meta']
+[0.170s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/clearpath_sensors) by extension 'colcon_meta'
+[0.170s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/clearpath_sensors) by extensions ['ros']
+[0.170s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/clearpath_sensors) by extension 'ros'
+[0.171s] DEBUG:colcon.colcon_core.package_identification:Package 'src/husky_bringup/clearpath_sensors' with type 'ros.ament_cmake' and name 'clearpath_sensors'
+[0.171s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/husky_bringup) by extensions ['ignore', 'ignore_ament_install']
+[0.171s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/husky_bringup) by extension 'ignore'
+[0.171s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/husky_bringup) by extension 'ignore_ament_install'
+[0.171s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/husky_bringup) by extensions ['colcon_pkg']
+[0.171s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/husky_bringup) by extension 'colcon_pkg'
+[0.171s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/husky_bringup) by extensions ['colcon_meta']
+[0.171s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/husky_bringup) by extension 'colcon_meta'
+[0.171s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/husky_bringup) by extensions ['ros']
+[0.171s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_bringup/husky_bringup) by extension 'ros'
+[0.171s] DEBUG:colcon.colcon_core.package_identification:Package 'src/husky_bringup/husky_bringup' with type 'ros.ament_cmake' and name 'husky_bringup'
+[0.171s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description) by extensions ['ignore', 'ignore_ament_install']
+[0.171s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description) by extension 'ignore'
+[0.171s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description) by extension 'ignore_ament_install'
+[0.171s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description) by extensions ['colcon_pkg']
+[0.171s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description) by extension 'colcon_pkg'
+[0.171s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description) by extensions ['colcon_meta']
+[0.171s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description) by extension 'colcon_meta'
+[0.171s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description) by extensions ['ros']
+[0.171s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description) by extension 'ros'
+[0.172s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description) by extensions ['cmake', 'python']
+[0.172s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description) by extension 'cmake'
+[0.172s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description) by extension 'python'
+[0.172s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description) by extensions ['python_setup_py']
+[0.172s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description) by extension 'python_setup_py'
+[0.172s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description/clearpath_platform_description) by extensions ['ignore', 'ignore_ament_install']
+[0.172s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description/clearpath_platform_description) by extension 'ignore'
+[0.172s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description/clearpath_platform_description) by extension 'ignore_ament_install'
+[0.172s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description/clearpath_platform_description) by extensions ['colcon_pkg']
+[0.172s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description/clearpath_platform_description) by extension 'colcon_pkg'
+[0.172s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description/clearpath_platform_description) by extensions ['colcon_meta']
+[0.172s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description/clearpath_platform_description) by extension 'colcon_meta'
+[0.172s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description/clearpath_platform_description) by extensions ['ros']
+[0.172s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description/clearpath_platform_description) by extension 'ros'
+[0.172s] DEBUG:colcon.colcon_core.package_identification:Package 'src/husky_description/clearpath_platform_description' with type 'ros.ament_cmake' and name 'clearpath_platform_description'
+[0.172s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description/clearpath_sensors_description) by extensions ['ignore', 'ignore_ament_install']
+[0.172s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description/clearpath_sensors_description) by extension 'ignore'
+[0.172s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description/clearpath_sensors_description) by extension 'ignore_ament_install'
+[0.172s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description/clearpath_sensors_description) by extensions ['colcon_pkg']
+[0.172s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description/clearpath_sensors_description) by extension 'colcon_pkg'
+[0.172s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description/clearpath_sensors_description) by extensions ['colcon_meta']
+[0.172s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description/clearpath_sensors_description) by extension 'colcon_meta'
+[0.173s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description/clearpath_sensors_description) by extensions ['ros']
+[0.173s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description/clearpath_sensors_description) by extension 'ros'
+[0.173s] DEBUG:colcon.colcon_core.package_identification:Package 'src/husky_description/clearpath_sensors_description' with type 'ros.ament_cmake' and name 'clearpath_sensors_description'
+[0.173s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description/clearpath_viz) by extensions ['ignore', 'ignore_ament_install']
+[0.173s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description/clearpath_viz) by extension 'ignore'
+[0.173s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description/clearpath_viz) by extension 'ignore_ament_install'
+[0.173s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description/clearpath_viz) by extensions ['colcon_pkg']
+[0.173s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description/clearpath_viz) by extension 'colcon_pkg'
+[0.173s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description/clearpath_viz) by extensions ['colcon_meta']
+[0.173s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description/clearpath_viz) by extension 'colcon_meta'
+[0.173s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description/clearpath_viz) by extensions ['ros']
+[0.173s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description/clearpath_viz) by extension 'ros'
+[0.173s] DEBUG:colcon.colcon_core.package_identification:Package 'src/husky_description/clearpath_viz' with type 'ros.ament_cmake' and name 'clearpath_viz'
+[0.173s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description/husky_description) by extensions ['ignore', 'ignore_ament_install']
+[0.173s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description/husky_description) by extension 'ignore'
+[0.173s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description/husky_description) by extension 'ignore_ament_install'
+[0.174s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description/husky_description) by extensions ['colcon_pkg']
+[0.174s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description/husky_description) by extension 'colcon_pkg'
+[0.174s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description/husky_description) by extensions ['colcon_meta']
+[0.174s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description/husky_description) by extension 'colcon_meta'
+[0.174s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description/husky_description) by extensions ['ros']
+[0.174s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_description/husky_description) by extension 'ros'
+[0.174s] DEBUG:colcon.colcon_core.package_identification:Package 'src/husky_description/husky_description' with type 'ros.ament_cmake' and name 'husky_description'
+[0.174s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_simulator) by extensions ['ignore', 'ignore_ament_install']
+[0.174s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_simulator) by extension 'ignore'
+[0.174s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_simulator) by extension 'ignore_ament_install'
+[0.174s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_simulator) by extensions ['colcon_pkg']
+[0.174s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_simulator) by extension 'colcon_pkg'
+[0.174s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_simulator) by extensions ['colcon_meta']
+[0.174s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_simulator) by extension 'colcon_meta'
+[0.174s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_simulator) by extensions ['ros']
+[0.174s] Level 1:colcon.colcon_core.package_identification:_identify(src/husky_simulator) by extension 'ros'
+[0.174s] DEBUG:colcon.colcon_core.package_identification:Package 'src/husky_simulator' with type 'ros.ament_cmake' and name 'husky_simulator'
+[0.175s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) using defaults
+[0.175s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) discover
+[0.175s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) using defaults
+[0.175s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) discover
+[0.175s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) using defaults
+[0.186s] DEBUG:colcon.colcon_core.package_augmentation.check_dependency_constraint:husky_simulator depends on clearpath_viz which has version 2.7.0 which satisfies to be greater than or equal to 1.0.0
+[0.187s] DEBUG:colcon.colcon_core.package_augmentation.check_dependency_constraint:husky_simulator depends on clearpath_common which has version 1.3.8 which satisfies to be greater than or equal to 1.3.0
+[0.187s] DEBUG:colcon.colcon_core.package_augmentation.check_dependency_constraint:clearpath_common depends on clearpath_control which has version 1.3.8 which satisfies to be greater than or equal to 1.3.0
+[0.188s] Level 5:colcon.colcon_core.verb:set package 'clearpath_control' build argument 'cmake_args' from command line to 'None'
+[0.188s] Level 5:colcon.colcon_core.verb:set package 'clearpath_control' build argument 'cmake_target' from command line to 'None'
+[0.188s] Level 5:colcon.colcon_core.verb:set package 'clearpath_control' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.188s] Level 5:colcon.colcon_core.verb:set package 'clearpath_control' build argument 'cmake_clean_cache' from command line to 'False'
+[0.188s] Level 5:colcon.colcon_core.verb:set package 'clearpath_control' build argument 'cmake_clean_first' from command line to 'False'
+[0.188s] Level 5:colcon.colcon_core.verb:set package 'clearpath_control' build argument 'cmake_force_configure' from command line to 'False'
+[0.188s] Level 5:colcon.colcon_core.verb:set package 'clearpath_control' build argument 'ament_cmake_args' from command line to 'None'
+[0.188s] Level 5:colcon.colcon_core.verb:set package 'clearpath_control' build argument 'catkin_cmake_args' from command line to 'None'
+[0.188s] Level 5:colcon.colcon_core.verb:set package 'clearpath_control' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.188s] DEBUG:colcon.colcon_core.verb:Building package 'clearpath_control' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ros_ws/build/clearpath_control', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ros_ws/install/clearpath_control', 'merge_install': False, 'path': '/home/ros_ws/src/husky_bringup/clearpath_control', 'symlink_install': True, 'test_result_base': None}
+[0.188s] Level 5:colcon.colcon_core.verb:set package 'clearpath_diagnostics' build argument 'cmake_args' from command line to 'None'
+[0.188s] Level 5:colcon.colcon_core.verb:set package 'clearpath_diagnostics' build argument 'cmake_target' from command line to 'None'
+[0.188s] Level 5:colcon.colcon_core.verb:set package 'clearpath_diagnostics' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.188s] Level 5:colcon.colcon_core.verb:set package 'clearpath_diagnostics' build argument 'cmake_clean_cache' from command line to 'False'
+[0.188s] Level 5:colcon.colcon_core.verb:set package 'clearpath_diagnostics' build argument 'cmake_clean_first' from command line to 'False'
+[0.188s] Level 5:colcon.colcon_core.verb:set package 'clearpath_diagnostics' build argument 'cmake_force_configure' from command line to 'False'
+[0.188s] Level 5:colcon.colcon_core.verb:set package 'clearpath_diagnostics' build argument 'ament_cmake_args' from command line to 'None'
+[0.188s] Level 5:colcon.colcon_core.verb:set package 'clearpath_diagnostics' build argument 'catkin_cmake_args' from command line to 'None'
+[0.188s] Level 5:colcon.colcon_core.verb:set package 'clearpath_diagnostics' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.188s] DEBUG:colcon.colcon_core.verb:Building package 'clearpath_diagnostics' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ros_ws/build/clearpath_diagnostics', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ros_ws/install/clearpath_diagnostics', 'merge_install': False, 'path': '/home/ros_ws/src/husky_bringup/clearpath_diagnostics', 'symlink_install': True, 'test_result_base': None}
+[0.189s] Level 5:colcon.colcon_core.verb:set package 'clearpath_platform_description' build argument 'cmake_args' from command line to 'None'
+[0.189s] Level 5:colcon.colcon_core.verb:set package 'clearpath_platform_description' build argument 'cmake_target' from command line to 'None'
+[0.189s] Level 5:colcon.colcon_core.verb:set package 'clearpath_platform_description' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.189s] Level 5:colcon.colcon_core.verb:set package 'clearpath_platform_description' build argument 'cmake_clean_cache' from command line to 'False'
+[0.189s] Level 5:colcon.colcon_core.verb:set package 'clearpath_platform_description' build argument 'cmake_clean_first' from command line to 'False'
+[0.189s] Level 5:colcon.colcon_core.verb:set package 'clearpath_platform_description' build argument 'cmake_force_configure' from command line to 'False'
+[0.189s] Level 5:colcon.colcon_core.verb:set package 'clearpath_platform_description' build argument 'ament_cmake_args' from command line to 'None'
+[0.189s] Level 5:colcon.colcon_core.verb:set package 'clearpath_platform_description' build argument 'catkin_cmake_args' from command line to 'None'
+[0.189s] Level 5:colcon.colcon_core.verb:set package 'clearpath_platform_description' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.189s] DEBUG:colcon.colcon_core.verb:Building package 'clearpath_platform_description' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ros_ws/build/clearpath_platform_description', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ros_ws/install/clearpath_platform_description', 'merge_install': False, 'path': '/home/ros_ws/src/husky_description/clearpath_platform_description', 'symlink_install': True, 'test_result_base': None}
+[0.189s] Level 5:colcon.colcon_core.verb:set package 'clearpath_sensors' build argument 'cmake_args' from command line to 'None'
+[0.189s] Level 5:colcon.colcon_core.verb:set package 'clearpath_sensors' build argument 'cmake_target' from command line to 'None'
+[0.189s] Level 5:colcon.colcon_core.verb:set package 'clearpath_sensors' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.189s] Level 5:colcon.colcon_core.verb:set package 'clearpath_sensors' build argument 'cmake_clean_cache' from command line to 'False'
+[0.189s] Level 5:colcon.colcon_core.verb:set package 'clearpath_sensors' build argument 'cmake_clean_first' from command line to 'False'
+[0.189s] Level 5:colcon.colcon_core.verb:set package 'clearpath_sensors' build argument 'cmake_force_configure' from command line to 'False'
+[0.189s] Level 5:colcon.colcon_core.verb:set package 'clearpath_sensors' build argument 'ament_cmake_args' from command line to 'None'
+[0.189s] Level 5:colcon.colcon_core.verb:set package 'clearpath_sensors' build argument 'catkin_cmake_args' from command line to 'None'
+[0.189s] Level 5:colcon.colcon_core.verb:set package 'clearpath_sensors' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.189s] DEBUG:colcon.colcon_core.verb:Building package 'clearpath_sensors' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ros_ws/build/clearpath_sensors', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ros_ws/install/clearpath_sensors', 'merge_install': False, 'path': '/home/ros_ws/src/husky_bringup/clearpath_sensors', 'symlink_install': True, 'test_result_base': None}
+[0.189s] Level 5:colcon.colcon_core.verb:set package 'clearpath_sensors_description' build argument 'cmake_args' from command line to 'None'
+[0.189s] Level 5:colcon.colcon_core.verb:set package 'clearpath_sensors_description' build argument 'cmake_target' from command line to 'None'
+[0.189s] Level 5:colcon.colcon_core.verb:set package 'clearpath_sensors_description' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.189s] Level 5:colcon.colcon_core.verb:set package 'clearpath_sensors_description' build argument 'cmake_clean_cache' from command line to 'False'
+[0.189s] Level 5:colcon.colcon_core.verb:set package 'clearpath_sensors_description' build argument 'cmake_clean_first' from command line to 'False'
+[0.189s] Level 5:colcon.colcon_core.verb:set package 'clearpath_sensors_description' build argument 'cmake_force_configure' from command line to 'False'
+[0.189s] Level 5:colcon.colcon_core.verb:set package 'clearpath_sensors_description' build argument 'ament_cmake_args' from command line to 'None'
+[0.189s] Level 5:colcon.colcon_core.verb:set package 'clearpath_sensors_description' build argument 'catkin_cmake_args' from command line to 'None'
+[0.189s] Level 5:colcon.colcon_core.verb:set package 'clearpath_sensors_description' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.189s] DEBUG:colcon.colcon_core.verb:Building package 'clearpath_sensors_description' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ros_ws/build/clearpath_sensors_description', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ros_ws/install/clearpath_sensors_description', 'merge_install': False, 'path': '/home/ros_ws/src/husky_description/clearpath_sensors_description', 'symlink_install': True, 'test_result_base': None}
+[0.190s] Level 5:colcon.colcon_core.verb:set package 'clearpath_common' build argument 'cmake_args' from command line to 'None'
+[0.190s] Level 5:colcon.colcon_core.verb:set package 'clearpath_common' build argument 'cmake_target' from command line to 'None'
+[0.190s] Level 5:colcon.colcon_core.verb:set package 'clearpath_common' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.190s] Level 5:colcon.colcon_core.verb:set package 'clearpath_common' build argument 'cmake_clean_cache' from command line to 'False'
+[0.190s] Level 5:colcon.colcon_core.verb:set package 'clearpath_common' build argument 'cmake_clean_first' from command line to 'False'
+[0.190s] Level 5:colcon.colcon_core.verb:set package 'clearpath_common' build argument 'cmake_force_configure' from command line to 'False'
+[0.190s] Level 5:colcon.colcon_core.verb:set package 'clearpath_common' build argument 'ament_cmake_args' from command line to 'None'
+[0.190s] Level 5:colcon.colcon_core.verb:set package 'clearpath_common' build argument 'catkin_cmake_args' from command line to 'None'
+[0.190s] Level 5:colcon.colcon_core.verb:set package 'clearpath_common' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.190s] DEBUG:colcon.colcon_core.verb:Building package 'clearpath_common' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ros_ws/build/clearpath_common', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ros_ws/install/clearpath_common', 'merge_install': False, 'path': '/home/ros_ws/src/husky_bringup/clearpath_common', 'symlink_install': True, 'test_result_base': None}
+[0.190s] Level 5:colcon.colcon_core.verb:set package 'clearpath_viz' build argument 'cmake_args' from command line to 'None'
+[0.190s] Level 5:colcon.colcon_core.verb:set package 'clearpath_viz' build argument 'cmake_target' from command line to 'None'
+[0.190s] Level 5:colcon.colcon_core.verb:set package 'clearpath_viz' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.190s] Level 5:colcon.colcon_core.verb:set package 'clearpath_viz' build argument 'cmake_clean_cache' from command line to 'False'
+[0.190s] Level 5:colcon.colcon_core.verb:set package 'clearpath_viz' build argument 'cmake_clean_first' from command line to 'False'
+[0.190s] Level 5:colcon.colcon_core.verb:set package 'clearpath_viz' build argument 'cmake_force_configure' from command line to 'False'
+[0.190s] Level 5:colcon.colcon_core.verb:set package 'clearpath_viz' build argument 'ament_cmake_args' from command line to 'None'
+[0.190s] Level 5:colcon.colcon_core.verb:set package 'clearpath_viz' build argument 'catkin_cmake_args' from command line to 'None'
+[0.190s] Level 5:colcon.colcon_core.verb:set package 'clearpath_viz' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.190s] DEBUG:colcon.colcon_core.verb:Building package 'clearpath_viz' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ros_ws/build/clearpath_viz', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ros_ws/install/clearpath_viz', 'merge_install': False, 'path': '/home/ros_ws/src/husky_description/clearpath_viz', 'symlink_install': True, 'test_result_base': None}
+[0.190s] Level 5:colcon.colcon_core.verb:set package 'husky_description' build argument 'cmake_args' from command line to 'None'
+[0.190s] Level 5:colcon.colcon_core.verb:set package 'husky_description' build argument 'cmake_target' from command line to 'None'
+[0.190s] Level 5:colcon.colcon_core.verb:set package 'husky_description' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.190s] Level 5:colcon.colcon_core.verb:set package 'husky_description' build argument 'cmake_clean_cache' from command line to 'False'
+[0.190s] Level 5:colcon.colcon_core.verb:set package 'husky_description' build argument 'cmake_clean_first' from command line to 'False'
+[0.190s] Level 5:colcon.colcon_core.verb:set package 'husky_description' build argument 'cmake_force_configure' from command line to 'False'
+[0.190s] Level 5:colcon.colcon_core.verb:set package 'husky_description' build argument 'ament_cmake_args' from command line to 'None'
+[0.190s] Level 5:colcon.colcon_core.verb:set package 'husky_description' build argument 'catkin_cmake_args' from command line to 'None'
+[0.190s] Level 5:colcon.colcon_core.verb:set package 'husky_description' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.190s] DEBUG:colcon.colcon_core.verb:Building package 'husky_description' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ros_ws/build/husky_description', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ros_ws/install/husky_description', 'merge_install': False, 'path': '/home/ros_ws/src/husky_description/husky_description', 'symlink_install': True, 'test_result_base': None}
+[0.190s] Level 5:colcon.colcon_core.verb:set package 'husky_bringup' build argument 'cmake_args' from command line to 'None'
+[0.190s] Level 5:colcon.colcon_core.verb:set package 'husky_bringup' build argument 'cmake_target' from command line to 'None'
+[0.190s] Level 5:colcon.colcon_core.verb:set package 'husky_bringup' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.191s] Level 5:colcon.colcon_core.verb:set package 'husky_bringup' build argument 'cmake_clean_cache' from command line to 'False'
+[0.191s] Level 5:colcon.colcon_core.verb:set package 'husky_bringup' build argument 'cmake_clean_first' from command line to 'False'
+[0.191s] Level 5:colcon.colcon_core.verb:set package 'husky_bringup' build argument 'cmake_force_configure' from command line to 'False'
+[0.191s] Level 5:colcon.colcon_core.verb:set package 'husky_bringup' build argument 'ament_cmake_args' from command line to 'None'
+[0.191s] Level 5:colcon.colcon_core.verb:set package 'husky_bringup' build argument 'catkin_cmake_args' from command line to 'None'
+[0.191s] Level 5:colcon.colcon_core.verb:set package 'husky_bringup' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.191s] DEBUG:colcon.colcon_core.verb:Building package 'husky_bringup' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ros_ws/build/husky_bringup', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ros_ws/install/husky_bringup', 'merge_install': False, 'path': '/home/ros_ws/src/husky_bringup/husky_bringup', 'symlink_install': True, 'test_result_base': None}
+[0.191s] Level 5:colcon.colcon_core.verb:set package 'husky_simulator' build argument 'cmake_args' from command line to 'None'
+[0.191s] Level 5:colcon.colcon_core.verb:set package 'husky_simulator' build argument 'cmake_target' from command line to 'None'
+[0.191s] Level 5:colcon.colcon_core.verb:set package 'husky_simulator' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.191s] Level 5:colcon.colcon_core.verb:set package 'husky_simulator' build argument 'cmake_clean_cache' from command line to 'False'
+[0.191s] Level 5:colcon.colcon_core.verb:set package 'husky_simulator' build argument 'cmake_clean_first' from command line to 'False'
+[0.191s] Level 5:colcon.colcon_core.verb:set package 'husky_simulator' build argument 'cmake_force_configure' from command line to 'False'
+[0.191s] Level 5:colcon.colcon_core.verb:set package 'husky_simulator' build argument 'ament_cmake_args' from command line to 'None'
+[0.191s] Level 5:colcon.colcon_core.verb:set package 'husky_simulator' build argument 'catkin_cmake_args' from command line to 'None'
+[0.191s] Level 5:colcon.colcon_core.verb:set package 'husky_simulator' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.191s] DEBUG:colcon.colcon_core.verb:Building package 'husky_simulator' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ros_ws/build/husky_simulator', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ros_ws/install/husky_simulator', 'merge_install': False, 'path': '/home/ros_ws/src/husky_simulator', 'symlink_install': True, 'test_result_base': None}
+[0.191s] INFO:colcon.colcon_core.executor:Executing jobs using 'parallel' executor
+[0.192s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete
+[0.192s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/ros_ws/src/husky_bringup/clearpath_control' with build type 'ament_cmake'
+[0.192s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/ros_ws/src/husky_bringup/clearpath_control'
+[0.195s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_core.shell.bat': Not used on non-Windows systems
+[0.195s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.195s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.195s] WARNING:colcon.colcon_ros.prefix_path.ament:The path '/home/ros_ws/install/husky_simulator' in the environment variable AMENT_PREFIX_PATH doesn't exist
+[0.195s] WARNING:colcon.colcon_ros.prefix_path.ament:The path '/home/ros_ws/install/husky_description' in the environment variable AMENT_PREFIX_PATH doesn't exist
+[0.195s] WARNING:colcon.colcon_ros.prefix_path.ament:The path '/home/ros_ws/install/husky_bringup' in the environment variable AMENT_PREFIX_PATH doesn't exist
+[0.195s] WARNING:colcon.colcon_ros.prefix_path.ament:The path '/home/ros_ws/install/clearpath_viz' in the environment variable AMENT_PREFIX_PATH doesn't exist
+[0.196s] WARNING:colcon.colcon_ros.prefix_path.ament:The path '/home/ros_ws/install/clearpath_sensors_description' in the environment variable AMENT_PREFIX_PATH doesn't exist
+[0.196s] WARNING:colcon.colcon_ros.prefix_path.ament:The path '/home/ros_ws/install/clearpath_sensors' in the environment variable AMENT_PREFIX_PATH doesn't exist
+[0.196s] WARNING:colcon.colcon_ros.prefix_path.ament:The path '/home/ros_ws/install/clearpath_platform_description' in the environment variable AMENT_PREFIX_PATH doesn't exist
+[0.196s] WARNING:colcon.colcon_ros.prefix_path.ament:The path '/home/ros_ws/install/clearpath_diagnostics' in the environment variable AMENT_PREFIX_PATH doesn't exist
+[0.196s] WARNING:colcon.colcon_ros.prefix_path.ament:The path '/home/ros_ws/install/clearpath_common' in the environment variable AMENT_PREFIX_PATH doesn't exist
+[0.196s] WARNING:colcon.colcon_ros.prefix_path.ament:The path '/home/ros_ws/install/clearpath_control' in the environment variable AMENT_PREFIX_PATH doesn't exist
+[0.196s] WARNING:colcon.colcon_ros.prefix_path.catkin:The path '/home/ros_ws/install/husky_simulator' in the environment variable CMAKE_PREFIX_PATH doesn't exist
+[0.196s] WARNING:colcon.colcon_ros.prefix_path.catkin:The path '/home/ros_ws/install/husky_description' in the environment variable CMAKE_PREFIX_PATH doesn't exist
+[0.196s] WARNING:colcon.colcon_ros.prefix_path.catkin:The path '/home/ros_ws/install/husky_bringup' in the environment variable CMAKE_PREFIX_PATH doesn't exist
+[0.196s] WARNING:colcon.colcon_ros.prefix_path.catkin:The path '/home/ros_ws/install/clearpath_viz' in the environment variable CMAKE_PREFIX_PATH doesn't exist
+[0.196s] WARNING:colcon.colcon_ros.prefix_path.catkin:The path '/home/ros_ws/install/clearpath_sensors_description' in the environment variable CMAKE_PREFIX_PATH doesn't exist
+[0.196s] WARNING:colcon.colcon_ros.prefix_path.catkin:The path '/home/ros_ws/install/clearpath_sensors' in the environment variable CMAKE_PREFIX_PATH doesn't exist
+[0.196s] WARNING:colcon.colcon_ros.prefix_path.catkin:The path '/home/ros_ws/install/clearpath_platform_description' in the environment variable CMAKE_PREFIX_PATH doesn't exist
+[0.196s] WARNING:colcon.colcon_ros.prefix_path.catkin:The path '/home/ros_ws/install/clearpath_diagnostics' in the environment variable CMAKE_PREFIX_PATH doesn't exist
+[0.196s] WARNING:colcon.colcon_ros.prefix_path.catkin:The path '/home/ros_ws/install/clearpath_common' in the environment variable CMAKE_PREFIX_PATH doesn't exist
+[0.196s] WARNING:colcon.colcon_ros.prefix_path.catkin:The path '/home/ros_ws/install/clearpath_control' in the environment variable CMAKE_PREFIX_PATH doesn't exist
+[0.198s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/ros_ws/src/husky_description/clearpath_platform_description' with build type 'ament_cmake'
+[0.198s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/ros_ws/src/husky_description/clearpath_platform_description'
+[0.198s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.198s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.201s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/ros_ws/src/husky_bringup/clearpath_diagnostics' with build type 'ament_cmake'
+[0.201s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/ros_ws/src/husky_bringup/clearpath_diagnostics'
+[0.201s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.201s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.204s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/ros_ws/src/husky_description/clearpath_sensors_description' with build type 'ament_cmake'
+[0.204s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/ros_ws/src/husky_description/clearpath_sensors_description'
+[0.204s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.204s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.206s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/ros_ws/src/husky_bringup/clearpath_sensors' with build type 'ament_cmake'
+[0.207s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/ros_ws/src/husky_bringup/clearpath_sensors'
+[0.207s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.207s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.211s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ros_ws/build/clearpath_control': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake /home/ros_ws/src/husky_bringup/clearpath_control -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/ros_ws/install/clearpath_control
+[0.213s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ros_ws/build/clearpath_platform_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake /home/ros_ws/src/husky_description/clearpath_platform_description -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/ros_ws/install/clearpath_platform_description
+[0.214s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ros_ws/build/clearpath_diagnostics': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake /home/ros_ws/src/husky_bringup/clearpath_diagnostics -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/ros_ws/install/clearpath_diagnostics
+[0.218s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ros_ws/build/clearpath_sensors_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake /home/ros_ws/src/husky_description/clearpath_sensors_description -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/ros_ws/install/clearpath_sensors_description
+[0.229s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ros_ws/build/clearpath_sensors': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake /home/ros_ws/src/husky_bringup/clearpath_sensors -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/ros_ws/install/clearpath_sensors
+[0.690s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ros_ws/build/clearpath_platform_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake /home/ros_ws/src/husky_description/clearpath_platform_description -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/ros_ws/install/clearpath_platform_description
+[0.692s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ros_ws/build/clearpath_platform_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --build /home/ros_ws/build/clearpath_platform_description -- -j16 -l16
+[0.694s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ros_ws/build/clearpath_sensors_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake /home/ros_ws/src/husky_description/clearpath_sensors_description -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/ros_ws/install/clearpath_sensors_description
+[0.695s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ros_ws/build/clearpath_sensors_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --build /home/ros_ws/build/clearpath_sensors_description -- -j16 -l16
+[0.696s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ros_ws/build/clearpath_control' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake /home/ros_ws/src/husky_bringup/clearpath_control -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/ros_ws/install/clearpath_control
+[0.698s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ros_ws/build/clearpath_control': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --build /home/ros_ws/build/clearpath_control -- -j16 -l16
+[0.722s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ros_ws/build/clearpath_platform_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --build /home/ros_ws/build/clearpath_platform_description -- -j16 -l16
+[0.730s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ros_ws/build/clearpath_platform_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --install /home/ros_ws/build/clearpath_platform_description
+[0.731s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ros_ws/build/clearpath_sensors_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --build /home/ros_ws/build/clearpath_sensors_description -- -j16 -l16
+[0.732s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ros_ws/build/clearpath_sensors_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --install /home/ros_ws/build/clearpath_sensors_description
+[0.732s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ros_ws/build/clearpath_control' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --build /home/ros_ws/build/clearpath_control -- -j16 -l16
+[0.734s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ros_ws/build/clearpath_control': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --install /home/ros_ws/build/clearpath_control
+[0.735s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ros_ws/build/clearpath_sensors' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake /home/ros_ws/src/husky_bringup/clearpath_sensors -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/ros_ws/install/clearpath_sensors
+[0.736s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ros_ws/build/clearpath_sensors': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --build /home/ros_ws/build/clearpath_sensors -- -j16 -l16
+[0.761s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ros_ws/build/clearpath_sensors' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --build /home/ros_ws/build/clearpath_sensors -- -j16 -l16
+[0.763s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ros_ws/build/clearpath_sensors': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --install /home/ros_ws/build/clearpath_sensors
+[0.778s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ros_ws/build/clearpath_diagnostics' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake /home/ros_ws/src/husky_bringup/clearpath_diagnostics -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/ros_ws/install/clearpath_diagnostics
+[0.778s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ros_ws/build/clearpath_diagnostics': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --build /home/ros_ws/build/clearpath_diagnostics -- -j16 -l16
+[0.920s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(clearpath_control)
+[0.920s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ros_ws/build/clearpath_control' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --install /home/ros_ws/build/clearpath_control
+[0.923s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_control' for CMake module files
+[0.923s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_control' for CMake config files
+[0.923s] Level 1:colcon.colcon_core.shell:create_environment_hook('clearpath_control', 'cmake_prefix_path')
+[0.924s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros_ws/install/clearpath_control/share/clearpath_control/hook/cmake_prefix_path.ps1'
+[0.924s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/ros_ws/install/clearpath_control/share/clearpath_control/hook/cmake_prefix_path.dsv'
+[0.924s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros_ws/install/clearpath_control/share/clearpath_control/hook/cmake_prefix_path.sh'
+[0.925s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_control/bin'
+[0.925s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_control/lib/pkgconfig/clearpath_control.pc'
+[0.927s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_control/lib/python3.10/site-packages'
+[0.927s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_control/bin'
+[0.927s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_control/share/clearpath_control/package.ps1'
+[0.929s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/ros_ws/install/clearpath_control/share/clearpath_control/package.dsv'
+[0.929s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_control/share/clearpath_control/package.sh'
+[0.930s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_control/share/clearpath_control/package.bash'
+[0.931s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_control/share/clearpath_control/package.zsh'
+[0.931s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/ros_ws/install/clearpath_control/share/colcon-core/packages/clearpath_control)
+[0.932s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(clearpath_control)
+[0.932s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_control' for CMake module files
+[0.933s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_control' for CMake config files
+[0.933s] Level 1:colcon.colcon_core.shell:create_environment_hook('clearpath_control', 'cmake_prefix_path')
+[0.933s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros_ws/install/clearpath_control/share/clearpath_control/hook/cmake_prefix_path.ps1'
+[0.933s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/ros_ws/install/clearpath_control/share/clearpath_control/hook/cmake_prefix_path.dsv'
+[0.934s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros_ws/install/clearpath_control/share/clearpath_control/hook/cmake_prefix_path.sh'
+[0.934s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_control/bin'
+[0.934s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_control/lib/pkgconfig/clearpath_control.pc'
+[0.934s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_control/lib/python3.10/site-packages'
+[0.934s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_control/bin'
+[0.935s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_control/share/clearpath_control/package.ps1'
+[0.935s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/ros_ws/install/clearpath_control/share/clearpath_control/package.dsv'
+[0.935s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_control/share/clearpath_control/package.sh'
+[0.936s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_control/share/clearpath_control/package.bash'
+[0.936s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_control/share/clearpath_control/package.zsh'
+[0.936s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/ros_ws/install/clearpath_control/share/colcon-core/packages/clearpath_control)
+[0.937s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/ros_ws/src/husky_bringup/clearpath_common' with build type 'ament_cmake'
+[0.937s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/ros_ws/src/husky_bringup/clearpath_common'
+[0.937s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.937s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.948s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ros_ws/build/clearpath_common': CMAKE_PREFIX_PATH=/home/ros_ws/install/clearpath_control:/home/ros_ws/install/husky_simulator:/home/ros_ws/install/husky_description:/home/ros_ws/install/husky_bringup:/home/ros_ws/install/clearpath_viz:/home/ros_ws/install/clearpath_sensors_description:/home/ros_ws/install/clearpath_sensors:/home/ros_ws/install/clearpath_platform_description:/home/ros_ws/install/clearpath_diagnostics:/home/ros_ws/install/clearpath_common:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake /home/ros_ws/src/husky_bringup/clearpath_common -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/ros_ws/install/clearpath_common
+[1.003s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(clearpath_sensors_description)
+[1.003s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_sensors_description' for CMake module files
+[1.003s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ros_ws/build/clearpath_sensors_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --install /home/ros_ws/build/clearpath_sensors_description
+[1.004s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_sensors_description' for CMake config files
+[1.004s] Level 1:colcon.colcon_core.shell:create_environment_hook('clearpath_sensors_description', 'cmake_prefix_path')
+[1.004s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros_ws/install/clearpath_sensors_description/share/clearpath_sensors_description/hook/cmake_prefix_path.ps1'
+[1.005s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/ros_ws/install/clearpath_sensors_description/share/clearpath_sensors_description/hook/cmake_prefix_path.dsv'
+[1.005s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros_ws/install/clearpath_sensors_description/share/clearpath_sensors_description/hook/cmake_prefix_path.sh'
+[1.005s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_sensors_description/bin'
+[1.006s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_sensors_description/lib/pkgconfig/clearpath_sensors_description.pc'
+[1.006s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_sensors_description/lib/python3.10/site-packages'
+[1.006s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_sensors_description/bin'
+[1.006s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_sensors_description/share/clearpath_sensors_description/package.ps1'
+[1.006s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/ros_ws/install/clearpath_sensors_description/share/clearpath_sensors_description/package.dsv'
+[1.007s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_sensors_description/share/clearpath_sensors_description/package.sh'
+[1.007s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_sensors_description/share/clearpath_sensors_description/package.bash'
+[1.007s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_sensors_description/share/clearpath_sensors_description/package.zsh'
+[1.008s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/ros_ws/install/clearpath_sensors_description/share/colcon-core/packages/clearpath_sensors_description)
+[1.008s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(clearpath_sensors_description)
+[1.009s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_sensors_description' for CMake module files
+[1.009s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_sensors_description' for CMake config files
+[1.009s] Level 1:colcon.colcon_core.shell:create_environment_hook('clearpath_sensors_description', 'cmake_prefix_path')
+[1.009s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros_ws/install/clearpath_sensors_description/share/clearpath_sensors_description/hook/cmake_prefix_path.ps1'
+[1.010s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/ros_ws/install/clearpath_sensors_description/share/clearpath_sensors_description/hook/cmake_prefix_path.dsv'
+[1.010s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros_ws/install/clearpath_sensors_description/share/clearpath_sensors_description/hook/cmake_prefix_path.sh'
+[1.011s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_sensors_description/bin'
+[1.011s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_sensors_description/lib/pkgconfig/clearpath_sensors_description.pc'
+[1.011s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_sensors_description/lib/python3.10/site-packages'
+[1.012s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_sensors_description/bin'
+[1.012s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_sensors_description/share/clearpath_sensors_description/package.ps1'
+[1.012s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/ros_ws/install/clearpath_sensors_description/share/clearpath_sensors_description/package.dsv'
+[1.012s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_sensors_description/share/clearpath_sensors_description/package.sh'
+[1.013s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_sensors_description/share/clearpath_sensors_description/package.bash'
+[1.013s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_sensors_description/share/clearpath_sensors_description/package.zsh'
+[1.013s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/ros_ws/install/clearpath_sensors_description/share/colcon-core/packages/clearpath_sensors_description)
+[1.024s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ros_ws/build/clearpath_diagnostics' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --build /home/ros_ws/build/clearpath_diagnostics -- -j16 -l16
+[1.025s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ros_ws/build/clearpath_diagnostics': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --install /home/ros_ws/build/clearpath_diagnostics
+[1.053s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(clearpath_platform_description)
+[1.054s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_platform_description' for CMake module files
+[1.055s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ros_ws/build/clearpath_platform_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --install /home/ros_ws/build/clearpath_platform_description
+[1.055s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_platform_description' for CMake config files
+[1.055s] Level 1:colcon.colcon_core.shell:create_environment_hook('clearpath_platform_description', 'cmake_prefix_path')
+[1.056s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/hook/cmake_prefix_path.ps1'
+[1.056s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/hook/cmake_prefix_path.dsv'
+[1.057s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/hook/cmake_prefix_path.sh'
+[1.057s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_platform_description/bin'
+[1.057s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_platform_description/lib/pkgconfig/clearpath_platform_description.pc'
+[1.058s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_platform_description/lib/python3.10/site-packages'
+[1.058s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_platform_description/bin'
+[1.059s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/package.ps1'
+[1.059s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/package.dsv'
+[1.059s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/package.sh'
+[1.060s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/package.bash'
+[1.060s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/package.zsh'
+[1.060s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/ros_ws/install/clearpath_platform_description/share/colcon-core/packages/clearpath_platform_description)
+[1.061s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(clearpath_platform_description)
+[1.061s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_platform_description' for CMake module files
+[1.061s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_platform_description' for CMake config files
+[1.061s] Level 1:colcon.colcon_core.shell:create_environment_hook('clearpath_platform_description', 'cmake_prefix_path')
+[1.062s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/hook/cmake_prefix_path.ps1'
+[1.062s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/hook/cmake_prefix_path.dsv'
+[1.062s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/hook/cmake_prefix_path.sh'
+[1.062s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_platform_description/bin'
+[1.062s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_platform_description/lib/pkgconfig/clearpath_platform_description.pc'
+[1.063s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_platform_description/lib/python3.10/site-packages'
+[1.063s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_platform_description/bin'
+[1.063s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/package.ps1'
+[1.063s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/package.dsv'
+[1.064s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/package.sh'
+[1.064s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/package.bash'
+[1.065s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/package.zsh'
+[1.065s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/ros_ws/install/clearpath_platform_description/share/colcon-core/packages/clearpath_platform_description)
+[1.066s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/ros_ws/src/husky_description/clearpath_viz' with build type 'ament_cmake'
+[1.066s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/ros_ws/src/husky_description/clearpath_viz'
+[1.066s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.066s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[1.069s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/ros_ws/src/husky_description/husky_description' with build type 'ament_cmake'
+[1.069s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/ros_ws/src/husky_description/husky_description'
+[1.069s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.069s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[1.076s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ros_ws/build/clearpath_viz': CMAKE_PREFIX_PATH=/home/ros_ws/install/clearpath_platform_description:/home/ros_ws/install/husky_simulator:/home/ros_ws/install/husky_description:/home/ros_ws/install/husky_bringup:/home/ros_ws/install/clearpath_viz:/home/ros_ws/install/clearpath_sensors_description:/home/ros_ws/install/clearpath_sensors:/home/ros_ws/install/clearpath_diagnostics:/home/ros_ws/install/clearpath_common:/home/ros_ws/install/clearpath_control:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake /home/ros_ws/src/husky_description/clearpath_viz -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/ros_ws/install/clearpath_viz
+[1.079s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ros_ws/build/husky_description': CMAKE_PREFIX_PATH=/home/ros_ws/install/clearpath_sensors_description:/home/ros_ws/install/clearpath_platform_description:/home/ros_ws/install/husky_simulator:/home/ros_ws/install/husky_description:/home/ros_ws/install/husky_bringup:/home/ros_ws/install/clearpath_viz:/home/ros_ws/install/clearpath_sensors:/home/ros_ws/install/clearpath_diagnostics:/home/ros_ws/install/clearpath_common:/home/ros_ws/install/clearpath_control:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake /home/ros_ws/src/husky_description/husky_description -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/ros_ws/install/husky_description
+[1.155s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(clearpath_sensors)
+[1.155s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_sensors' for CMake module files
+[1.155s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ros_ws/build/clearpath_sensors' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --install /home/ros_ws/build/clearpath_sensors
+[1.156s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_sensors' for CMake config files
+[1.156s] Level 1:colcon.colcon_core.shell:create_environment_hook('clearpath_sensors', 'cmake_prefix_path')
+[1.156s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros_ws/install/clearpath_sensors/share/clearpath_sensors/hook/cmake_prefix_path.ps1'
+[1.156s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/ros_ws/install/clearpath_sensors/share/clearpath_sensors/hook/cmake_prefix_path.dsv'
+[1.156s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros_ws/install/clearpath_sensors/share/clearpath_sensors/hook/cmake_prefix_path.sh'
+[1.157s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_sensors/bin'
+[1.157s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_sensors/lib/pkgconfig/clearpath_sensors.pc'
+[1.157s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_sensors/lib/python3.10/site-packages'
+[1.157s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_sensors/bin'
+[1.157s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_sensors/share/clearpath_sensors/package.ps1'
+[1.158s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/ros_ws/install/clearpath_sensors/share/clearpath_sensors/package.dsv'
+[1.158s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_sensors/share/clearpath_sensors/package.sh'
+[1.159s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_sensors/share/clearpath_sensors/package.bash'
+[1.159s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_sensors/share/clearpath_sensors/package.zsh'
+[1.160s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/ros_ws/install/clearpath_sensors/share/colcon-core/packages/clearpath_sensors)
+[1.160s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(clearpath_sensors)
+[1.160s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_sensors' for CMake module files
+[1.161s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_sensors' for CMake config files
+[1.161s] Level 1:colcon.colcon_core.shell:create_environment_hook('clearpath_sensors', 'cmake_prefix_path')
+[1.161s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros_ws/install/clearpath_sensors/share/clearpath_sensors/hook/cmake_prefix_path.ps1'
+[1.161s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/ros_ws/install/clearpath_sensors/share/clearpath_sensors/hook/cmake_prefix_path.dsv'
+[1.161s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros_ws/install/clearpath_sensors/share/clearpath_sensors/hook/cmake_prefix_path.sh'
+[1.162s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_sensors/bin'
+[1.162s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_sensors/lib/pkgconfig/clearpath_sensors.pc'
+[1.162s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_sensors/lib/python3.10/site-packages'
+[1.162s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_sensors/bin'
+[1.163s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_sensors/share/clearpath_sensors/package.ps1'
+[1.163s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/ros_ws/install/clearpath_sensors/share/clearpath_sensors/package.dsv'
+[1.164s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_sensors/share/clearpath_sensors/package.sh'
+[1.164s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_sensors/share/clearpath_sensors/package.bash'
+[1.164s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_sensors/share/clearpath_sensors/package.zsh'
+[1.165s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/ros_ws/install/clearpath_sensors/share/colcon-core/packages/clearpath_sensors)
+[1.242s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ros_ws/build/clearpath_common' returned '0': CMAKE_PREFIX_PATH=/home/ros_ws/install/clearpath_control:/home/ros_ws/install/husky_simulator:/home/ros_ws/install/husky_description:/home/ros_ws/install/husky_bringup:/home/ros_ws/install/clearpath_viz:/home/ros_ws/install/clearpath_sensors_description:/home/ros_ws/install/clearpath_sensors:/home/ros_ws/install/clearpath_platform_description:/home/ros_ws/install/clearpath_diagnostics:/home/ros_ws/install/clearpath_common:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake /home/ros_ws/src/husky_bringup/clearpath_common -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/ros_ws/install/clearpath_common
+[1.243s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ros_ws/build/clearpath_common': CMAKE_PREFIX_PATH=/home/ros_ws/install/clearpath_control:/home/ros_ws/install/husky_simulator:/home/ros_ws/install/husky_description:/home/ros_ws/install/husky_bringup:/home/ros_ws/install/clearpath_viz:/home/ros_ws/install/clearpath_sensors_description:/home/ros_ws/install/clearpath_sensors:/home/ros_ws/install/clearpath_platform_description:/home/ros_ws/install/clearpath_diagnostics:/home/ros_ws/install/clearpath_common:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --build /home/ros_ws/build/clearpath_common -- -j16 -l16
+[1.255s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(clearpath_diagnostics)
+[1.255s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_diagnostics' for CMake module files
+[1.255s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ros_ws/build/clearpath_diagnostics' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --install /home/ros_ws/build/clearpath_diagnostics
+[1.256s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_diagnostics' for CMake config files
+[1.256s] Level 1:colcon.colcon_core.shell:create_environment_hook('clearpath_diagnostics', 'cmake_prefix_path')
+[1.256s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/hook/cmake_prefix_path.ps1'
+[1.256s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/hook/cmake_prefix_path.dsv'
+[1.256s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/hook/cmake_prefix_path.sh'
+[1.257s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_diagnostics/lib'
+[1.257s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_diagnostics/bin'
+[1.257s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_diagnostics/lib/pkgconfig/clearpath_diagnostics.pc'
+[1.257s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_diagnostics/lib/python3.10/site-packages'
+[1.257s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_diagnostics/bin'
+[1.258s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/package.ps1'
+[1.258s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/package.dsv'
+[1.258s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/package.sh'
+[1.259s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/package.bash'
+[1.259s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/package.zsh'
+[1.259s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/ros_ws/install/clearpath_diagnostics/share/colcon-core/packages/clearpath_diagnostics)
+[1.259s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(clearpath_diagnostics)
+[1.260s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_diagnostics' for CMake module files
+[1.260s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_diagnostics' for CMake config files
+[1.260s] Level 1:colcon.colcon_core.shell:create_environment_hook('clearpath_diagnostics', 'cmake_prefix_path')
+[1.260s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/hook/cmake_prefix_path.ps1'
+[1.261s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/hook/cmake_prefix_path.dsv'
+[1.261s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/hook/cmake_prefix_path.sh'
+[1.261s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_diagnostics/lib'
+[1.261s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_diagnostics/bin'
+[1.262s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_diagnostics/lib/pkgconfig/clearpath_diagnostics.pc'
+[1.262s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_diagnostics/lib/python3.10/site-packages'
+[1.262s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_diagnostics/bin'
+[1.262s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/package.ps1'
+[1.263s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/package.dsv'
+[1.263s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/package.sh'
+[1.263s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/package.bash'
+[1.264s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_diagnostics/share/clearpath_diagnostics/package.zsh'
+[1.264s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/ros_ws/install/clearpath_diagnostics/share/colcon-core/packages/clearpath_diagnostics)
+[1.269s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ros_ws/build/clearpath_common' returned '0': CMAKE_PREFIX_PATH=/home/ros_ws/install/clearpath_control:/home/ros_ws/install/husky_simulator:/home/ros_ws/install/husky_description:/home/ros_ws/install/husky_bringup:/home/ros_ws/install/clearpath_viz:/home/ros_ws/install/clearpath_sensors_description:/home/ros_ws/install/clearpath_sensors:/home/ros_ws/install/clearpath_platform_description:/home/ros_ws/install/clearpath_diagnostics:/home/ros_ws/install/clearpath_common:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --build /home/ros_ws/build/clearpath_common -- -j16 -l16
+[1.271s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ros_ws/build/clearpath_common': CMAKE_PREFIX_PATH=/home/ros_ws/install/clearpath_control:/home/ros_ws/install/husky_simulator:/home/ros_ws/install/husky_description:/home/ros_ws/install/husky_bringup:/home/ros_ws/install/clearpath_viz:/home/ros_ws/install/clearpath_sensors_description:/home/ros_ws/install/clearpath_sensors:/home/ros_ws/install/clearpath_platform_description:/home/ros_ws/install/clearpath_diagnostics:/home/ros_ws/install/clearpath_common:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --install /home/ros_ws/build/clearpath_common
+[1.366s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(clearpath_common)
+[1.366s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_common' for CMake module files
+[1.366s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ros_ws/build/clearpath_common' returned '0': CMAKE_PREFIX_PATH=/home/ros_ws/install/clearpath_control:/home/ros_ws/install/husky_simulator:/home/ros_ws/install/husky_description:/home/ros_ws/install/husky_bringup:/home/ros_ws/install/clearpath_viz:/home/ros_ws/install/clearpath_sensors_description:/home/ros_ws/install/clearpath_sensors:/home/ros_ws/install/clearpath_platform_description:/home/ros_ws/install/clearpath_diagnostics:/home/ros_ws/install/clearpath_common:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --install /home/ros_ws/build/clearpath_common
+[1.367s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_common' for CMake config files
+[1.367s] Level 1:colcon.colcon_core.shell:create_environment_hook('clearpath_common', 'cmake_prefix_path')
+[1.367s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros_ws/install/clearpath_common/share/clearpath_common/hook/cmake_prefix_path.ps1'
+[1.367s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/ros_ws/install/clearpath_common/share/clearpath_common/hook/cmake_prefix_path.dsv'
+[1.368s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros_ws/install/clearpath_common/share/clearpath_common/hook/cmake_prefix_path.sh'
+[1.368s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_common/bin'
+[1.368s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_common/lib/pkgconfig/clearpath_common.pc'
+[1.368s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_common/lib/python3.10/site-packages'
+[1.368s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_common/bin'
+[1.368s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_common/share/clearpath_common/package.ps1'
+[1.369s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/ros_ws/install/clearpath_common/share/clearpath_common/package.dsv'
+[1.369s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_common/share/clearpath_common/package.sh'
+[1.370s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_common/share/clearpath_common/package.bash'
+[1.370s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_common/share/clearpath_common/package.zsh'
+[1.370s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/ros_ws/install/clearpath_common/share/colcon-core/packages/clearpath_common)
+[1.370s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(clearpath_common)
+[1.371s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_common' for CMake module files
+[1.371s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_common' for CMake config files
+[1.371s] Level 1:colcon.colcon_core.shell:create_environment_hook('clearpath_common', 'cmake_prefix_path')
+[1.371s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros_ws/install/clearpath_common/share/clearpath_common/hook/cmake_prefix_path.ps1'
+[1.371s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/ros_ws/install/clearpath_common/share/clearpath_common/hook/cmake_prefix_path.dsv'
+[1.372s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros_ws/install/clearpath_common/share/clearpath_common/hook/cmake_prefix_path.sh'
+[1.372s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_common/bin'
+[1.372s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_common/lib/pkgconfig/clearpath_common.pc'
+[1.372s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_common/lib/python3.10/site-packages'
+[1.372s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_common/bin'
+[1.373s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_common/share/clearpath_common/package.ps1'
+[1.373s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/ros_ws/install/clearpath_common/share/clearpath_common/package.dsv'
+[1.373s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_common/share/clearpath_common/package.sh'
+[1.374s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_common/share/clearpath_common/package.bash'
+[1.374s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_common/share/clearpath_common/package.zsh'
+[1.374s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/ros_ws/install/clearpath_common/share/colcon-core/packages/clearpath_common)
+[1.375s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/ros_ws/src/husky_bringup/husky_bringup' with build type 'ament_cmake'
+[1.375s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/ros_ws/src/husky_bringup/husky_bringup'
+[1.375s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.375s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[1.388s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ros_ws/build/husky_bringup': CMAKE_PREFIX_PATH=/home/ros_ws/install/clearpath_common:/home/ros_ws/install/clearpath_diagnostics:/home/ros_ws/install/clearpath_control:/home/ros_ws/install/husky_simulator:/home/ros_ws/install/husky_description:/home/ros_ws/install/husky_bringup:/home/ros_ws/install/clearpath_viz:/home/ros_ws/install/clearpath_sensors_description:/home/ros_ws/install/clearpath_sensors:/home/ros_ws/install/clearpath_platform_description:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake /home/ros_ws/src/husky_bringup/husky_bringup -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/ros_ws/install/husky_bringup
+[1.540s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ros_ws/build/clearpath_viz' returned '0': CMAKE_PREFIX_PATH=/home/ros_ws/install/clearpath_platform_description:/home/ros_ws/install/husky_simulator:/home/ros_ws/install/husky_description:/home/ros_ws/install/husky_bringup:/home/ros_ws/install/clearpath_viz:/home/ros_ws/install/clearpath_sensors_description:/home/ros_ws/install/clearpath_sensors:/home/ros_ws/install/clearpath_diagnostics:/home/ros_ws/install/clearpath_common:/home/ros_ws/install/clearpath_control:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake /home/ros_ws/src/husky_description/clearpath_viz -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/ros_ws/install/clearpath_viz
+[1.541s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ros_ws/build/clearpath_viz': CMAKE_PREFIX_PATH=/home/ros_ws/install/clearpath_platform_description:/home/ros_ws/install/husky_simulator:/home/ros_ws/install/husky_description:/home/ros_ws/install/husky_bringup:/home/ros_ws/install/clearpath_viz:/home/ros_ws/install/clearpath_sensors_description:/home/ros_ws/install/clearpath_sensors:/home/ros_ws/install/clearpath_diagnostics:/home/ros_ws/install/clearpath_common:/home/ros_ws/install/clearpath_control:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --build /home/ros_ws/build/clearpath_viz -- -j16 -l16
+[1.552s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ros_ws/build/husky_description' returned '0': CMAKE_PREFIX_PATH=/home/ros_ws/install/clearpath_sensors_description:/home/ros_ws/install/clearpath_platform_description:/home/ros_ws/install/husky_simulator:/home/ros_ws/install/husky_description:/home/ros_ws/install/husky_bringup:/home/ros_ws/install/clearpath_viz:/home/ros_ws/install/clearpath_sensors:/home/ros_ws/install/clearpath_diagnostics:/home/ros_ws/install/clearpath_common:/home/ros_ws/install/clearpath_control:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake /home/ros_ws/src/husky_description/husky_description -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/ros_ws/install/husky_description
+[1.553s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ros_ws/build/husky_description': CMAKE_PREFIX_PATH=/home/ros_ws/install/clearpath_sensors_description:/home/ros_ws/install/clearpath_platform_description:/home/ros_ws/install/husky_simulator:/home/ros_ws/install/husky_description:/home/ros_ws/install/husky_bringup:/home/ros_ws/install/clearpath_viz:/home/ros_ws/install/clearpath_sensors:/home/ros_ws/install/clearpath_diagnostics:/home/ros_ws/install/clearpath_common:/home/ros_ws/install/clearpath_control:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --build /home/ros_ws/build/husky_description -- -j16 -l16
+[1.566s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ros_ws/build/clearpath_viz' returned '0': CMAKE_PREFIX_PATH=/home/ros_ws/install/clearpath_platform_description:/home/ros_ws/install/husky_simulator:/home/ros_ws/install/husky_description:/home/ros_ws/install/husky_bringup:/home/ros_ws/install/clearpath_viz:/home/ros_ws/install/clearpath_sensors_description:/home/ros_ws/install/clearpath_sensors:/home/ros_ws/install/clearpath_diagnostics:/home/ros_ws/install/clearpath_common:/home/ros_ws/install/clearpath_control:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --build /home/ros_ws/build/clearpath_viz -- -j16 -l16
+[1.567s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ros_ws/build/clearpath_viz': CMAKE_PREFIX_PATH=/home/ros_ws/install/clearpath_platform_description:/home/ros_ws/install/husky_simulator:/home/ros_ws/install/husky_description:/home/ros_ws/install/husky_bringup:/home/ros_ws/install/clearpath_viz:/home/ros_ws/install/clearpath_sensors_description:/home/ros_ws/install/clearpath_sensors:/home/ros_ws/install/clearpath_diagnostics:/home/ros_ws/install/clearpath_common:/home/ros_ws/install/clearpath_control:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --install /home/ros_ws/build/clearpath_viz
+[1.576s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ros_ws/build/husky_description' returned '0': CMAKE_PREFIX_PATH=/home/ros_ws/install/clearpath_sensors_description:/home/ros_ws/install/clearpath_platform_description:/home/ros_ws/install/husky_simulator:/home/ros_ws/install/husky_description:/home/ros_ws/install/husky_bringup:/home/ros_ws/install/clearpath_viz:/home/ros_ws/install/clearpath_sensors:/home/ros_ws/install/clearpath_diagnostics:/home/ros_ws/install/clearpath_common:/home/ros_ws/install/clearpath_control:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --build /home/ros_ws/build/husky_description -- -j16 -l16
+[1.578s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ros_ws/build/husky_description': CMAKE_PREFIX_PATH=/home/ros_ws/install/clearpath_sensors_description:/home/ros_ws/install/clearpath_platform_description:/home/ros_ws/install/husky_simulator:/home/ros_ws/install/husky_description:/home/ros_ws/install/husky_bringup:/home/ros_ws/install/clearpath_viz:/home/ros_ws/install/clearpath_sensors:/home/ros_ws/install/clearpath_diagnostics:/home/ros_ws/install/clearpath_common:/home/ros_ws/install/clearpath_control:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --install /home/ros_ws/build/husky_description
+[1.668s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(husky_description)
+[1.668s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/husky_description' for CMake module files
+[1.669s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ros_ws/build/husky_description' returned '0': CMAKE_PREFIX_PATH=/home/ros_ws/install/clearpath_sensors_description:/home/ros_ws/install/clearpath_platform_description:/home/ros_ws/install/husky_simulator:/home/ros_ws/install/husky_description:/home/ros_ws/install/husky_bringup:/home/ros_ws/install/clearpath_viz:/home/ros_ws/install/clearpath_sensors:/home/ros_ws/install/clearpath_diagnostics:/home/ros_ws/install/clearpath_common:/home/ros_ws/install/clearpath_control:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --install /home/ros_ws/build/husky_description
+[1.669s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/husky_description' for CMake config files
+[1.669s] Level 1:colcon.colcon_core.shell:create_environment_hook('husky_description', 'cmake_prefix_path')
+[1.669s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros_ws/install/husky_description/share/husky_description/hook/cmake_prefix_path.ps1'
+[1.670s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/ros_ws/install/husky_description/share/husky_description/hook/cmake_prefix_path.dsv'
+[1.670s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros_ws/install/husky_description/share/husky_description/hook/cmake_prefix_path.sh'
+[1.670s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/husky_description/bin'
+[1.670s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/husky_description/lib/pkgconfig/husky_description.pc'
+[1.670s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/husky_description/lib/python3.10/site-packages'
+[1.671s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/husky_description/bin'
+[1.671s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/husky_description/share/husky_description/package.ps1'
+[1.671s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/ros_ws/install/husky_description/share/husky_description/package.dsv'
+[1.671s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/husky_description/share/husky_description/package.sh'
+[1.671s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/husky_description/share/husky_description/package.bash'
+[1.672s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/husky_description/share/husky_description/package.zsh'
+[1.672s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/ros_ws/install/husky_description/share/colcon-core/packages/husky_description)
+[1.672s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(husky_description)
+[1.673s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/husky_description' for CMake module files
+[1.673s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/husky_description' for CMake config files
+[1.673s] Level 1:colcon.colcon_core.shell:create_environment_hook('husky_description', 'cmake_prefix_path')
+[1.673s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros_ws/install/husky_description/share/husky_description/hook/cmake_prefix_path.ps1'
+[1.674s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/ros_ws/install/husky_description/share/husky_description/hook/cmake_prefix_path.dsv'
+[1.674s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros_ws/install/husky_description/share/husky_description/hook/cmake_prefix_path.sh'
+[1.674s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/husky_description/bin'
+[1.674s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/husky_description/lib/pkgconfig/husky_description.pc'
+[1.674s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/husky_description/lib/python3.10/site-packages'
+[1.674s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/husky_description/bin'
+[1.675s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/husky_description/share/husky_description/package.ps1'
+[1.675s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/ros_ws/install/husky_description/share/husky_description/package.dsv'
+[1.675s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/husky_description/share/husky_description/package.sh'
+[1.676s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/husky_description/share/husky_description/package.bash'
+[1.676s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/husky_description/share/husky_description/package.zsh'
+[1.676s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/ros_ws/install/husky_description/share/colcon-core/packages/husky_description)
+[1.727s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(clearpath_viz)
+[1.727s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_viz' for CMake module files
+[1.727s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ros_ws/build/clearpath_viz' returned '0': CMAKE_PREFIX_PATH=/home/ros_ws/install/clearpath_platform_description:/home/ros_ws/install/husky_simulator:/home/ros_ws/install/husky_description:/home/ros_ws/install/husky_bringup:/home/ros_ws/install/clearpath_viz:/home/ros_ws/install/clearpath_sensors_description:/home/ros_ws/install/clearpath_sensors:/home/ros_ws/install/clearpath_diagnostics:/home/ros_ws/install/clearpath_common:/home/ros_ws/install/clearpath_control:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --install /home/ros_ws/build/clearpath_viz
+[1.728s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_viz' for CMake config files
+[1.728s] Level 1:colcon.colcon_core.shell:create_environment_hook('clearpath_viz', 'cmake_prefix_path')
+[1.728s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros_ws/install/clearpath_viz/share/clearpath_viz/hook/cmake_prefix_path.ps1'
+[1.729s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/ros_ws/install/clearpath_viz/share/clearpath_viz/hook/cmake_prefix_path.dsv'
+[1.729s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros_ws/install/clearpath_viz/share/clearpath_viz/hook/cmake_prefix_path.sh'
+[1.729s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_viz/bin'
+[1.729s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_viz/lib/pkgconfig/clearpath_viz.pc'
+[1.730s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_viz/lib/python3.10/site-packages'
+[1.730s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_viz/bin'
+[1.730s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_viz/share/clearpath_viz/package.ps1'
+[1.731s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/ros_ws/install/clearpath_viz/share/clearpath_viz/package.dsv'
+[1.731s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_viz/share/clearpath_viz/package.sh'
+[1.731s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_viz/share/clearpath_viz/package.bash'
+[1.731s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_viz/share/clearpath_viz/package.zsh'
+[1.732s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/ros_ws/install/clearpath_viz/share/colcon-core/packages/clearpath_viz)
+[1.732s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(clearpath_viz)
+[1.732s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_viz' for CMake module files
+[1.732s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_viz' for CMake config files
+[1.733s] Level 1:colcon.colcon_core.shell:create_environment_hook('clearpath_viz', 'cmake_prefix_path')
+[1.733s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros_ws/install/clearpath_viz/share/clearpath_viz/hook/cmake_prefix_path.ps1'
+[1.733s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/ros_ws/install/clearpath_viz/share/clearpath_viz/hook/cmake_prefix_path.dsv'
+[1.733s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros_ws/install/clearpath_viz/share/clearpath_viz/hook/cmake_prefix_path.sh'
+[1.734s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_viz/bin'
+[1.734s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_viz/lib/pkgconfig/clearpath_viz.pc'
+[1.734s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_viz/lib/python3.10/site-packages'
+[1.734s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/clearpath_viz/bin'
+[1.734s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_viz/share/clearpath_viz/package.ps1'
+[1.735s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/ros_ws/install/clearpath_viz/share/clearpath_viz/package.dsv'
+[1.735s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_viz/share/clearpath_viz/package.sh'
+[1.735s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_viz/share/clearpath_viz/package.bash'
+[1.735s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/clearpath_viz/share/clearpath_viz/package.zsh'
+[1.736s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/ros_ws/install/clearpath_viz/share/colcon-core/packages/clearpath_viz)
+[1.821s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ros_ws/build/husky_bringup' returned '0': CMAKE_PREFIX_PATH=/home/ros_ws/install/clearpath_common:/home/ros_ws/install/clearpath_diagnostics:/home/ros_ws/install/clearpath_control:/home/ros_ws/install/husky_simulator:/home/ros_ws/install/husky_description:/home/ros_ws/install/husky_bringup:/home/ros_ws/install/clearpath_viz:/home/ros_ws/install/clearpath_sensors_description:/home/ros_ws/install/clearpath_sensors:/home/ros_ws/install/clearpath_platform_description:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake /home/ros_ws/src/husky_bringup/husky_bringup -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/ros_ws/install/husky_bringup
+[1.822s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ros_ws/build/husky_bringup': CMAKE_PREFIX_PATH=/home/ros_ws/install/clearpath_common:/home/ros_ws/install/clearpath_diagnostics:/home/ros_ws/install/clearpath_control:/home/ros_ws/install/husky_simulator:/home/ros_ws/install/husky_description:/home/ros_ws/install/husky_bringup:/home/ros_ws/install/clearpath_viz:/home/ros_ws/install/clearpath_sensors_description:/home/ros_ws/install/clearpath_sensors:/home/ros_ws/install/clearpath_platform_description:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --build /home/ros_ws/build/husky_bringup -- -j16 -l16
+[1.845s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ros_ws/build/husky_bringup' returned '0': CMAKE_PREFIX_PATH=/home/ros_ws/install/clearpath_common:/home/ros_ws/install/clearpath_diagnostics:/home/ros_ws/install/clearpath_control:/home/ros_ws/install/husky_simulator:/home/ros_ws/install/husky_description:/home/ros_ws/install/husky_bringup:/home/ros_ws/install/clearpath_viz:/home/ros_ws/install/clearpath_sensors_description:/home/ros_ws/install/clearpath_sensors:/home/ros_ws/install/clearpath_platform_description:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --build /home/ros_ws/build/husky_bringup -- -j16 -l16
+[1.846s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ros_ws/build/husky_bringup': CMAKE_PREFIX_PATH=/home/ros_ws/install/clearpath_common:/home/ros_ws/install/clearpath_diagnostics:/home/ros_ws/install/clearpath_control:/home/ros_ws/install/husky_simulator:/home/ros_ws/install/husky_description:/home/ros_ws/install/husky_bringup:/home/ros_ws/install/clearpath_viz:/home/ros_ws/install/clearpath_sensors_description:/home/ros_ws/install/clearpath_sensors:/home/ros_ws/install/clearpath_platform_description:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --install /home/ros_ws/build/husky_bringup
+[1.967s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(husky_bringup)
+[1.967s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/husky_bringup' for CMake module files
+[1.967s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ros_ws/build/husky_bringup' returned '0': CMAKE_PREFIX_PATH=/home/ros_ws/install/clearpath_common:/home/ros_ws/install/clearpath_diagnostics:/home/ros_ws/install/clearpath_control:/home/ros_ws/install/husky_simulator:/home/ros_ws/install/husky_description:/home/ros_ws/install/husky_bringup:/home/ros_ws/install/clearpath_viz:/home/ros_ws/install/clearpath_sensors_description:/home/ros_ws/install/clearpath_sensors:/home/ros_ws/install/clearpath_platform_description:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --install /home/ros_ws/build/husky_bringup
+[1.967s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/husky_bringup' for CMake config files
+[1.968s] Level 1:colcon.colcon_core.shell:create_environment_hook('husky_bringup', 'cmake_prefix_path')
+[1.968s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros_ws/install/husky_bringup/share/husky_bringup/hook/cmake_prefix_path.ps1'
+[1.968s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/ros_ws/install/husky_bringup/share/husky_bringup/hook/cmake_prefix_path.dsv'
+[1.968s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros_ws/install/husky_bringup/share/husky_bringup/hook/cmake_prefix_path.sh'
+[1.969s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/husky_bringup/bin'
+[1.969s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/husky_bringup/lib/pkgconfig/husky_bringup.pc'
+[1.969s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/husky_bringup/lib/python3.10/site-packages'
+[1.969s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/husky_bringup/bin'
+[1.969s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/husky_bringup/share/husky_bringup/package.ps1'
+[1.970s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/ros_ws/install/husky_bringup/share/husky_bringup/package.dsv'
+[1.970s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/husky_bringup/share/husky_bringup/package.sh'
+[1.970s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/husky_bringup/share/husky_bringup/package.bash'
+[1.971s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/husky_bringup/share/husky_bringup/package.zsh'
+[1.971s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/ros_ws/install/husky_bringup/share/colcon-core/packages/husky_bringup)
+[1.971s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(husky_bringup)
+[1.972s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/husky_bringup' for CMake module files
+[1.972s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/husky_bringup' for CMake config files
+[1.972s] Level 1:colcon.colcon_core.shell:create_environment_hook('husky_bringup', 'cmake_prefix_path')
+[1.972s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros_ws/install/husky_bringup/share/husky_bringup/hook/cmake_prefix_path.ps1'
+[1.973s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/ros_ws/install/husky_bringup/share/husky_bringup/hook/cmake_prefix_path.dsv'
+[1.973s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros_ws/install/husky_bringup/share/husky_bringup/hook/cmake_prefix_path.sh'
+[1.974s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/husky_bringup/bin'
+[1.974s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/husky_bringup/lib/pkgconfig/husky_bringup.pc'
+[1.974s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/husky_bringup/lib/python3.10/site-packages'
+[1.974s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/husky_bringup/bin'
+[1.975s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/husky_bringup/share/husky_bringup/package.ps1'
+[1.976s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/ros_ws/install/husky_bringup/share/husky_bringup/package.dsv'
+[1.976s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/husky_bringup/share/husky_bringup/package.sh'
+[1.977s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/husky_bringup/share/husky_bringup/package.bash'
+[1.977s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/husky_bringup/share/husky_bringup/package.zsh'
+[1.978s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/ros_ws/install/husky_bringup/share/colcon-core/packages/husky_bringup)
+[1.978s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/ros_ws/src/husky_simulator' with build type 'ament_cmake'
+[1.978s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/ros_ws/src/husky_simulator'
+[1.978s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.978s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[1.995s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ros_ws/build/husky_simulator': CMAKE_PREFIX_PATH=/home/ros_ws/install/husky_bringup:/home/ros_ws/install/clearpath_viz:/home/ros_ws/install/clearpath_common:/home/ros_ws/install/clearpath_platform_description:/home/ros_ws/install/clearpath_diagnostics:/home/ros_ws/install/clearpath_control:/home/ros_ws/install/husky_simulator:/home/ros_ws/install/husky_description:/home/ros_ws/install/clearpath_sensors_description:/home/ros_ws/install/clearpath_sensors:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake /home/ros_ws/src/husky_simulator -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/ros_ws/install/husky_simulator
+[2.422s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ros_ws/build/husky_simulator' returned '0': CMAKE_PREFIX_PATH=/home/ros_ws/install/husky_bringup:/home/ros_ws/install/clearpath_viz:/home/ros_ws/install/clearpath_common:/home/ros_ws/install/clearpath_platform_description:/home/ros_ws/install/clearpath_diagnostics:/home/ros_ws/install/clearpath_control:/home/ros_ws/install/husky_simulator:/home/ros_ws/install/husky_description:/home/ros_ws/install/clearpath_sensors_description:/home/ros_ws/install/clearpath_sensors:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake /home/ros_ws/src/husky_simulator -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/ros_ws/install/husky_simulator
+[2.423s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ros_ws/build/husky_simulator': CMAKE_PREFIX_PATH=/home/ros_ws/install/husky_bringup:/home/ros_ws/install/clearpath_viz:/home/ros_ws/install/clearpath_common:/home/ros_ws/install/clearpath_platform_description:/home/ros_ws/install/clearpath_diagnostics:/home/ros_ws/install/clearpath_control:/home/ros_ws/install/husky_simulator:/home/ros_ws/install/husky_description:/home/ros_ws/install/clearpath_sensors_description:/home/ros_ws/install/clearpath_sensors:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --build /home/ros_ws/build/husky_simulator -- -j16 -l16
+[2.445s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ros_ws/build/husky_simulator' returned '0': CMAKE_PREFIX_PATH=/home/ros_ws/install/husky_bringup:/home/ros_ws/install/clearpath_viz:/home/ros_ws/install/clearpath_common:/home/ros_ws/install/clearpath_platform_description:/home/ros_ws/install/clearpath_diagnostics:/home/ros_ws/install/clearpath_control:/home/ros_ws/install/husky_simulator:/home/ros_ws/install/husky_description:/home/ros_ws/install/clearpath_sensors_description:/home/ros_ws/install/clearpath_sensors:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --build /home/ros_ws/build/husky_simulator -- -j16 -l16
+[2.446s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ros_ws/build/husky_simulator': CMAKE_PREFIX_PATH=/home/ros_ws/install/husky_bringup:/home/ros_ws/install/clearpath_viz:/home/ros_ws/install/clearpath_common:/home/ros_ws/install/clearpath_platform_description:/home/ros_ws/install/clearpath_diagnostics:/home/ros_ws/install/clearpath_control:/home/ros_ws/install/husky_simulator:/home/ros_ws/install/husky_description:/home/ros_ws/install/clearpath_sensors_description:/home/ros_ws/install/clearpath_sensors:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --install /home/ros_ws/build/husky_simulator
+[2.816s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(husky_simulator)
+[2.816s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/husky_simulator' for CMake module files
+[2.816s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ros_ws/build/husky_simulator' returned '0': CMAKE_PREFIX_PATH=/home/ros_ws/install/husky_bringup:/home/ros_ws/install/clearpath_viz:/home/ros_ws/install/clearpath_common:/home/ros_ws/install/clearpath_platform_description:/home/ros_ws/install/clearpath_diagnostics:/home/ros_ws/install/clearpath_control:/home/ros_ws/install/husky_simulator:/home/ros_ws/install/husky_description:/home/ros_ws/install/clearpath_sensors_description:/home/ros_ws/install/clearpath_sensors:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --install /home/ros_ws/build/husky_simulator
+[2.817s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/husky_simulator' for CMake config files
+[2.817s] Level 1:colcon.colcon_core.shell:create_environment_hook('husky_simulator', 'cmake_prefix_path')
+[2.817s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros_ws/install/husky_simulator/share/husky_simulator/hook/cmake_prefix_path.ps1'
+[2.817s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/ros_ws/install/husky_simulator/share/husky_simulator/hook/cmake_prefix_path.dsv'
+[2.817s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros_ws/install/husky_simulator/share/husky_simulator/hook/cmake_prefix_path.sh'
+[2.818s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/husky_simulator/bin'
+[2.818s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/husky_simulator/lib/pkgconfig/husky_simulator.pc'
+[2.818s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/husky_simulator/lib/python3.10/site-packages'
+[2.818s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/husky_simulator/bin'
+[2.818s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/husky_simulator/share/husky_simulator/package.ps1'
+[2.819s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/ros_ws/install/husky_simulator/share/husky_simulator/package.dsv'
+[2.819s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/husky_simulator/share/husky_simulator/package.sh'
+[2.819s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/husky_simulator/share/husky_simulator/package.bash'
+[2.819s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/husky_simulator/share/husky_simulator/package.zsh'
+[2.820s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/ros_ws/install/husky_simulator/share/colcon-core/packages/husky_simulator)
+[2.820s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(husky_simulator)
+[2.820s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/husky_simulator' for CMake module files
+[2.820s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/husky_simulator' for CMake config files
+[2.820s] Level 1:colcon.colcon_core.shell:create_environment_hook('husky_simulator', 'cmake_prefix_path')
+[2.821s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros_ws/install/husky_simulator/share/husky_simulator/hook/cmake_prefix_path.ps1'
+[2.821s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/ros_ws/install/husky_simulator/share/husky_simulator/hook/cmake_prefix_path.dsv'
+[2.821s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros_ws/install/husky_simulator/share/husky_simulator/hook/cmake_prefix_path.sh'
+[2.821s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/husky_simulator/bin'
+[2.821s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/husky_simulator/lib/pkgconfig/husky_simulator.pc'
+[2.821s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/husky_simulator/lib/python3.10/site-packages'
+[2.822s] Level 1:colcon.colcon_core.environment:checking '/home/ros_ws/install/husky_simulator/bin'
+[2.822s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/husky_simulator/share/husky_simulator/package.ps1'
+[2.822s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/ros_ws/install/husky_simulator/share/husky_simulator/package.dsv'
+[2.822s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/husky_simulator/share/husky_simulator/package.sh'
+[2.823s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/husky_simulator/share/husky_simulator/package.bash'
+[2.823s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros_ws/install/husky_simulator/share/husky_simulator/package.zsh'
+[2.823s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/ros_ws/install/husky_simulator/share/colcon-core/packages/husky_simulator)
+[2.823s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:closing loop
+[2.823s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:loop closed
+[2.823s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete finished with '0'
+[2.823s] DEBUG:colcon.colcon_core.event_reactor:joining thread
+[2.827s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.notify_send': Could not find 'notify-send'
+[2.827s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.terminal_notifier': Not used on non-Darwin systems
+[2.827s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.win32': Not used on non-Windows systems
+[2.827s] INFO:colcon.colcon_notification.desktop_notification:Sending desktop notification using 'notify2'
+[2.830s] DEBUG:colcon.colcon_notification.desktop_notification.notify2:Failed to initialize notify2: org.freedesktop.DBus.Error.Spawn.ExecFailed: /usr/bin/dbus-launch terminated abnormally without any error message
+[2.830s] DEBUG:colcon.colcon_core.event_reactor:joined thread
+[2.830s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/ros_ws/install/local_setup.ps1'
+[2.831s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/ros_ws/install/_local_setup_util_ps1.py'
+[2.832s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/ros_ws/install/setup.ps1'
+[2.833s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/ros_ws/install/local_setup.sh'
+[2.833s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/ros_ws/install/_local_setup_util_sh.py'
+[2.833s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/ros_ws/install/setup.sh'
+[2.834s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/ros_ws/install/local_setup.bash'
+[2.834s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/ros_ws/install/setup.bash'
+[2.835s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/ros_ws/install/local_setup.zsh'
+[2.836s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/ros_ws/install/setup.zsh'

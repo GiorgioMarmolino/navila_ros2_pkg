@@ -1,1 +1,1 @@
-/home/ros_ws/install/clearpath_common:/home/ros_ws/install/clearpath_diagnostics:/home/ros_ws/install/clearpath_control:/opt/ros/humble
+/home/ros_ws/install/husky_simulator:/home/ros_ws/install/husky_description:/home/ros_ws/install/husky_bringup:/home/ros_ws/install/clearpath_viz:/home/ros_ws/install/clearpath_sensors_description:/home/ros_ws/install/clearpath_sensors:/home/ros_ws/install/clearpath_platform_description:/home/ros_ws/install/clearpath_diagnostics:/home/ros_ws/install/clearpath_common:/home/ros_ws/install/clearpath_control:/opt/ros/humble

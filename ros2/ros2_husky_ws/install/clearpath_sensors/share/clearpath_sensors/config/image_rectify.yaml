@@ -1,5 +1,1 @@
-image_rectify:
-  ros__parameters:
-    image_transport: raw
-    interpolation: 1
-    queue_size: 5
+/home/ros_ws/src/husky_bringup/clearpath_sensors/config/image_rectify.yaml

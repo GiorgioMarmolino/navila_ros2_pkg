@@ -198,17 +198,17 @@ clearpath_diagnostics_uninstall/fast:
 .PHONY : clearpath_diagnostics_uninstall/fast
 
 #=============================================================================
-# Target rules for targets named ament_cmake_python_copy_clearpath_diagnostics
+# Target rules for targets named ament_cmake_python_symlink_clearpath_diagnostics
 
 # Build rule for target.
-ament_cmake_python_copy_clearpath_diagnostics: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ament_cmake_python_copy_clearpath_diagnostics
-.PHONY : ament_cmake_python_copy_clearpath_diagnostics
+ament_cmake_python_symlink_clearpath_diagnostics: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ament_cmake_python_symlink_clearpath_diagnostics
+.PHONY : ament_cmake_python_symlink_clearpath_diagnostics
 
 # fast build rule for target.
-ament_cmake_python_copy_clearpath_diagnostics/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ament_cmake_python_copy_clearpath_diagnostics.dir/build.make CMakeFiles/ament_cmake_python_copy_clearpath_diagnostics.dir/build
-.PHONY : ament_cmake_python_copy_clearpath_diagnostics/fast
+ament_cmake_python_symlink_clearpath_diagnostics/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ament_cmake_python_symlink_clearpath_diagnostics.dir/build.make CMakeFiles/ament_cmake_python_symlink_clearpath_diagnostics.dir/build
+.PHONY : ament_cmake_python_symlink_clearpath_diagnostics/fast
 
 #=============================================================================
 # Target rules for targets named ament_cmake_python_build_clearpath_diagnostics_egg
@@ -237,7 +237,7 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... ament_cmake_python_build_clearpath_diagnostics_egg"
-	@echo "... ament_cmake_python_copy_clearpath_diagnostics"
+	@echo "... ament_cmake_python_symlink_clearpath_diagnostics"
 	@echo "... clearpath_diagnostics_uninstall"
 	@echo "... uninstall"
 .PHONY : help

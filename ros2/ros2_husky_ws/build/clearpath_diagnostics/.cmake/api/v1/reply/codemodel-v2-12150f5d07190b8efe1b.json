@@ -1,0 +1,88 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-c4d2ab7269c18001d331.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.12"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3
+					]
+				}
+			],
+			"name" : "",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "clearpath_diagnostics",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "ament_cmake_python_build_clearpath_diagnostics_egg::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ament_cmake_python_build_clearpath_diagnostics_egg-fd4de612a013180521a3.json",
+					"name" : "ament_cmake_python_build_clearpath_diagnostics_egg",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "ament_cmake_python_symlink_clearpath_diagnostics::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ament_cmake_python_symlink_clearpath_diagnostics-57dfcd12be9411d0f75d.json",
+					"name" : "ament_cmake_python_symlink_clearpath_diagnostics",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "clearpath_diagnostics_uninstall::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-clearpath_diagnostics_uninstall-ba4ec3c2298802c66c0a.json",
+					"name" : "clearpath_diagnostics_uninstall",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "uninstall::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-uninstall-c7191f6a00f3417d17e8.json",
+					"name" : "uninstall",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/ros_ws/build/clearpath_diagnostics",
+		"source" : "/home/ros_ws/src/husky_bringup/clearpath_diagnostics"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 3
+	}
+}

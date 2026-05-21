@@ -1,0 +1,79 @@
+[0.014s] Invoking command in '/home/ros_ws/build/clearpath_platform_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake /home/ros_ws/src/husky_description/clearpath_platform_description -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/ros_ws/install/clearpath_platform_description
+[0.068s] -- The C compiler identification is GNU 11.4.0
+[0.112s] -- The CXX compiler identification is GNU 11.4.0
+[0.117s] -- Detecting C compiler ABI info
+[0.168s] -- Detecting C compiler ABI info - done
+[0.176s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.177s] -- Detecting C compile features
+[0.177s] -- Detecting C compile features - done
+[0.179s] -- Detecting CXX compiler ABI info
+[0.238s] -- Detecting CXX compiler ABI info - done
+[0.244s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.244s] -- Detecting CXX compile features
+[0.245s] -- Detecting CXX compile features - done
+[0.246s] -- Found ament_cmake: 1.3.14 (/opt/ros/humble/share/ament_cmake/cmake)
+[0.361s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[0.411s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[0.485s] -- Configuring done
+[0.487s] -- Generating done
+[0.488s] -- Build files have been written to: /home/ros_ws/build/clearpath_platform_description
+[0.492s] Invoked command in '/home/ros_ws/build/clearpath_platform_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake /home/ros_ws/src/husky_description/clearpath_platform_description -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/ros_ws/install/clearpath_platform_description
+[0.494s] Invoking command in '/home/ros_ws/build/clearpath_platform_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --build /home/ros_ws/build/clearpath_platform_description -- -j16 -l16
+[0.524s] Invoked command in '/home/ros_ws/build/clearpath_platform_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --build /home/ros_ws/build/clearpath_platform_description -- -j16 -l16
+[0.531s] Invoking command in '/home/ros_ws/build/clearpath_platform_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --install /home/ros_ws/build/clearpath_platform_description
+[0.537s] -- Install configuration: ""
+[0.538s] -- Execute custom install script
+[0.538s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/launch/description.launch.py
+[0.543s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/meshes/a200/accessories/lidar_mount.stl
+[0.549s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/meshes/a200/accessories/lms1xx_mount.dae
+[0.555s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/meshes/a200/accessories/lms1xx_mount.stl
+[0.561s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/meshes/a200/attachments/300_mm_sensor_arch.dae
+[0.566s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/meshes/a200/attachments/300_mm_sensor_arch.stl
+[0.571s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/meshes/a200/attachments/510_mm_sensor_arch.dae
+[0.576s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/meshes/a200/attachments/510_mm_sensor_arch.stl
+[0.581s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/meshes/a200/attachments/bumper.dae
+[0.587s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/meshes/a200/attachments/bumper2.dae
+[0.592s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/meshes/a200/attachments/bumper3.dae
+[0.599s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/meshes/a200/attachments/bumper_extension.dae
+[0.605s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/meshes/a200/attachments/large_top_plate.dae
+[0.610s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/meshes/a200/attachments/large_top_plate_collision.stl
+[0.616s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/meshes/a200/attachments/pacs_top_plate.stl
+[0.622s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/meshes/a200/attachments/top_plate.dae
+[0.628s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/meshes/a200/attachments/top_plate.stl
+[0.634s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/meshes/a200/attachments/user_rail.dae
+[0.640s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/meshes/a200/attachments/user_rail.stl
+[0.646s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/meshes/a200/base_link.dae
+[0.652s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/meshes/a200/base_link.stl
+[0.657s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/meshes/a200/top_chassis.dae
+[0.663s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/meshes/a200/top_chassis.stl
+[0.669s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/meshes/a200/wheel.dae
+[0.675s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/meshes/a200/wheel.stl
+[0.681s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/urdf/a200/a200.urdf.xacro
+[0.686s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/urdf/a200/attachments/bumper.urdf.xacro
+[0.691s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/urdf/a200/attachments/sensor_arch.urdf.xacro
+[0.697s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/urdf/a200/attachments/top_plate.urdf.xacro
+[0.703s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/urdf/a200/attachments/top_plate.urdf.xacro.bak
+[0.709s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/urdf/a200/wheels/wheel.urdf.xacro
+[0.715s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/urdf/common.urdf.xacro
+[0.721s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/urdf/generic/gazebo.urdf.xacro
+[0.729s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/urdf/links/box.urdf.xacro
+[0.733s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/urdf/links/cylinder.urdf.xacro
+[0.740s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/urdf/links/frame.urdf.xacro
+[0.748s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/urdf/links/mesh.urdf.xacro
+[0.753s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/urdf/links/sphere.urdf.xacro
+[0.760s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/ament_index/resource_index/package_run_dependencies/clearpath_platform_description
+[0.766s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/ament_index/resource_index/parent_prefix_path/clearpath_platform_description
+[0.771s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/environment/ament_prefix_path.sh
+[0.777s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/environment/ament_prefix_path.dsv
+[0.784s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/environment/path.sh
+[0.790s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/environment/path.dsv
+[0.796s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/local_setup.bash
+[0.803s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/local_setup.sh
+[0.811s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/local_setup.zsh
+[0.817s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/local_setup.dsv
+[0.824s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/package.dsv
+[0.831s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/ament_index/resource_index/packages/clearpath_platform_description
+[0.837s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/cmake/clearpath_platform_descriptionConfig.cmake
+[0.842s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/cmake/clearpath_platform_descriptionConfig-version.cmake
+[0.847s] -- Symlinking: /home/ros_ws/install/clearpath_platform_description/share/clearpath_platform_description/package.xml
+[0.856s] Invoked command in '/home/ros_ws/build/clearpath_platform_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble _=/usr/bin/env /usr/bin/cmake --install /home/ros_ws/build/clearpath_platform_description
