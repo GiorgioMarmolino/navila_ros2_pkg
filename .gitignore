@@ -1,0 +1,113 @@
+# =========================
+# ROS2 / colcon
+# =========================
+build/
+install/
+log/
+
+# Colcon metadata
+.colcon/
+.colcon_install_layout
+
+# ROS logs
+*.log
+
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# pytest
+.pytest_cache/
+
+# mypy
+.mypy_cache/
+
+# =========================
+# CMake
+# =========================
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+compile_commands.json
+
+# =========================
+# VSCode
+# =========================
+.vscode/
+
+# =========================
+# CLion / JetBrains
+# =========================
+.idea/
+
+# =========================
+# Vim
+# =========================
+*.swp
+*.swo
+
+# =========================
+# macOS
+# =========================
+.DS_Store
+
+# =========================
+# Linux temp
+# =========================
+*~
+
+# =========================
+# ROS bag files
+# (decommenta se non vuoi versionarle)
+# =========================
+# *.bag
+# *.db3
+
+# =========================
+# Simulation outputs
+# =========================
+gzserver.log
+gzclient.log
+
+# Ignition / Gazebo
+.ignition/
+gazebo/
+
+# =========================
+# Machine Learning
+# =========================
+*.pt
+*.pth
+*.onnx
+*.engine
+wandb/
+runs/
+checkpoints/
+
+# =========================
+# Docker
+# =========================
+*.tar
+
+# =========================
+# Coverage
+# =========================
+coverage/
+htmlcov/
+.coverage
+
+# =========================
+# Secrets / env
+# =========================
+.env
+*.pem
+*.key
