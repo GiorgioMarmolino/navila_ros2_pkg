@@ -357,6 +357,9 @@ def load_navila_model(model_path: str):
         offload_folder="offload",
     )
 
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token = tokenizer.eos_token
+
     model.eval()
     print(f"[NaVILA] Model device: {next(model.parameters()).device}")
     print("[NaVILA] Model loaded successfully.")
@@ -404,12 +407,16 @@ def run_navila_inference(
         prompt_text, tokenizer, IMAGE_TOKEN_INDEX, return_tensors="pt"
     ).unsqueeze(0).to("cuda")
 
+    attention_mask = torch.ones_like(input_ids)
+
     with torch.inference_mode():
         output_ids = model.generate(
             input_ids,
+            attention_mask=attention_mask,
             images=image_tensor,
             do_sample=False,
             max_new_tokens=16,
+            pad_token_id=tokenizer.eos_token_id,
         )
 
     raw_output = tokenizer.decode(output_ids[0], skip_special_tokens=True).strip().lower()
