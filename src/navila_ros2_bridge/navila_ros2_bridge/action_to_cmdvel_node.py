@@ -43,7 +43,7 @@ DEFAULT_ANGULAR_Z      = 0.5    # rad/s — rotazione sul posto
 DEFAULT_CURVE_LINEAR   = 0.2    # m/s  — componente lineare in "curve_*"
 DEFAULT_CURVE_ANGULAR  = 0.4    # rad/s — componente angolare in "curve_*"
 
-DEFAULT_CMD_TIMEOUT    = 0.3    # s    — watchdog: stop se nessun cmd
+DEFAULT_CMD_TIMEOUT    = 0.9    # s    — watchdog: stop se nessun cmd
 DEFAULT_WATCHDOG_RATE  = 0.05   # s    — periodo timer watchdog (20 Hz)
 DEFAULT_PUBLISH_RATE   = 0.05   # s    — periodo pubblicazione (20 Hz)
 

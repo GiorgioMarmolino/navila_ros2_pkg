@@ -413,7 +413,7 @@ def run_navila_inference(
     conv.append_message(conv.roles[1], None)
     prompt_text = conv.get_prompt()
 
-    print(f"Prompt: {prompt_text}")
+    # print(f"Prompt: {prompt_text}")
 
     input_ids = tokenizer_image_token(
         prompt_text, tokenizer, IMAGE_TOKEN_INDEX, return_tensors="pt"
