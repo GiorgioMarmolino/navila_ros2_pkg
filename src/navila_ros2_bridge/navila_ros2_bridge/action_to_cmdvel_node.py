@@ -29,6 +29,7 @@ import math
 
 import rclpy
 from rclpy.node import Node
+from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy, DurabilityPolicy
 from std_msgs.msg import String
 from geometry_msgs.msg import Twist
 
@@ -127,8 +128,15 @@ class ActionToCmdVelNode(Node):
         self.sub_action = self.create_subscription(
             String, action_topic, self._action_cb, 10)
 
+        qos_cmd_vel = QoSProfile(
+            reliability=ReliabilityPolicy.RELIABLE,
+            history=HistoryPolicy.KEEP_LAST,
+            depth=1,                              # match twist_mux
+            durability=DurabilityPolicy.VOLATILE,
+        )
+
         self.pub_cmd_vel = self.create_publisher(
-            Twist, cmd_vel_topic, 10)
+            Twist, cmd_vel_topic, qos_cmd_vel)
 
         # Watchdog: controlla timeout
         self._watchdog_timer = self.create_timer(
