@@ -233,7 +233,7 @@ class Phi3Classifier:
         model_id = "microsoft/Phi-3-mini-4k-instruct"
 
         # --- download if not found ---
-         if not os.path.exists(os.path.join(model_path, "config.json")):
+        if not os.path.exists(os.path.join(model_path, "config.json")):
             print(f"[Phi3Classifier] Downloading {model_id} to {model_path} ...")
             snapshot_download(
                 repo_id=model_id,
