@@ -1,93 +1,38 @@
-# =====================================
-# ROS2 workspaces
-# =====================================
+# Ignora tutto
+*
 
-ros2/**/build/
-ros2/**/install/
-ros2/**/log/
+# Mantieni git metadata
+!.gitignore
 
-# Optional offload/cache dirs
-ros2/**/offload/
+# Mantieni la workspace ROS2 desiderata
+!ros2_navila_ws/
+!ros2_navila_ws/**
 
-# =====================================
-# Colcon
-# =====================================
+# Dentro la workspace ignora build artifacts ROS2
+ros2_navila_ws/build/
+ros2_navila_ws/install/
+ros2_navila_ws/log/
 
-.colcon/
-.colcon_install_layout
-
-# =====================================
 # Python
-# =====================================
+ros2_navila_ws/**/__pycache__/
+ros2_navila_ws/**/*.py[cod]
 
-__pycache__/
-*.py[cod]
-*$py.class
-
-venv/
-.venv/
-env/
-
-.pytest_cache/
-.mypy_cache/
-
-# =====================================
 # CMake
-# =====================================
+ros2_navila_ws/**/CMakeFiles/
+ros2_navila_ws/**/CMakeCache.txt
+ros2_navila_ws/**/cmake_install.cmake
+ros2_navila_ws/**/Makefile
+ros2_navila_ws/**/compile_commands.json
 
-CMakeFiles/
-CMakeCache.txt
-cmake_install.cmake
-Makefile
-compile_commands.json
-
-# =====================================
-# IDEs
-# =====================================
-
+# IDE
 .vscode/
 .idea/
 
-# =====================================
-# OS / editor temp
-# =====================================
-
+# Temp
 .DS_Store
 *~
 *.swp
 *.swo
 
-# =====================================
 # Logs
-# =====================================
-
 *.log
-
-# =====================================
-# ML artifacts
-# =====================================
-
-*.pt
-*.pth
-*.onnx
-*.engine
-
-wandb/
-runs/
-checkpoints/
-
-# =====================================
-# ROS bags (optional)
-# Uncomment if needed
-# =====================================
-
-# *.bag
-# *.db3
-
-# =====================================
-# Environment / secrets
-# =====================================
-
-.env
-*.pem
-*.key
