@@ -391,17 +391,29 @@ def run_navila_inference(
     import torch
     from llava.mm_utils import process_images, tokenizer_image_token
     from llava.constants import IMAGE_TOKEN_INDEX, DEFAULT_IMAGE_TOKEN
-    from llava.conversation import conv_templates
+    from llava.conversation import conv_templates, SeparatorStyle
+    from llava.mm_utils import KeywordsStoppingCriteria
 
     pil_img = PILImage.fromarray(frame_rgb)
     image_tensor = process_images([pil_img], image_processor, model.config)
     image_tensor = image_tensor.to(dtype=torch.float16, device="cuda")
 
     conv = conv_templates["llama_3"].copy()
-    prompt = f"{DEFAULT_IMAGE_TOKEN}\n{goal}"
-    conv.append_message(conv.roles[0], prompt)
+    image_token = "<image>\n"
+
+    qs = (
+        f"Imagine you are a robot programmed for navigation tasks. "
+        f"You have been given a current observation <image>\n. "
+        f'Your assigned task is: "{goal}" '
+        f"Analyze this image to decide your next action, which could be turning left or right by a specific "
+        f"degree, moving forward a certain distance, or stop if the task is completed."
+    )
+
+    conv.append_message(conv.roles[0], qs)
     conv.append_message(conv.roles[1], None)
     prompt_text = conv.get_prompt()
+
+    print(f"Prompt: {prompt_text}")
 
     input_ids = tokenizer_image_token(
         prompt_text, tokenizer, IMAGE_TOKEN_INDEX, return_tensors="pt"
@@ -409,14 +421,23 @@ def run_navila_inference(
 
     attention_mask = torch.ones_like(input_ids)
 
+    stop_str = conv.sep if conv.sep_style != SeparatorStyle.TWO else conv.sep2
+    stopping_criteria = KeywordsStoppingCriteria([stop_str], tokenizer, input_ids)
+
+
     with torch.inference_mode():
         output_ids = model.generate(
             input_ids,
             attention_mask=attention_mask,
-            images=image_tensor,
+            images=[image_tensor],
             do_sample=False,
-            max_new_tokens=16,
+            temperature=1.0,
+            top_p=1.0,
+            num_beams=1,
+            max_new_tokens=64,
+            use_cache=True,
             pad_token_id=tokenizer.eos_token_id,
+            stopping_criteria=[stopping_criteria],
         )
 
     raw_output = tokenizer.decode(output_ids[0], skip_special_tokens=True).strip().lower()
