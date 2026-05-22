@@ -221,29 +221,31 @@ class Phi3Classifier:
     Used as the primary parser when available; regex is always the fallback.
     """
 
-    def __init__(self, device: str = "auto", use_4bit: bool = True):
+    def __init__(self, device: str = "auto", use_4bit: bool = False):
         import torch
         from transformers import (
             AutoTokenizer,
             AutoModelForCausalLM,
-            BitsAndBytesConfig,
+            #BitsAndBytesConfig,
         )
 
         model_id = "microsoft/Phi-3-mini-4k-instruct"
-        print(f"[Phi3Classifier] Loading {model_id} (4bit={use_4bit}) ...")
+        print(f"[Phi3Classifier] Loading {model_id}...")
 
-        quant_cfg = None
-        if use_4bit:
-            quant_cfg = BitsAndBytesConfig(
-                load_in_4bit=True,
-                bnb_4bit_compute_dtype=torch.float16,
-                bnb_4bit_use_double_quant=True,
-            )
+        # print(f"[Phi3Classifier] Loading {model_id} (4bit={use_4bit}) ...")
+
+        # quant_cfg = None
+        # if use_4bit:
+        #     quant_cfg = BitsAndBytesConfig(
+        #         load_in_4bit=True,
+        #         bnb_4bit_compute_dtype=torch.float16,
+        #         bnb_4bit_use_double_quant=True,
+        #     )
 
         self.tokenizer = AutoTokenizer.from_pretrained(model_id)
         self.model = AutoModelForCausalLM.from_pretrained(
             model_id,
-            quantization_config=quant_cfg,
+            #quantization_config=quant_cfg,
             device_map=device,
             trust_remote_code=True,
             torch_dtype=torch.float16,

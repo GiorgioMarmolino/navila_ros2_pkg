@@ -1,4 +1,4 @@
-import os
+# import os
 
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, ExecuteProcess
@@ -35,11 +35,11 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             "use_phi3",
-            default_value="false"
+            default_value="true"
         ),
         DeclareLaunchArgument(
             "phi3_4bit",
-            default_value="true"
+            default_value="false"
         ),
 
 
