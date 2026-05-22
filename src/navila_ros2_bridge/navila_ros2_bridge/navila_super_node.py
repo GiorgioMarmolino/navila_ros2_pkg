@@ -408,7 +408,6 @@ def run_navila_inference(
         output_ids = model.generate(
             input_ids,
             images=image_tensor,
-            image_sizes=[pil_img.size],
             do_sample=False,
             max_new_tokens=16,
         )
@@ -606,15 +605,15 @@ class NaViLANode(Node):
 
         if not ready:
             self.get_logger().info(
-                "Waiting for model to load...", throttle_duration_sec=5.0)
+                "Waiting for model to load...", throttle_duration_sec=20.0)
             return
         if frame is None:
             self.get_logger().info(
-                "Waiting for camera frame...", throttle_duration_sec=5.0)
+                "Waiting for camera frame...", throttle_duration_sec=20.0)
             return
         if not goal:
             self.get_logger().info(
-                "Waiting for goal instruction...", throttle_duration_sec=5.0)
+                "Waiting for goal instruction...", throttle_duration_sec=20.0)
             return
 
         try:
