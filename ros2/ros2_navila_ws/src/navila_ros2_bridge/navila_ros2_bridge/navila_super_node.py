@@ -221,15 +221,29 @@ class Phi3Classifier:
     Used as the primary parser when available; regex is always the fallback.
     """
 
-    def __init__(self, device: str = "auto", use_4bit: bool = False):
+    def __init__(self, device: str = "auto", use_4bit: bool = False, model_path: str = "/models/phi3mini"):
         import torch
         from transformers import (
             AutoTokenizer,
             AutoModelForCausalLM,
             #BitsAndBytesConfig,
         )
+        from huggingface_hub import snapshot_download
 
         model_id = "microsoft/Phi-3-mini-4k-instruct"
+
+        # --- download if not found ---
+         if not os.path.exists(os.path.join(model_path, "config.json")):
+            print(f"[Phi3Classifier] Downloading {model_id} to {model_path} ...")
+            snapshot_download(
+                repo_id=model_id,
+                local_dir=model_path,
+            )
+            print(f"[Phi3Classifier] Model saved to: {model_path}")
+        else:
+            print(f"[Phi3Classifier] Model found at: {model_path}")
+        # --- --- --- --- --- --- --- ---
+
         print(f"[Phi3Classifier] Loading {model_id}...")
 
         # print(f"[Phi3Classifier] Loading {model_id} (4bit={use_4bit}) ...")
@@ -419,6 +433,7 @@ class NaViLANode(Node):
         # ROS 2 parameters
         # ------------------------------------------------------------------
         self.declare_parameter("model_path", os.environ.get("NAVILA_MODEL_PATH", "/models"))
+        self.declare_parameter("phi3_model_path", "/models/phi3mini")
         self.declare_parameter("inference_rate_hz", 2.0)
 
         self.declare_parameter("image_topic",  "/camera/image_raw")
@@ -548,6 +563,7 @@ class NaViLANode(Node):
                     classifier = Phi3Classifier(
                         device="auto",
                         use_4bit=self._phi3_4bit,
+                        model_path=self.get_parameter("phi3_model_path").value,
                     )
                     self.get_logger().info("Phi-3-mini classifier loaded successfully.")
                 except Exception as exc:
