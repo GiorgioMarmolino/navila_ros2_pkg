@@ -483,6 +483,12 @@ class NaViLANode(Node):
         self._use_phi3    = p("use_phi3")
         self._phi3_4bit   = p("phi3_4bit")
 
+        self.set.parameter([rclpy.parameter.Parameter(
+            'use_sim_time',
+            rclpy.parameter.Parameter.Type.BOOL,
+            True
+        )])
+
         self.get_logger().info(f"use_phi3 = {self.get_parameter('use_phi3').value}")
 
         # ------------------------------------------------------------------

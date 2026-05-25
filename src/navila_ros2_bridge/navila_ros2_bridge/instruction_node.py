@@ -12,7 +12,12 @@ class GoalInstructionPublisher(Node):
 
         self.publisher_ = self.create_publisher(String, '/goal_instruction', 10)
         self.get_logger().info("Nodo avviato. Scrivi il goal e premi INVIO.")
-
+        
+        self.set_parameters([rclpy.parameter.Parameter(
+            'use_sim_time',
+            rclpy.parameter.Parameter.Type.BOOL,
+            True
+        )])
         self.input_thread = threading.Thread(target=self.read_input_loop, daemon=True)
         self.input_thread.start()
 

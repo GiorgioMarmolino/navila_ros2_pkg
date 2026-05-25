@@ -78,6 +78,12 @@ class ActionToCmdVelNode(Node):
         self.declare_parameter("max_acc_linear",    DEFAULT_MAX_ACC_LIN)
         self.declare_parameter("max_acc_angular",   DEFAULT_MAX_ACC_ANG)
 
+        self.set_parameters([rclpy.parameter.Parameter(
+            'use_sim_time',
+            rclpy.parameter.Parameter.Type.BOOL,
+            True
+        )])
+        
         def p(name):
             return self.get_parameter(name).value
 
