@@ -13,7 +13,7 @@ class GoalInstructionPublisher(Node):
         self.publisher_ = self.create_publisher(String, '/goal_instruction', 10)
         self.get_logger().info("Nodo avviato. Scrivi il goal e premi INVIO.")
         
-        self.declare_parameter("use_sim_time", True)
+        # self.declare_parameter("use_sim_time", True)
         
         self.input_thread = threading.Thread(target=self.read_input_loop, daemon=True)
         self.input_thread.start()

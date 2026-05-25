@@ -232,6 +232,8 @@ class Phi3Classifier:
 
         model_id = "microsoft/Phi-3-mini-4k-instruct"
 
+        
+
         # --- download if not found ---
         if not os.path.exists(os.path.join(model_path, "config.json")):
             print(f"[Phi3Classifier] Downloading {model_id} to {model_path} ...")
@@ -483,6 +485,8 @@ class NaViLANode(Node):
         self._use_phi3    = p("use_phi3")
         self._phi3_4bit   = p("phi3_4bit")
 
+        self._inference_running = False
+
         # self.declare_parameter("use_sim_time", True)
 
         self.get_logger().info(f"use_phi3 = {self.get_parameter('use_phi3').value}")
@@ -624,6 +628,10 @@ class NaViLANode(Node):
     # ------------------------------------------------------------------
 
     def _inference_cb(self):
+
+        if self._inference_running: # if previous inference is still running, skip this cycle
+            return
+    
         with self._lock:
             ready      = self._model_ready
             frame      = self.last_frame
@@ -635,40 +643,45 @@ class NaViLANode(Node):
 
         if not ready:
             self.get_logger().info(
-                "Waiting for model to load...", throttle_duration_sec=20.0)
+                "Waiting for model to load...", throttle_duration_sec=30.0)
             return
         if frame is None:
             self.get_logger().info(
-                "Waiting for camera frame...", throttle_duration_sec=20.0)
+                "Waiting for camera frame...", throttle_duration_sec=30.0)
             return
         if not goal:
             self.get_logger().info(
-                "Waiting for goal instruction...", throttle_duration_sec=20.0)
+                "Waiting for goal instruction...", throttle_duration_sec=30.0)
             return
 
+        #--- Run inference in a separate thread to avoid blocking the ROS 2 timer ---
+        threading.Thread(
+            target=self._run_inference_thread,
+            args=(model, tok, iproc, frame, goal, classifier),
+            daemon=True,
+        ).start()
+
+
+    def _run_inference_thread(self, model, tok, iproc, frame, goal, classifier):
+        self._inference_running = True
         try:
             raw_output = run_navila_inference(model, tok, iproc, frame, goal)
 
             # --- Action resolution: Phi-3 → regex → stop ---
             if classifier is not None:
-                action = classifier.classify(
-                    raw_output,
-                    fallback_fn=parse_navila_output,
-                )
+                action = classifier.classify(raw_output, fallback_fn=parse_navila_output)
             else:
                 action = parse_navila_output(raw_output)
 
-            self.get_logger().info(
-                f"raw='{raw_output}' → action='{action}'  (goal: '{goal}')"
-            )
-            self.get_logger().debug(f"Full NaVILA output: {raw_output}")
+            self.get_logger().info(f"raw='{raw_output}' → action='{action}'  (goal: '{goal}')")
 
             msg = String()
             msg.data = action
             self.pub_action.publish(msg)
-
         except Exception as exc:
             self.get_logger().error(f"Inference error: {exc}")
+        finally:
+            self._inference_running = False
 
 
 # =============================================================================
