@@ -496,6 +496,8 @@ class NaViLANode(Node):
         # ------------------------------------------------------------------
         self.bridge        = CvBridge()
         self.last_frame    = None       # numpy RGB
+        self._last_image_msg = None # raw ROS Image message; processed lazily in inference thread
+
         self.last_goal     = ""
         self.last_odom     = None
         self.model         = None
@@ -555,14 +557,31 @@ class NaViLANode(Node):
     # Subscriber callbacks
     # ------------------------------------------------------------------
 
+    # def _image_cb(self, msg: Image):
+    #     try:
+    #         frame_bgr = self.bridge.imgmsg_to_cv2(msg, desired_encoding="bgr8")
+    #         frame_rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
+    #         with self._lock:
+    #             self.last_frame = frame_rgb
+    #     except Exception as exc:
+    #         self.get_logger().warn(f"Image conversion error: {exc}")
+
+
     def _image_cb(self, msg: Image):
+        # Salva il messaggio raw, NON processare qui
+        with self._lock:
+            self._last_image_msg = msg
+
+    def _process_image(self, msg):
+        # Questo viene chiamato solo dentro _run_inference_thread
         try:
             frame_bgr = self.bridge.imgmsg_to_cv2(msg, desired_encoding="bgr8")
             frame_rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
-            with self._lock:
-                self.last_frame = frame_rgb
+            return frame_rgb
         except Exception as exc:
             self.get_logger().warn(f"Image conversion error: {exc}")
+            return None
+
 
     def _goal_cb(self, msg: String):
         with self._lock:
@@ -640,12 +659,13 @@ class NaViLANode(Node):
             tok        = self.tokenizer
             iproc      = self.image_proc
             classifier = self.classifier
+            image_msg = self._last_image_msg
 
         if not ready:
             self.get_logger().info(
                 "Waiting for model to load...", throttle_duration_sec=30.0)
             return
-        if frame is None:
+        if image_msg is None:
             self.get_logger().info(
                 "Waiting for camera frame...", throttle_duration_sec=30.0)
             return
@@ -657,17 +677,22 @@ class NaViLANode(Node):
         #--- Run inference in a separate thread to avoid blocking the ROS 2 timer ---
         threading.Thread(
             target=self._run_inference_thread,
-            args=(model, tok, iproc, frame, goal, classifier),
+            args=(model, tok, iproc, image_msg, goal, classifier),
             daemon=True,
         ).start()
 
 
-    def _run_inference_thread(self, model, tok, iproc, frame, goal, classifier):
+    def _run_inference_thread(self, model, tok, iproc, image_msg, goal, classifier):
         self._inference_running = True
 
         self.get_logger().info(">>> Inference thread STARTED")
         try:
-            raw_output = run_navila_inference(model, tok, iproc, frame, goal)
+            frame_rgb = self._process_image(image_msg)
+            if frame_rgb is None:
+                self.get_logger().warn("Frame processing fallito, skip inferenza")
+                return
+                
+            raw_output = run_navila_inference(model, tok, iproc, frame_rgb, goal)
 
             # --- Action resolution: Phi-3 → regex → stop ---
             if classifier is not None:
