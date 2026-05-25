@@ -56,28 +56,26 @@ def load_navila_model(model_path: str):
 
 class MinimalLoadNode(Node):
 
-    dclass MinimalLoadNode(Node):
+        def __init__(self):
+            super().__init__("minimal_load_node")
 
-    def __init__(self):
-        super().__init__("minimal_load_node")
+            self.declare_parameter("model_path", os.environ.get("NAVILA_MODEL_PATH", "/models"))
+            model_path = self.get_parameter("model_path").value
 
-        self.declare_parameter("model_path", os.environ.get("NAVILA_MODEL_PATH", "/models"))
-        model_path = self.get_parameter("model_path").value
+            # Subscriber odom
+            from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy
+            qos_sensor = QoSProfile(
+                reliability=ReliabilityPolicy.BEST_EFFORT,
+                history=HistoryPolicy.KEEP_LAST,
+                depth=1,
+            )
+            from nav_msgs.msg import Odometry
+            self.sub_odom = self.create_subscription(
+                Odometry, '/platform/odom', lambda msg: None, qos_sensor)
 
-        # Subscriber odom
-        from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy
-        qos_sensor = QoSProfile(
-            reliability=ReliabilityPolicy.BEST_EFFORT,
-            history=HistoryPolicy.KEEP_LAST,
-            depth=1,
-        )
-        from nav_msgs.msg import Odometry
-        self.sub_odom = self.create_subscription(
-            Odometry, '/platform/odom', lambda msg: None, qos_sensor)
+            self.get_logger().info("Subscriber odom attivo — il robot si muove?")
 
-        self.get_logger().info("Subscriber odom attivo — il robot si muove?")
-
-        threading.Thread(target=self._load, args=(model_path,), daemon=True).start()
+            threading.Thread(target=self._load, args=(model_path,), daemon=True).start()
 
 
 def main(args=None):
