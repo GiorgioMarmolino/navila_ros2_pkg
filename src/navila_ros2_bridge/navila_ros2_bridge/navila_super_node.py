@@ -568,7 +568,12 @@ class NaViLANode(Node):
 
 
     def _image_cb(self, msg: Image):
-        # Salva il messaggio raw, NON processare qui
+        now = self.get_clock().now()
+        if hasattr(self, '_last_image_time'):
+            dt = (now - self._last_image_time).nanoseconds / 1e9
+            if dt < 1.0:
+                return
+        self._last_image_time = now
         with self._lock:
             self._last_image_msg = msg
 
