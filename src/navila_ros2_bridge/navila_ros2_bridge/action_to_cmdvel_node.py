@@ -44,7 +44,7 @@ DEFAULT_ANGULAR_Z      = 0.5    # rad/s — rotazione sul posto
 DEFAULT_CURVE_LINEAR   = 0.2    # m/s  — componente lineare in "curve_*"
 DEFAULT_CURVE_ANGULAR  = 0.4    # rad/s — componente angolare in "curve_*"
 
-DEFAULT_CMD_TIMEOUT    = 0.9    # s    — watchdog: stop se nessun cmd
+DEFAULT_CMD_TIMEOUT    = 15.0   # s    — watchdog: stop se nessun cmd
 DEFAULT_WATCHDOG_RATE  = 0.05   # s    — periodo timer watchdog (20 Hz)
 DEFAULT_PUBLISH_RATE   = 0.05   # s    — periodo pubblicazione (20 Hz)
 
@@ -218,13 +218,17 @@ class ActionToCmdVelNode(Node):
 
     def _publish_cb(self):
         # Rampa di accelerazione (clamp della variazione per timestep)
-        self._current_lin = self._ramp(
-            self._current_lin, self._target_lin,
-            self.max_acc_lin * self._dt)
+        # self._current_lin = self._ramp(
+        #     self._current_lin, self._target_lin,
+        #     self.max_acc_lin * self._dt)
 
-        self._current_ang = self._ramp(
-            self._current_ang, self._target_ang,
-            self.max_acc_ang * self._dt)
+        # self._current_ang = self._ramp(
+        #     self._current_ang, self._target_ang,
+        #     self.max_acc_ang * self._dt)
+
+        # no ramp:
+        self._current_lin = self._target_lin
+        self._current_ang = self._target_ang
 
         twist = Twist()
         twist.linear.x  = self._current_lin

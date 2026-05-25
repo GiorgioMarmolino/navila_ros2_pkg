@@ -664,6 +664,8 @@ class NaViLANode(Node):
 
     def _run_inference_thread(self, model, tok, iproc, frame, goal, classifier):
         self._inference_running = True
+
+        self.get_logger().info(">>> Inference thread STARTED")
         try:
             raw_output = run_navila_inference(model, tok, iproc, frame, goal)
 
@@ -682,6 +684,7 @@ class NaViLANode(Node):
             self.get_logger().error(f"Inference error: {exc}")
         finally:
             self._inference_running = False
+            self.get_logger().info(">>> Inference thread DONE")
 
 
 # =============================================================================
