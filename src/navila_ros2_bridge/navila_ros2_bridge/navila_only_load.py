@@ -56,28 +56,28 @@ def load_navila_model(model_path: str):
 
 class MinimalLoadNode(Node):
 
+    dclass MinimalLoadNode(Node):
+
     def __init__(self):
         super().__init__("minimal_load_node")
 
         self.declare_parameter("model_path", os.environ.get("NAVILA_MODEL_PATH", "/models"))
         model_path = self.get_parameter("model_path").value
 
-        self.get_logger().info(f"Avvio caricamento modello da: {model_path}")
-        self.get_logger().info("Se il robot smette di muoversi ORA, il problema è il caricamento.")
+        # Subscriber odom
+        from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy
+        qos_sensor = QoSProfile(
+            reliability=ReliabilityPolicy.BEST_EFFORT,
+            history=HistoryPolicy.KEEP_LAST,
+            depth=1,
+        )
+        from nav_msgs.msg import Odometry
+        self.sub_odom = self.create_subscription(
+            Odometry, '/platform/odom', lambda msg: None, qos_sensor)
 
-        threading.Thread(
-            target=self._load,
-            args=(model_path,),
-            daemon=True,
-        ).start()
+        self.get_logger().info("Subscriber odom attivo — il robot si muove?")
 
-    def _load(self, model_path: str):
-        try:
-            model, tokenizer, image_proc = load_navila_model(model_path)
-            self.get_logger().info("=== Modello carico. Se il robot non si muove ancora, il problema è il modello in memoria. ===")
-            self.get_logger().info("=== Se il robot si muove, il problema era nel resto del nodo NaVILA. ===")
-        except Exception as e:
-            self.get_logger().error(f"Errore caricamento: {e}")
+        threading.Thread(target=self._load, args=(model_path,), daemon=True).start()
 
 
 def main(args=None):
