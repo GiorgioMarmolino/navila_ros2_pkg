@@ -463,9 +463,9 @@ class NaViLANode(Node):
         self.declare_parameter("phi3_model_path", "/models/phi3mini")
         self.declare_parameter("inference_rate_hz", 2.0)
 
-        self.declare_parameter("image_topic",  "/camera/image_raw")
+        self.declare_parameter("image_topic",  "/sensors/front_camera/color/image_raw")
         self.declare_parameter("goal_topic",   "/goal_instruction")
-        self.declare_parameter("odom_topic",   "/odom")
+        self.declare_parameter("odom_topic",   "/platform/odom")
         self.declare_parameter("action_topic", "/navila/action")
 
         self.declare_parameter("use_phi3",     False)   # enable Phi-3 classifier

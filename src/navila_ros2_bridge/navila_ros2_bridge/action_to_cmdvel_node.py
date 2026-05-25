@@ -37,8 +37,8 @@ from geometry_msgs.msg import Twist
 # ---------------------------------------------------------------------------
 # Default parameters
 # ---------------------------------------------------------------------------
-DEFAULT_LINEAR_X       = 0.3    # m/s  — "forward"
-DEFAULT_LINEAR_X_FAST  = 0.6    # m/s  — "forward_fast"
+DEFAULT_LINEAR_X       = 0.5    # m/s  — "forward"
+DEFAULT_LINEAR_X_FAST  = 1.0    # m/s  — "forward_fast"
 DEFAULT_LINEAR_X_BACK  = 0.2    # m/s  — "backward"
 DEFAULT_ANGULAR_Z      = 0.5    # rad/s — rotazione sul posto
 DEFAULT_CURVE_LINEAR   = 0.2    # m/s  — componente lineare in "curve_*"

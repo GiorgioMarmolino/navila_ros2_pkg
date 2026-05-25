@@ -31,11 +31,11 @@ def generate_launch_description():
 
         DeclareLaunchArgument(
             "inference_rate_hz",
-            default_value="2.0"
+            default_value="1.0"
         ),
         DeclareLaunchArgument(
             "use_phi3",
-            default_value="true"
+            default_value="false"
         ),
         DeclareLaunchArgument(
             "phi3_4bit",
@@ -52,10 +52,10 @@ def generate_launch_description():
             name='navila_super_node',
             namespace='',
             output='screen',
-            remappings=[
-                ('/camera/image_raw', '/sensors/front_camera/color/image_raw'),
-                ('/odom', '/platform/odom'),
-            ],
+            # remappings=[
+            #     ('/camera/image_raw', '/sensors/front_camera/color/image_raw'),
+            #     ('/odom', '/platform/odom'),
+            # ],
             parameters=[
                 # config_file,
                 {
@@ -74,21 +74,26 @@ def generate_launch_description():
             name='action_to_cmdvel_node',
             namespace='',
             output='screen',
-            # se serve anche qui:
-            # remappings=[('/cmd_vel', '/husky/cmd_vel')],
-        ),
+            ),
 
         #========================================================================================
         #Node 3: Instruction publisher
-        ExecuteProcess(
-            cmd=[
-                'xterm',
-                '-title', 'NaVILA Goal Input',
-                '-e', 'bash -c "source /opt/ros/humble/setup.bash && '
-                    'source /home/ros_ws/install/setup.bash && '
-                    'ros2 run navila_ros2_bridge instruction_node; '
-                    'echo DONE; read"'
-            ],
+        # ExecuteProcess(
+        #     cmd=[
+        #         'xterm',
+        #         '-title', 'NaVILA Goal Input',
+        #         '-e', 'bash -c "source /opt/ros/humble/setup.bash && '
+        #             'source /home/ros_ws/install/setup.bash && '
+        #             'ros2 run navila_ros2_bridge instruction_node; '
+        #             'echo DONE; read"'
+        #     ],
+        #     output='screen',
+        # ),
+        Node(
+            package=navila_package,
+            executable='instruction_node',
+            name='instruction_node',
+            namespace='',
             output='screen',
-        ),
+        )
     ])
