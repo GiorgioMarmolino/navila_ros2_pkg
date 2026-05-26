@@ -49,9 +49,9 @@ from typing import Callable, Optional
 
 import rclpy
 from rclpy.node import Node
-from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy
+from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy, DurabilityPolicy
 
-from sensor_msgs.msg import Image
+from sensor_msgs.msg import Image, CompressedImage
 from std_msgs.msg import String
 from nav_msgs.msg import Odometry
 
@@ -465,7 +465,7 @@ class NaViLANode(Node):
         self.declare_parameter("phi3_model_path", "/models/phi3mini")
         self.declare_parameter("inference_rate_hz", 2.0)
 
-        self.declare_parameter("image_topic",  "/sensors/front_camera/color/image_raw")
+        self.declare_parameter("image_topic",  "/sensors/front_camera/color/image_raw/compressed")
         self.declare_parameter("goal_topic",   "/goal_instruction")
         self.declare_parameter("odom_topic",   "/platform/odom")
         self.declare_parameter("action_topic", "/navila/action")
@@ -516,10 +516,16 @@ class NaViLANode(Node):
             depth=1,
         )
 
+        # self.sub_image = self.create_subscription(
+        #     Image, 
+        #     image_topic, 
+        #     self._image_cb, 
+        #     qos_sensor)
+
         self.sub_image = self.create_subscription(
-            Image, 
-            image_topic, 
-            self._image_cb, 
+            CompressedImage,
+            image_topic,
+            self._image_cb,
             qos_sensor)
 
         self.sub_goal  = self.create_subscription(
@@ -556,31 +562,16 @@ class NaViLANode(Node):
     # ------------------------------------------------------------------
     # Subscriber callbacks
     # ------------------------------------------------------------------
-
-    # def _image_cb(self, msg: Image):
-    #     try:
-    #         frame_bgr = self.bridge.imgmsg_to_cv2(msg, desired_encoding="bgr8")
-    #         frame_rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
-    #         with self._lock:
-    #             self.last_frame = frame_rgb
-    #     except Exception as exc:
-    #         self.get_logger().warn(f"Image conversion error: {exc}")
-
-
-    def _image_cb(self, msg: Image):
-        now = self.get_clock().now()
-        if hasattr(self, '_last_image_time'):
-            dt = (now - self._last_image_time).nanoseconds / 1e9
-            if dt < 1.0:
-                return
-        self._last_image_time = now
+    def _image_cb(self, msg: CompressedImage):
         with self._lock:
             self._last_image_msg = msg
 
-    def _process_image(self, msg):
-        # Questo viene chiamato solo dentro _run_inference_thread
+    def _process_image(self, msg: CompressedImage):
         try:
-            frame_bgr = self.bridge.imgmsg_to_cv2(msg, desired_encoding="bgr8")
+            np_arr = np.frombuffer(msg.data, np.uint8)
+            frame_bgr = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)   # BGR diretto
+            if frame_bgr is None:
+                raise ValueError("cv2.imdecode returned None — frame corrotto?")
             frame_rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
             return frame_rgb
         except Exception as exc:
