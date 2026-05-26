@@ -1,5 +1,5 @@
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
+from launch.actions import DeclareLaunchArgument, SetEnvironmentVariable
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
@@ -12,32 +12,12 @@ def generate_launch_description():
 
     return LaunchDescription([
 
+        # Tutti i nodi su domain 105 — nessun domain_bridge necessario
+        SetEnvironmentVariable('ROS_DOMAIN_ID', '105'),
+
         DeclareLaunchArgument("inference_rate_hz", default_value="1.0"),
         DeclareLaunchArgument("use_phi3",          default_value="false"),
         DeclareLaunchArgument("phi3_4bit",         default_value="false"),
-
-        # Republisher raw > compressed to reduce bandwidth (NaVILA only needs compressed images)
-        # Node(
-        #     package='image_transport',
-        #     executable='republish',
-        #     name='camera_republisher',
-        #     arguments=['raw', 'compressed'],
-        #     remappings=[
-        #         ('in',             '/sensors/front_camera/color/image_raw'),
-        #         ('out/compressed', '/sensors/front_camera/color/image_raw/compressed'),
-        #     ],
-        #     parameters=[{
-        #         'jpeg_quality': 70,   # ~100KB/frame (VLA ~1Hz)
-        #     }],
-        # ),
-
-        Node(
-            package='domain_bridge',
-            executable='domain_bridge',
-            name='navila_domain_bridge',
-            arguments=['/ros2_ws/src/navila_ros2_bridge/config/domain_bridge.yaml'],
-            output='screen',
-        ),
 
         # Node 1: NaVILA bridge node
         Node(
@@ -47,14 +27,15 @@ def generate_launch_description():
             namespace='',
             output='screen',
             parameters=[{
-                "use_sim_time":      True,
+                "use_sim_time":      True,  # PC B non ha Gazebo, sim_time non disponibile
                 "use_phi3":          use_phi3,
                 "inference_rate_hz": inference_rate_hz,
                 "phi3_4bit":         phi3_4bit,
-                }],
+            }],
         ),
 
         # Node 2: Action to cmd_vel converter
+        # Pubblica /cmd_vel su domain 105 — il bridge su PC A lo porta su domain 104
         Node(
             package=navila_package,
             executable='action_to_cmdvel_node',
