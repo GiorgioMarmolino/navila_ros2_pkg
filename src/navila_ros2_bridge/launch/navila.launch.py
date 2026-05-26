@@ -17,18 +17,26 @@ def generate_launch_description():
         DeclareLaunchArgument("phi3_4bit",         default_value="false"),
 
         # Republisher raw > compressed to reduce bandwidth (NaVILA only needs compressed images)
+        # Node(
+        #     package='image_transport',
+        #     executable='republish',
+        #     name='camera_republisher',
+        #     arguments=['raw', 'compressed'],
+        #     remappings=[
+        #         ('in',             '/sensors/front_camera/color/image_raw'),
+        #         ('out/compressed', '/sensors/front_camera/color/image_raw/compressed'),
+        #     ],
+        #     parameters=[{
+        #         'jpeg_quality': 70,   # ~100KB/frame (VLA ~1Hz)
+        #     }],
+        # ),
+
         Node(
-            package='image_transport',
-            executable='republish',
-            name='camera_republisher',
-            arguments=['raw', 'compressed'],
-            remappings=[
-                ('in',             '/sensors/front_camera/color/image_raw'),
-                ('out/compressed', '/sensors/front_camera/color/image_raw/compressed'),
-            ],
-            parameters=[{
-                'jpeg_quality': 70,   # ~100KB/frame (VLA ~1Hz)
-            }],
+            package='domain_bridge',
+            executable='domain_bridge',
+            name='navila_domain_bridge',
+            arguments=['/ros2_ws/src/navila_ros2_bridge/config/domain_bridge.yaml'],
+            output='screen',
         ),
 
         # Node 1: NaVILA bridge node
