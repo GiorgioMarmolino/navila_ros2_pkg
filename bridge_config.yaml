@@ -1,0 +1,14 @@
+name: navila_bridge
+from_domain: 104
+to_domain: 105
+
+topics:
+
+  /cmd_vel:
+    type: geometry_msgs/msg/Twist
+    reversed: true
+
+  /sensors/front_camera/color/image_raw/compressed:
+    type: sensor_msgs/msg/CompressedImage
+    from_domain: 104
+    to_domain: 105
