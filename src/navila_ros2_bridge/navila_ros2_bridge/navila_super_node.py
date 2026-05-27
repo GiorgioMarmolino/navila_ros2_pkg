@@ -49,9 +49,9 @@ from typing import Callable, Optional
 
 import rclpy
 from rclpy.node import Node
-from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy, DurabilityPolicy
+from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy
 
-from sensor_msgs.msg import Image, CompressedImage
+from sensor_msgs.msg import CompressedImage
 from std_msgs.msg import String
 from nav_msgs.msg import Odometry
 
@@ -248,16 +248,6 @@ class Phi3Classifier:
 
         print(f"[Phi3Classifier] Loading {model_id}...")
 
-        # print(f"[Phi3Classifier] Loading {model_id} (4bit={use_4bit}) ...")
-
-        # quant_cfg = None
-        # if use_4bit:
-        #     quant_cfg = BitsAndBytesConfig(
-        #         load_in_4bit=True,
-        #         bnb_4bit_compute_dtype=torch.float16,
-        #         bnb_4bit_use_double_quant=True,
-        #     )
-
         self.tokenizer = AutoTokenizer.from_pretrained(model_id)
         self.model = AutoModelForCausalLM.from_pretrained(
             model_id,
@@ -415,8 +405,6 @@ def run_navila_inference(
     conv.append_message(conv.roles[1], None)
     prompt_text = conv.get_prompt()
 
-    # print(f"Prompt: {prompt_text}")
-
     input_ids = tokenizer_image_token(
         prompt_text, tokenizer, IMAGE_TOKEN_INDEX, return_tensors="pt"
     ).unsqueeze(0).to("cuda")
@@ -515,12 +503,6 @@ class NaViLANode(Node):
             history=HistoryPolicy.KEEP_LAST,
             depth=1,
         )
-
-        # self.sub_image = self.create_subscription(
-        #     Image, 
-        #     image_topic, 
-        #     self._image_cb, 
-        #     qos_sensor)
 
         self.sub_image = self.create_subscription(
             CompressedImage,
@@ -681,7 +663,6 @@ class NaViLANode(Node):
     def _run_inference_thread(self, model, tok, iproc, image_msg, goal, classifier):
         self._inference_running = True
 
-        self.get_logger().info(">>> Inference thread STARTED")
         try:
             frame_rgb = self._process_image(image_msg)
             if frame_rgb is None:
@@ -705,7 +686,6 @@ class NaViLANode(Node):
             self.get_logger().error(f"Inference error: {exc}")
         finally:
             self._inference_running = False
-            self.get_logger().info(">>> Inference thread DONE")
 
 
 # =============================================================================

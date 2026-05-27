@@ -32,6 +32,7 @@ from rclpy.node import Node
 from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy, DurabilityPolicy
 from std_msgs.msg import String
 from geometry_msgs.msg import Twist
+from sensor_msgs.msg import LaserScan
 
 
 # ---------------------------------------------------------------------------
@@ -40,11 +41,11 @@ from geometry_msgs.msg import Twist
 DEFAULT_LINEAR_X       = 0.5    # m/s  — "forward"
 DEFAULT_LINEAR_X_FAST  = 1.0    # m/s  — "forward_fast"
 DEFAULT_LINEAR_X_BACK  = 0.2    # m/s  — "backward"
-DEFAULT_ANGULAR_Z      = 0.5    # rad/s — rotazione sul posto
+DEFAULT_ANGULAR_Z      = 0.35    # rad/s — rotazione sul posto
 DEFAULT_CURVE_LINEAR   = 0.2    # m/s  — componente lineare in "curve_*"
 DEFAULT_CURVE_ANGULAR  = 0.4    # rad/s — componente angolare in "curve_*"
 
-DEFAULT_CMD_TIMEOUT    = 15.0   # s    — watchdog: stop se nessun cmd
+DEFAULT_CMD_TIMEOUT    = 0.9   # s    — watchdog: stop se nessun cmd
 DEFAULT_WATCHDOG_RATE  = 0.05   # s    — periodo timer watchdog (20 Hz)
 DEFAULT_PUBLISH_RATE   = 0.05   # s    — periodo pubblicazione (20 Hz)
 
@@ -78,6 +79,10 @@ class ActionToCmdVelNode(Node):
         self.declare_parameter("max_acc_linear",    DEFAULT_MAX_ACC_LIN)
         self.declare_parameter("max_acc_angular",   DEFAULT_MAX_ACC_ANG)
 
+        # Safety distances (m)
+        self.declare_parameter("front_stop_dist", 1.0)
+        self.declare_parameter("front_slow_dist", 2.0)
+
         # self.declare_parameter("use_sim_time", True)
         
         def p(name):
@@ -96,6 +101,9 @@ class ActionToCmdVelNode(Node):
         self.max_acc_ang  = p("max_acc_angular")
         watchdog_rate     = p("watchdog_rate_sec")
         publish_rate      = p("publish_rate_sec")
+
+        self.front_stop_dist = p("front_stop_dist")
+        self.front_slow_dist = p("front_slow_dist")
 
         # ------------------------------------------------------------------
         # Mappa token → (linear_x, angular_z)
@@ -125,10 +133,20 @@ class ActionToCmdVelNode(Node):
         self._last_cmd_time = self.get_clock().now()
 
         # ------------------------------------------------------------------
+        # Security states
+        # ------------------------------------------------------------------
+        self._front_blocked = False
+        self._left_blocked = False
+        self._right_blocked = False
+        self._rear_blocked = False
+
+        self._front_min_dist = 999.0
+        # ------------------------------------------------------------------
         # Subscriber / Publisher / Timer
         # ------------------------------------------------------------------
-        self.sub_action = self.create_subscription(
-            String, action_topic, self._action_cb, 10)
+        self.sub_action = self.create_subscription(String, action_topic, self._action_cb, 10)
+        
+        self.sub_scan = self.create_subscription(LaserScan, "/scan", self._scan_cb, 10)
 
         qos_cmd_vel = QoSProfile(
             reliability=ReliabilityPolicy.RELIABLE,
@@ -198,6 +216,27 @@ class ActionToCmdVelNode(Node):
         self.get_logger().debug(
             f"target set [{label}] → "
             f"lin={lx:.3f}  ang={az:.3f}")
+        
+
+    def _scan_cb(self, msg: LaserScan):
+        self._last_scan_time = self.get_clock().now()
+        ranges = list(msg.ranges)
+
+        def safe_min(values):
+            vals = [v for v in values if not math.isinf(v) and not math.isnan(v)]
+            return min(vals) if vals else 999.0
+
+        n = len(ranges)
+        front = ranges[-20:] + ranges[:20]      # FRONT ±20°
+        left = ranges[n//4-20:n//4+20]          # LEFT
+        right = ranges[3*n//4-20:3*n//4+20]     # RIGHT
+        rear = ranges[n//2-20:n//2+20]          # REAR
+
+        self._front_min_dist = safe_min(front)
+        self._front_blocked = self._front_min_dist < 1.2
+        self._left_blocked  = safe_min(left)  < 0.7
+        self._right_blocked = safe_min(right) < 0.7
+        self._rear_blocked  = safe_min(rear)  < 0.8
 
     # ------------------------------------------------------------------
     # Watchdog callback
@@ -216,28 +255,83 @@ class ActionToCmdVelNode(Node):
     # Publish callback (smoothing + pubblicazione)
     # ------------------------------------------------------------------
 
+    # def _publish_cb(self):
+    #     # Rampa di accelerazione (clamp della variazione per timestep)
+    #     # self._current_lin = self._ramp(
+    #     #     self._current_lin, self._target_lin,
+    #     #     self.max_acc_lin * self._dt)
+
+    #     # self._current_ang = self._ramp(
+    #     #     self._current_ang, self._target_ang,
+    #     #     self.max_acc_ang * self._dt)
+
+    #     # no ramp:
+    #     self._current_lin = self._target_lin
+    #     self._current_ang = self._target_ang
+
+    #     twist = Twist()
+    #     twist.linear.x  = self._current_lin
+    #     twist.angular.z = self._current_ang
+    #     self.pub_cmd_vel.publish(twist)
+
+    #     self.get_logger().debug(
+    #         f"cmd_vel → lin={self._current_lin:.3f}  "
+    #         f"ang={self._current_ang:.3f}")
+
     def _publish_cb(self):
-        # Rampa di accelerazione (clamp della variazione per timestep)
-        # self._current_lin = self._ramp(
-        #     self._current_lin, self._target_lin,
-        #     self.max_acc_lin * self._dt)
+        # --- scan watchdog
+        scan_dt = (
+            self.get_clock().now() - self._last_scan_time
+        ).nanoseconds / 1e9
 
-        # self._current_ang = self._ramp(
-        #     self._current_ang, self._target_ang,
-        #     self.max_acc_ang * self._dt)
+        if scan_dt > 0.5:
 
-        # no ramp:
-        self._current_lin = self._target_lin
-        self._current_ang = self._target_ang
+            self.get_logger().warn("LIDAR TIMEOUT -> STOP", throttle_duration_sec=1.0)
 
+            lin = 0.0
+            ang = 0.0
+        # --- ---
+    
+        lin = self._target_lin
+        ang = self._target_ang
+
+        if lin > 0.0:
+            d = self._front_min_dist
+            if d < self.front_stop_dist:
+                self.get_logger().warn("FRONT OBSTACLE -> STOP", throttle_duration_sec=1.0 )
+                lin = 0.0
+            elif d < self.front_slow_dist:
+                scale = (
+                    (d - self.front_stop_dist) / (self.front_slow_dist - self.front_stop_dist))
+                scale = max(0.0, min(scale, 1.0))
+                lin *= scale
+
+        if lin < 0.0 and self._rear_blocked:
+            self.get_logger().warn("REAR OBSTACLE -> STOP", throttle_duration_sec=1.0)
+            lin = 0.0
+
+        if ang > 0.0 and self._left_blocked:
+            self.get_logger().warn("LEFT SIDE BLOCKED", throttle_duration_sec=1.0)
+            ang = 0.0
+
+        if ang < 0.0 and self._right_blocked:
+            self.get_logger().warn("RIGHT SIDE BLOCKED",throttle_duration_sec=1.0)
+            ang = 0.0
+
+        self._current_lin = self._ramp(self._current_lin, lin, self.max_acc_lin * self._dt)
+        self._current_ang = self._ramp(self._current_ang, ang, self.max_acc_ang * self._dt)
+
+        # --- publish
         twist = Twist()
-        twist.linear.x  = self._current_lin
+        twist.linear.x = self._current_lin
         twist.angular.z = self._current_ang
         self.pub_cmd_vel.publish(twist)
-
         self.get_logger().debug(
-            f"cmd_vel → lin={self._current_lin:.3f}  "
-            f"ang={self._current_ang:.3f}")
+            f"cmd_vel -> "
+            f"lin={self._current_lin:.3f} "
+            f"ang={self._current_ang:.3f} "
+            f"front={self._front_min_dist:.2f}m"
+        )
 
     # ------------------------------------------------------------------
     # Utility
