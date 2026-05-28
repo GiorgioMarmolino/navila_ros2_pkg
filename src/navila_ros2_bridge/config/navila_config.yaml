@@ -4,3 +4,6 @@ navila_super_node:
     inference_rate_hz: 2.0
     use_phi3: false
     phi3_4bit: true
+
+    # sarebbe da usare e aggiornare per il launch file, terminata la fase di test
+    # ma per ora lo lascio hardcoded nel codice

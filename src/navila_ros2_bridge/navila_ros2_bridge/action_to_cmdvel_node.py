@@ -1,27 +1,42 @@
 #!/usr/bin/env python3
 """
 action_to_cmdvel_node.py
-Converte le azioni di NaVILA in comandi di velocità (geometry_msgs/Twist)
-pubblicati su /cmd_vel.
+
+Converts NaVILA actions into velocity commands (geometry_msgs/Twist)
+published on /cmd_vel.
 
 Subscribes:
-    /navila/action  (std_msgs/String)
-        Accetta due formati:
-          1) JSON  →  {"linear_x": 0.3, "angular_z": 0.2}
-          2) Token →  "forward" | "forward_fast" | "backward"
-                      "turn_left" | "turn_right"
-                      "curve_left" | "curve_right"
-                      "stop"
+    /navila/action (std_msgs/String)
+        Supported formats:
+            1) JSON:
+                {"linear_x": 0.3, "angular_z": 0.2}
+
+            2) Action tokens:
+                "forward"
+                "forward_fast"
+                "backward"
+                "turn_left"
+                "turn_right"
+                "curve_left"
+                "curve_right"
+                "stop"
+
+    /sensors/lidar3d_0/scan (sensor_msgs/LaserScan)
 
 Publishes:
-    /cmd_vel  (geometry_msgs/Twist)
+    /cmd_vel (geometry_msgs/Twist)
 
 Features:
-    - Watchdog timer: STOP automatico dopo <cmd_timeout_sec> senza comandi
-    - Velocity smoothing: rampa di accelerazione (acceleration limiting)
-    - Action schema ricco con token estesi + JSON pass-through
-    - Logging throttled (debug per frame, info/warn per eventi)
-    - Parametri ROS 2 configurabili
+    - Command watchdog timeout with automatic STOP
+    - LiDAR-based collision prevention
+    - Front obstacle slowdown and emergency stop
+    - Side-aware turning reduction for narrow corridors
+    - Rear obstacle protection
+    - LiDAR timeout fail-safe
+    - Velocity smoothing with acceleration limiting
+    - Extended action token mapping + JSON passthrough
+    - Throttled logging for cleaner runtime output
+    - Fully configurable ROS 2 parameters
 """
 
 import json
@@ -52,6 +67,12 @@ DEFAULT_PUBLISH_RATE   = 0.05   # s    — periodo pubblicazione (20 Hz)
 DEFAULT_MAX_ACC_LIN    = 1.0    # m/s² — max accelerazione lineare
 DEFAULT_MAX_ACC_ANG    = 2.0    # rad/s² — max accelerazione angolare
 
+DEFAULT_FRONT_STOP_DIST = 0.55  # m    — distanza frontale per stop
+DEFAULT_FRONT_SLOW_DIST = 1.2   # m    — distanza frontale per inizio rallentamento
+DEFAULT_SIDE_STOP_DIST  = 0.22  # m   — distanza laterale per stop
+DEFAULT_REAR_STOP_DIST  = 0.35
+
+
 
 class ActionToCmdVelNode(Node):
 
@@ -63,6 +84,7 @@ class ActionToCmdVelNode(Node):
         # ------------------------------------------------------------------
         self.declare_parameter("action_topic",      "/navila/action")
         self.declare_parameter("cmd_vel_topic",     "/cmd_vel")
+        self.declare_parameter("scan_topic",        "/sensors/lidar3d_0/scan")
 
         # Velocità per ogni token
         self.declare_parameter("linear_x",          DEFAULT_LINEAR_X)
@@ -80,8 +102,10 @@ class ActionToCmdVelNode(Node):
         self.declare_parameter("max_acc_angular",   DEFAULT_MAX_ACC_ANG)
 
         # Safety distances (m)
-        self.declare_parameter("front_stop_dist", 1.0)
-        self.declare_parameter("front_slow_dist", 2.0)
+        self.declare_parameter("front_stop_dist", DEFAULT_FRONT_STOP_DIST)
+        self.declare_parameter("front_slow_dist", DEFAULT_FRONT_SLOW_DIST)
+        self.declare_parameter("side_stop_dist", DEFAULT_SIDE_STOP_DIST)
+        self.declare_parameter("rear_stop_dist", DEFAULT_REAR_STOP_DIST)
 
         # self.declare_parameter("use_sim_time", True)
         
@@ -90,6 +114,7 @@ class ActionToCmdVelNode(Node):
 
         action_topic      = p("action_topic")
         cmd_vel_topic     = p("cmd_vel_topic")
+        scan_topic        = p("scan_topic")
         self.lin          = p("linear_x")
         self.lin_fast     = p("linear_x_fast")
         self.lin_back     = p("linear_x_back")
@@ -104,6 +129,8 @@ class ActionToCmdVelNode(Node):
 
         self.front_stop_dist = p("front_stop_dist")
         self.front_slow_dist = p("front_slow_dist")
+        self.side_stop_dist = p("side_stop_dist")
+        self.rear_stop_dist = p("rear_stop_dist")
 
         # ------------------------------------------------------------------
         # Mappa token → (linear_x, angular_z)
@@ -146,7 +173,7 @@ class ActionToCmdVelNode(Node):
         # ------------------------------------------------------------------
         self.sub_action = self.create_subscription(String, action_topic, self._action_cb, 10)
         
-        self.sub_scan = self.create_subscription(LaserScan, "/scan", self._scan_cb, 10)
+        self.sub_scan = self.create_subscription(LaserScan, scan_topic, self._scan_cb, 10)
 
         qos_cmd_vel = QoSProfile(
             reliability=ReliabilityPolicy.RELIABLE,
@@ -155,16 +182,11 @@ class ActionToCmdVelNode(Node):
             durability=DurabilityPolicy.VOLATILE,
         )
 
-        self.pub_cmd_vel = self.create_publisher(
-            Twist, cmd_vel_topic, qos_cmd_vel)
+        self.pub_cmd_vel = self.create_publisher(Twist, cmd_vel_topic, qos_cmd_vel)
 
-        # Watchdog: controlla timeout
-        self._watchdog_timer = self.create_timer(
-            watchdog_rate, self._watchdog_cb)
-
-        # Publish loop: applica smoothing e pubblica a rate fisso
-        self._publish_timer = self.create_timer(
-            publish_rate, self._publish_cb)
+        # --- TIMERS ---
+        self._watchdog_timer = self.create_timer(watchdog_rate, self._watchdog_cb)  # Watchdog: controlla timeout
+        self._publish_timer = self.create_timer(publish_rate, self._publish_cb)     # Publish loop: applica smoothing e pubblica a rate fisso
 
         self._dt = publish_rate  # usato per la rampa di accelerazione
 
@@ -179,13 +201,13 @@ class ActionToCmdVelNode(Node):
         )
 
     # ------------------------------------------------------------------
-    # Callback azione
+    # Action callback
     # ------------------------------------------------------------------
 
     def _action_cb(self, msg: String):
         raw = msg.data.strip()
 
-        # --- Prova a parsare come JSON -----------------------------------
+        # --- Parse as JSON -----------------------------------
         if raw.startswith("{"):
             try:
                 data = json.loads(raw)
@@ -216,7 +238,6 @@ class ActionToCmdVelNode(Node):
         self.get_logger().debug(
             f"target set [{label}] → "
             f"lin={lx:.3f}  ang={az:.3f}")
-        
 
     def _scan_cb(self, msg: LaserScan):
         self._last_scan_time = self.get_clock().now()
@@ -279,10 +300,8 @@ class ActionToCmdVelNode(Node):
     #         f"ang={self._current_ang:.3f}")
 
     def _publish_cb(self):
-        # --- scan watchdog
-        scan_dt = (
-            self.get_clock().now() - self._last_scan_time
-        ).nanoseconds / 1e9
+        # --- Scan timeout check ---
+        scan_dt = (self.get_clock().now() - self._last_scan_time).nanoseconds / 1e9
 
         if scan_dt > 0.5:
 
@@ -290,38 +309,39 @@ class ActionToCmdVelNode(Node):
 
             lin = 0.0
             ang = 0.0
-        # --- ---
-    
-        lin = self._target_lin
-        ang = self._target_ang
+        else:
+            lin = self._target_lin
+            ang = self._target_ang
 
-        if lin > 0.0:
-            d = self._front_min_dist
-            if d < self.front_stop_dist:
-                self.get_logger().warn("FRONT OBSTACLE -> STOP", throttle_duration_sec=1.0 )
+            if lin > 0.0:                       # Front obstacle protection
+                d = self._front_min_dist
+                if d < self.front_stop_dist:    # Hard stop
+                    self.get_logger().warn("FRONT OBSTACLE -> STOP", throttle_duration_sec=1.0 )
+                    lin = 0.0
+                elif d < self.front_slow_dist:  # Progressive slowdown
+                    scale = (
+                        (d - self.front_stop_dist) / (self.front_slow_dist - self.front_stop_dist))
+                    scale = max(0.0, min(scale, 1.0))
+                    lin *= scale
+
+            if lin < 0.0 and self._rear_blocked:# Rear obstacle protection
+                self.get_logger().warn("REAR OBSTACLE -> STOP", throttle_duration_sec=1.0)
                 lin = 0.0
-            elif d < self.front_slow_dist:
-                scale = (
-                    (d - self.front_stop_dist) / (self.front_slow_dist - self.front_stop_dist))
-                scale = max(0.0, min(scale, 1.0))
-                lin *= scale
 
-        if lin < 0.0 and self._rear_blocked:
-            self.get_logger().warn("REAR OBSTACLE -> STOP", throttle_duration_sec=1.0)
-            lin = 0.0
+            # Reduce turning aggressiveness in narrow spaces
+            if lin > 0.0 and ang > 0.0 and self._left_blocked:
+                self.get_logger().warn("LEFT SIDE CLOSE -> REDUCING TURN", throttle_duration_sec=1.0)
+                ang *= 0.4
 
-        if ang > 0.0 and self._left_blocked:
-            self.get_logger().warn("LEFT SIDE BLOCKED", throttle_duration_sec=1.0)
-            ang = 0.0
-
-        if ang < 0.0 and self._right_blocked:
-            self.get_logger().warn("RIGHT SIDE BLOCKED",throttle_duration_sec=1.0)
-            ang = 0.0
-
+            if lin > 0.0 and ang < 0.0 and self._right_blocked:
+                self.get_logger().warn("RIGHT SIDE CLOSE -> REDUCING TURN", throttle_duration_sec=1.0)
+                ang *= 0.4
+        
+        # Acceleration ramp
         self._current_lin = self._ramp(self._current_lin, lin, self.max_acc_lin * self._dt)
         self._current_ang = self._ramp(self._current_ang, ang, self.max_acc_ang * self._dt)
 
-        # --- publish
+        # Publish cmd_vel
         twist = Twist()
         twist.linear.x = self._current_lin
         twist.angular.z = self._current_ang
