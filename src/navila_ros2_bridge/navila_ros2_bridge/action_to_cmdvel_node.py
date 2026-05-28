@@ -47,7 +47,10 @@ from rclpy.node import Node
 from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy, DurabilityPolicy
 from std_msgs.msg import String
 from geometry_msgs.msg import Twist
-from sensor_msgs.msg import LaserScan
+from sensor_msgs.msg import LaserScan, Image
+
+import numpy as np
+from cv_bridge import CvBridge
 
 
 # ---------------------------------------------------------------------------
@@ -60,17 +63,17 @@ DEFAULT_ANGULAR_Z      = 0.35    # rad/s — rotazione sul posto
 DEFAULT_CURVE_LINEAR   = 0.2    # m/s  — componente lineare in "curve_*"
 DEFAULT_CURVE_ANGULAR  = 0.4    # rad/s — componente angolare in "curve_*"
 
-DEFAULT_CMD_TIMEOUT    = 0.9   # s    — watchdog: stop se nessun cmd
+DEFAULT_CMD_TIMEOUT    = 1.0   # s    — watchdog: stop se nessun cmd
 DEFAULT_WATCHDOG_RATE  = 0.05   # s    — periodo timer watchdog (20 Hz)
 DEFAULT_PUBLISH_RATE   = 0.05   # s    — periodo pubblicazione (20 Hz)
 
 DEFAULT_MAX_ACC_LIN    = 1.0    # m/s² — max accelerazione lineare
 DEFAULT_MAX_ACC_ANG    = 2.0    # rad/s² — max accelerazione angolare
 
-DEFAULT_FRONT_STOP_DIST = 0.55  # m    — distanza frontale per stop
+DEFAULT_FRONT_STOP_DIST = 0.75  # m    — distanza frontale per stop
 DEFAULT_FRONT_SLOW_DIST = 1.2   # m    — distanza frontale per inizio rallentamento
-DEFAULT_SIDE_STOP_DIST  = 0.22  # m   — distanza laterale per stop
-DEFAULT_REAR_STOP_DIST  = 0.35
+DEFAULT_SIDE_STOP_DIST  = 0.42  # m   — distanza laterale per stop
+DEFAULT_REAR_STOP_DIST  = 0.65
 
 
 
@@ -85,6 +88,7 @@ class ActionToCmdVelNode(Node):
         self.declare_parameter("action_topic",      "/navila/action")
         self.declare_parameter("cmd_vel_topic",     "/cmd_vel")
         self.declare_parameter("scan_topic",        "/sensors/lidar3d_0/scan")
+        self.declare_parameter("depth_topic",       "/sensors/front_camera/depth/image_raw")
 
         # Velocità per ogni token
         self.declare_parameter("linear_x",          DEFAULT_LINEAR_X)
@@ -115,6 +119,8 @@ class ActionToCmdVelNode(Node):
         action_topic      = p("action_topic")
         cmd_vel_topic     = p("cmd_vel_topic")
         scan_topic        = p("scan_topic")
+        depth_topic       = p("depth_topic")
+        
         self.lin          = p("linear_x")
         self.lin_fast     = p("linear_x_fast")
         self.lin_back     = p("linear_x_back")
@@ -169,11 +175,16 @@ class ActionToCmdVelNode(Node):
 
         self._front_min_dist = 999.0
         self._last_scan_time = self.get_clock().now()
+
+        self._bridge = CvBridge()
+        self._front_depth_dist = 999.0
+        self._last_depth_time = self.get_clock().now()
+
         # ------------------------------------------------------------------
         # Subscriber / Publisher / Timer
         # ------------------------------------------------------------------
         self.sub_action = self.create_subscription(String, action_topic, self._action_cb, 10)
-        
+        self.sub_depth = self.create_subscription(Image, depth_topic, self._depth_cb, 10)
         self.sub_scan = self.create_subscription(LaserScan, scan_topic, self._scan_cb, 10)
 
         qos_cmd_vel = QoSProfile(
@@ -204,6 +215,21 @@ class ActionToCmdVelNode(Node):
     # ------------------------------------------------------------------
     # Action callback
     # ------------------------------------------------------------------
+    def _depth_cb(self, msg: Image):
+        self._last_depth_time = self.get_clock().now()
+        try:
+            depth = self._bridge.imgmsg_to_cv2(msg, desired_encoding='passthrough')
+            h, w = depth.shape[:2]
+
+            # ROI: zona centrale-bassa del frame (ostacoli vicini al suolo)
+            roi = depth[h//2:h, w//4:3*w//4]
+
+            # Filtra valori invalidi (0, inf, nan)
+            valid = roi[(roi > 0.1) & np.isfinite(roi)]
+            self._front_depth_dist = float(np.min(valid)) if len(valid) > 0 else 999.0
+
+        except Exception as e:
+            self.get_logger().warn(f"Depth error: {e}", throttle_duration_sec=2.0)
 
     def _action_cb(self, msg: String):
         raw = msg.data.strip()
@@ -246,22 +272,22 @@ class ActionToCmdVelNode(Node):
         n = len(ranges)
 
         angle_increment = msg.angle_increment
-    samples_30deg = int(math.radians(30) / angle_increment)
+        samples_30deg = int(math.radians(30) / angle_increment)
 
-    def safe_min(values):
-        vals = [v for v in values if not math.isinf(v) and not math.isnan(v)]
-        return min(vals) if vals else 999.0
+        def safe_min(values):
+            vals = [v for v in values if not math.isinf(v) and not math.isnan(v)]
+            return min(vals) if vals else 999.0
 
-    front = ranges[-samples_30deg:] + ranges[:samples_30deg]
-    left  = ranges[n//4 - samples_30deg : n//4 + samples_30deg]
-    right = ranges[3*n//4 - samples_30deg : 3*n//4 + samples_30deg]
-    rear  = ranges[n//2 - samples_30deg : n//2 + samples_30deg]
+        front = ranges[-samples_30deg:] + ranges[:samples_30deg]
+        left  = ranges[n//4 - samples_30deg : n//4 + samples_30deg]
+        right = ranges[3*n//4 - samples_30deg : 3*n//4 + samples_30deg]
+        rear  = ranges[n//2 - samples_30deg : n//2 + samples_30deg]
 
-    self._front_min_dist = safe_min(front)
-    self._front_blocked = self._front_min_dist < self.front_slow_dist
-    self._left_blocked  = safe_min(left)  < self.side_stop_dist
-    self._right_blocked = safe_min(right) < self.side_stop_dist
-    self._rear_blocked  = safe_min(rear)  < self.rear_stop_dist
+        self._front_min_dist = safe_min(front)
+        self._front_blocked = self._front_min_dist < self.front_slow_dist
+        self._left_blocked  = safe_min(left)  < self.side_stop_dist
+        self._right_blocked = safe_min(right) < self.side_stop_dist
+        self._rear_blocked  = safe_min(rear)  < self.rear_stop_dist
 
     # ------------------------------------------------------------------
     # Watchdog callback
@@ -318,7 +344,7 @@ class ActionToCmdVelNode(Node):
             ang = self._target_ang
 
             if lin > 0.0:                       # Front obstacle protection
-                d = self._front_min_dist
+                d = min(self._front_min_dist, self._front_depth_dist) # using depth camera
                 if d < self.front_stop_dist:    # Hard stop
                     self.get_logger().warn("FRONT OBSTACLE -> STOP", throttle_duration_sec=1.0 )
                     lin = 0.0
