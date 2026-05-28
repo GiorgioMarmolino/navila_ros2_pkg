@@ -63,6 +63,7 @@ DEFAULT_ANGULAR_Z      = 0.35    # rad/s — rotazione sul posto
 DEFAULT_CURVE_LINEAR   = 0.2    # m/s  — componente lineare in "curve_*"
 DEFAULT_CURVE_ANGULAR  = 0.4    # rad/s — componente angolare in "curve_*"
 
+DEFAULT_LIDAR_TIMEOUT  = 2.5   #s     - max time without lidar
 DEFAULT_CMD_TIMEOUT    = 1.0   # s    — watchdog: stop se nessun cmd
 DEFAULT_WATCHDOG_RATE  = 0.05   # s    — periodo timer watchdog (20 Hz)
 DEFAULT_PUBLISH_RATE   = 0.05   # s    — periodo pubblicazione (20 Hz)
@@ -88,7 +89,7 @@ class ActionToCmdVelNode(Node):
         self.declare_parameter("action_topic",      "/navila/action")
         self.declare_parameter("cmd_vel_topic",     "/cmd_vel")
         self.declare_parameter("scan_topic",        "/sensors/lidar3d_0/scan")
-        self.declare_parameter("depth_topic",       "/sensors/front_camera/depth/image_raw")
+        self.declare_parameter("depth_topic",       "/sensors/front_camera/depth/image_raw/compressed")
 
         # Velocità per ogni token
         self.declare_parameter("linear_x",          DEFAULT_LINEAR_X)
@@ -120,7 +121,7 @@ class ActionToCmdVelNode(Node):
         cmd_vel_topic     = p("cmd_vel_topic")
         scan_topic        = p("scan_topic")
         depth_topic       = p("depth_topic")
-        
+
         self.lin          = p("linear_x")
         self.lin_fast     = p("linear_x_fast")
         self.lin_back     = p("linear_x_back")
@@ -333,7 +334,7 @@ class ActionToCmdVelNode(Node):
         # --- Scan timeout check ---
         scan_dt = (self.get_clock().now() - self._last_scan_time).nanoseconds / 1e9
 
-        if scan_dt > 0.5:
+        if scan_dt > DEFAULT_LIDAR_TIMEOUT:
 
             self.get_logger().warn("LIDAR TIMEOUT -> STOP", throttle_duration_sec=1.0)
 
