@@ -168,6 +168,7 @@ class ActionToCmdVelNode(Node):
         self._rear_blocked = False
 
         self._front_min_dist = 999.0
+        self._last_scan_time = self.get_clock().now()
         # ------------------------------------------------------------------
         # Subscriber / Publisher / Timer
         # ------------------------------------------------------------------
