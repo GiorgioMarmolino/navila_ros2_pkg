@@ -243,22 +243,25 @@ class ActionToCmdVelNode(Node):
     def _scan_cb(self, msg: LaserScan):
         self._last_scan_time = self.get_clock().now()
         ranges = list(msg.ranges)
-
-        def safe_min(values):
-            vals = [v for v in values if not math.isinf(v) and not math.isnan(v)]
-            return min(vals) if vals else 999.0
-
         n = len(ranges)
-        front = ranges[-20:] + ranges[:20]      # FRONT ±20°
-        left = ranges[n//4-20:n//4+20]          # LEFT
-        right = ranges[3*n//4-20:3*n//4+20]     # RIGHT
-        rear = ranges[n//2-20:n//2+20]          # REAR
 
-        self._front_min_dist = safe_min(front)
-        self._front_blocked = self._front_min_dist < 1.2
-        self._left_blocked  = safe_min(left)  < 0.7
-        self._right_blocked = safe_min(right) < 0.7
-        self._rear_blocked  = safe_min(rear)  < 0.8
+        angle_increment = msg.angle_increment
+    samples_30deg = int(math.radians(30) / angle_increment)
+
+    def safe_min(values):
+        vals = [v for v in values if not math.isinf(v) and not math.isnan(v)]
+        return min(vals) if vals else 999.0
+
+    front = ranges[-samples_30deg:] + ranges[:samples_30deg]
+    left  = ranges[n//4 - samples_30deg : n//4 + samples_30deg]
+    right = ranges[3*n//4 - samples_30deg : 3*n//4 + samples_30deg]
+    rear  = ranges[n//2 - samples_30deg : n//2 + samples_30deg]
+
+    self._front_min_dist = safe_min(front)
+    self._front_blocked = self._front_min_dist < self.front_slow_dist
+    self._left_blocked  = safe_min(left)  < self.side_stop_dist
+    self._right_blocked = safe_min(right) < self.side_stop_dist
+    self._rear_blocked  = safe_min(rear)  < self.rear_stop_dist
 
     # ------------------------------------------------------------------
     # Watchdog callback
