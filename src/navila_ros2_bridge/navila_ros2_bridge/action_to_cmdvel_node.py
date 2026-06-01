@@ -47,7 +47,7 @@ from rclpy.node import Node
 from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy, DurabilityPolicy
 from std_msgs.msg import String
 from geometry_msgs.msg import Twist
-from sensor_msgs.msg import LaserScan, Image
+from sensor_msgs.msg import LaserScan, CompressedImage, Image
 
 import numpy as np
 from cv_bridge import CvBridge
@@ -185,7 +185,7 @@ class ActionToCmdVelNode(Node):
         # Subscriber / Publisher / Timer
         # ------------------------------------------------------------------
         self.sub_action = self.create_subscription(String, action_topic, self._action_cb, 10)
-        self.sub_depth = self.create_subscription(Image, depth_topic, self._depth_cb, 10)
+        self.sub_depth = self.create_subscription(CompressedImage, depth_topic, self._depth_cb, 10)
         self.sub_scan = self.create_subscription(LaserScan, scan_topic, self._scan_cb, 10)
 
         qos_cmd_vel = QoSProfile(
@@ -200,6 +200,20 @@ class ActionToCmdVelNode(Node):
         # --- TIMERS ---
         self._watchdog_timer = self.create_timer(watchdog_rate, self._watchdog_cb)  # Watchdog: controlla timeout
         self._publish_timer = self.create_timer(publish_rate, self._publish_cb)     # Publish loop: applica smoothing e pubblica a rate fisso
+        
+        
+        
+        
+        
+        
+        
+        ##############################################################################
+        self._debug_timer = self.create_timer(1.0, self._debug_cb)  # 1 Hz
+        ##############################################################################
+
+
+
+
 
         self._dt = publish_rate  # usato per la rampa di accelerazione
 
@@ -216,10 +230,10 @@ class ActionToCmdVelNode(Node):
     # ------------------------------------------------------------------
     # Action callback
     # ------------------------------------------------------------------
-    def _depth_cb(self, msg: Image):
+    def _depth_cb(self, msg: CompressedImage):
         self._last_depth_time = self.get_clock().now()
         try:
-            depth = self._bridge.imgmsg_to_cv2(msg, desired_encoding='passthrough')
+        depth = self._bridge.compressed_imgmsg_to_cv2(msg, desired_encoding='passthrough')
             h, w = depth.shape[:2]
 
             # ROI: zona centrale-bassa del frame (ostacoli vicini al suolo)
@@ -329,6 +343,31 @@ class ActionToCmdVelNode(Node):
     #     self.get_logger().debug(
     #         f"cmd_vel → lin={self._current_lin:.3f}  "
     #         f"ang={self._current_ang:.3f}")
+
+
+
+
+
+    ################################################################################
+    def _debug_cb(self):
+        self.get_logger().info(
+            f"[SAFETY] "
+            f"front_lidar={self._front_min_dist:.2f}m ({'BLOCKED' if self._front_blocked else 'ok'})  "
+            f"front_depth={self._front_depth_dist:.2f}m ({'BLOCKED' if self._front_depth_dist < self.front_slow_dist else 'ok'})  "
+            f"left={('BLOCKED' if self._left_blocked else 'ok')}  "
+            f"right={('BLOCKED' if self._right_blocked else 'ok')}  "
+            f"rear={('BLOCKED' if self._rear_blocked else 'ok')}  "
+            f"| target=({self._target_lin:.2f}, {self._target_ang:.2f})"
+        )
+    ################################################################################
+
+
+
+
+
+
+
+
 
     def _publish_cb(self):
         # --- Scan timeout check ---
