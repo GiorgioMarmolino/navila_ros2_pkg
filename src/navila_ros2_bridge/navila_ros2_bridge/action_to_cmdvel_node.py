@@ -73,8 +73,8 @@ DEFAULT_MAX_ACC_ANG    = 2.0    # rad/s² — max accelerazione angolare
 
 DEFAULT_FRONT_STOP_DIST = 0.75  # m    — distanza frontale per stop
 DEFAULT_FRONT_SLOW_DIST = 1.2   # m    — distanza frontale per inizio rallentamento
-DEFAULT_SIDE_STOP_DIST  = 0.5  # m   — distanza laterale per stop
-DEFAULT_REAR_STOP_DIST  = 0.65
+DEFAULT_SIDE_STOP_DIST  = 1.0  # m   — distanza laterale per stop
+DEFAULT_REAR_STOP_DIST  = 1.2
 
 
 
@@ -112,6 +112,7 @@ class ActionToCmdVelNode(Node):
         self.declare_parameter("side_stop_dist", DEFAULT_SIDE_STOP_DIST)
         self.declare_parameter("rear_stop_dist", DEFAULT_REAR_STOP_DIST)
 
+        self.declare_parameter("lidar_front_angle_deg", 90.0)  # angolo reale del fronte nel frame LiDAR
         # self.declare_parameter("use_sim_time", True)
         
         def p(name):
@@ -289,25 +290,30 @@ class ActionToCmdVelNode(Node):
         ranges = list(msg.ranges)
         n = len(ranges)
 
-        self._ranges_debug = ranges # per debug, da rimuovere o limitare in futuro se troppo pesante
-        self._n_debug = n # per debug, da rimuovere
-
         angle_increment = msg.angle_increment
         samples_30deg = int(math.radians(30) / angle_increment)
+
+        # Calcola l'indice del fronte reale in base al parametro
+        front_angle_deg = self.get_parameter("lidar_front_angle_deg").value
+        front_idx = int((math.radians(front_angle_deg) - msg.angle_min) / angle_increment) % n
+
+        left_idx  = (front_idx + n//4)   % n
+        rear_idx  = (front_idx + n//2)   % n
+        right_idx = (front_idx + 3*n//4) % n
+
+        def safe_slice(center, half):
+            idxs = [(center + i) % n for i in range(-half, half)]
+            vals = [ranges[i] for i in idxs]
+            return vals
 
         def safe_min(values):
             vals = [v for v in values if not math.isinf(v) and not math.isnan(v)]
             return min(vals) if vals else 999.0
 
-        front = ranges[3*n//4 - samples_30deg : 3*n//4 + samples_30deg]
-        left  = ranges[-samples_30deg:] + ranges[:samples_30deg]
-        rear  = ranges[n//4 - samples_30deg : n//4 + samples_30deg]
-        right = ranges[n//2 - samples_30deg : n//2 + samples_30deg]
-
-        self._front_min_dist = safe_min(front)
-        self._left_min_dist  = safe_min(left)
-        self._right_min_dist = safe_min(right)
-        self._rear_min_dist  = safe_min(rear)
+        self._front_min_dist = safe_min(safe_slice(front_idx, samples_30deg))
+        self._left_min_dist  = safe_min(safe_slice(left_idx,  samples_30deg))
+        self._rear_min_dist  = safe_min(safe_slice(rear_idx,  samples_30deg))
+        self._right_min_dist = safe_min(safe_slice(right_idx, samples_30deg))
 
         self._front_blocked = self._front_min_dist < self.front_slow_dist
         self._left_blocked  = self._left_min_dist  < self.side_stop_dist
