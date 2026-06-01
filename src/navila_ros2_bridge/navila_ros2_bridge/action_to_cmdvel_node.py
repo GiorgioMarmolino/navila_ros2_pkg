@@ -299,10 +299,10 @@ class ActionToCmdVelNode(Node):
             vals = [v for v in values if not math.isinf(v) and not math.isnan(v)]
             return min(vals) if vals else 999.0
 
-        front = ranges[-samples_30deg:] + ranges[:samples_30deg]
-        left  = ranges[n//4 - samples_30deg : n//4 + samples_30deg]
-        right = ranges[3*n//4 - samples_30deg : 3*n//4 + samples_30deg]
-        rear  = ranges[n//2 - samples_30deg : n//2 + samples_30deg]
+        front = ranges[3*n//4 - samples_30deg : 3*n//4 + samples_30deg]
+        left  = ranges[-samples_30deg:] + ranges[:samples_30deg]
+        rear  = ranges[n//4 - samples_30deg : n//4 + samples_30deg]
+        right = ranges[n//2 - samples_30deg : n//2 + samples_30deg]
 
         self._front_min_dist = safe_min(front)
         self._left_min_dist  = safe_min(left)
