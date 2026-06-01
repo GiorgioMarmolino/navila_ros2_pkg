@@ -47,7 +47,7 @@ from rclpy.node import Node
 from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy, DurabilityPolicy
 from std_msgs.msg import String
 from geometry_msgs.msg import Twist
-from sensor_msgs.msg import LaserScan, CompressedImage, Image
+from sensor_msgs.msg import LaserScan, Image
 
 import numpy as np
 from cv_bridge import CvBridge
@@ -73,7 +73,7 @@ DEFAULT_MAX_ACC_ANG    = 2.0    # rad/s² — max accelerazione angolare
 
 DEFAULT_FRONT_STOP_DIST = 0.75  # m    — distanza frontale per stop
 DEFAULT_FRONT_SLOW_DIST = 1.2   # m    — distanza frontale per inizio rallentamento
-DEFAULT_SIDE_STOP_DIST  = 0.42  # m   — distanza laterale per stop
+DEFAULT_SIDE_STOP_DIST  = 0.5  # m   — distanza laterale per stop
 DEFAULT_REAR_STOP_DIST  = 0.65
 
 
@@ -89,7 +89,7 @@ class ActionToCmdVelNode(Node):
         self.declare_parameter("action_topic",      "/navila/action")
         self.declare_parameter("cmd_vel_topic",     "/cmd_vel")
         self.declare_parameter("scan_topic",        "/sensors/lidar3d_0/scan")
-        self.declare_parameter("depth_topic",       "/sensors/front_camera/depth/image_raw/compressed")
+        self.declare_parameter("depth_topic",       "/sensors/front_camera/depth/image_raw")
 
         # Velocità per ogni token
         self.declare_parameter("linear_x",          DEFAULT_LINEAR_X)
@@ -175,6 +175,9 @@ class ActionToCmdVelNode(Node):
         self._rear_blocked = False
 
         self._front_min_dist = 999.0
+        self._left_min_dist = 999.0
+        self._right_min_dist = 999.0
+        self._rear_min_dist = 999.0
         self._last_scan_time = self.get_clock().now()
 
         self._bridge = CvBridge()
@@ -185,7 +188,7 @@ class ActionToCmdVelNode(Node):
         # Subscriber / Publisher / Timer
         # ------------------------------------------------------------------
         self.sub_action = self.create_subscription(String, action_topic, self._action_cb, 10)
-        self.sub_depth = self.create_subscription(CompressedImage, depth_topic, self._depth_cb, 10)
+        self.sub_depth = self.create_subscription(Image, depth_topic, self._depth_cb, 10)
         self.sub_scan = self.create_subscription(LaserScan, scan_topic, self._scan_cb, 10)
 
         qos_cmd_vel = QoSProfile(
@@ -230,10 +233,10 @@ class ActionToCmdVelNode(Node):
     # ------------------------------------------------------------------
     # Action callback
     # ------------------------------------------------------------------
-    def _depth_cb(self, msg: CompressedImage):
+    def _depth_cb(self, msg: Image):
         self._last_depth_time = self.get_clock().now()
         try:
-        depth = self._bridge.compressed_imgmsg_to_cv2(msg, desired_encoding='passthrough')
+            depth = self._bridge.imgmsg_to_cv2(msg, desired_encoding='passthrough')
             h, w = depth.shape[:2]
 
             # ROI: zona centrale-bassa del frame (ostacoli vicini al suolo)
@@ -299,10 +302,14 @@ class ActionToCmdVelNode(Node):
         rear  = ranges[n//2 - samples_30deg : n//2 + samples_30deg]
 
         self._front_min_dist = safe_min(front)
+        self._left_min_dist  = safe_min(left)
+        self._right_min_dist = safe_min(right)
+        self._rear_min_dist  = safe_min(rear)
+
         self._front_blocked = self._front_min_dist < self.front_slow_dist
-        self._left_blocked  = safe_min(left)  < self.side_stop_dist
-        self._right_blocked = safe_min(right) < self.side_stop_dist
-        self._rear_blocked  = safe_min(rear)  < self.rear_stop_dist
+        self._left_blocked  = self._left_min_dist  < self.side_stop_dist
+        self._right_blocked = self._right_min_dist < self.side_stop_dist
+        self._rear_blocked  = self._rear_min_dist  < self.rear_stop_dist
 
     # ------------------------------------------------------------------
     # Watchdog callback
@@ -352,11 +359,11 @@ class ActionToCmdVelNode(Node):
     def _debug_cb(self):
         self.get_logger().info(
             f"[SAFETY] "
-            f"front_lidar={self._front_min_dist:.2f}m ({'BLOCKED' if self._front_blocked else 'ok'})  "
-            f"front_depth={self._front_depth_dist:.2f}m ({'BLOCKED' if self._front_depth_dist < self.front_slow_dist else 'ok'})  "
-            f"left={('BLOCKED' if self._left_blocked else 'ok')}  "
-            f"right={('BLOCKED' if self._right_blocked else 'ok')}  "
-            f"rear={('BLOCKED' if self._rear_blocked else 'ok')}  "
+            f"front_lidar={self._front_min_dist:.2f}m ({'BLOCK' if self._front_blocked else 'ok'})  "
+            f"front_depth={self._front_depth_dist:.2f}m ({'BLOCK' if self._front_depth_dist < self.front_slow_dist else 'ok'})  "
+            f"left={self._left_min_dist:.2f}m ({'BLOCK' if self._left_blocked else 'ok'})  "
+            f"right={self._right_min_dist:.2f}m ({'BLOCK' if self._right_blocked else 'ok'})  "
+            f"rear={self._rear_min_dist:.2f}m ({'BLOCK' if self._rear_blocked else 'ok'})  "
             f"| target=({self._target_lin:.2f}, {self._target_ang:.2f})"
         )
     ################################################################################
