@@ -333,38 +333,7 @@ class ActionToCmdVelNode(Node):
             self._target_lin = 0.0
             self._target_ang = 0.0
 
-    # ------------------------------------------------------------------
-    # Publish callback (smoothing + pubblicazione)
-    # ------------------------------------------------------------------
-
-    # def _publish_cb(self):
-    #     # Rampa di accelerazione (clamp della variazione per timestep)
-    #     # self._current_lin = self._ramp(
-    #     #     self._current_lin, self._target_lin,
-    #     #     self.max_acc_lin * self._dt)
-
-    #     # self._current_ang = self._ramp(
-    #     #     self._current_ang, self._target_ang,
-    #     #     self.max_acc_ang * self._dt)
-
-    #     # no ramp:
-    #     self._current_lin = self._target_lin
-    #     self._current_ang = self._target_ang
-
-    #     twist = Twist()
-    #     twist.linear.x  = self._current_lin
-    #     twist.angular.z = self._current_ang
-    #     self.pub_cmd_vel.publish(twist)
-
-    #     self.get_logger().debug(
-    #         f"cmd_vel → lin={self._current_lin:.3f}  "
-    #         f"ang={self._current_ang:.3f}")
-
-
-
-
-
-    ################################################################################
+    
     def _debug_cb(self):
         self.get_logger().info(
             f"[SAFETY] "
@@ -375,14 +344,14 @@ class ActionToCmdVelNode(Node):
             f"rear={self._rear_min_dist:.2f}m ({'BLOCK' if self._rear_blocked else 'ok'})  "
             f"| target=({self._target_lin:.2f}, {self._target_ang:.2f})"
         )
-        # Aggiungi temporaneamente per capire l'orientamento
-        self.get_logger().info(
-            f"[LIDAR RAW] "
-            f"idx0={self._ranges_debug[0]:.2f}m  "
-            f"idx_n4={self._ranges_debug[self._n_debug//4]:.2f}m  "
-            f"idx_n2={self._ranges_debug[self._n_debug//2]:.2f}m  "
-            f"idx_3n4={self._ranges_debug[3*self._n_debug//4]:.2f}m"
-        )
+        # # Aggiungi temporaneamente per capire l'orientamento
+        # self.get_logger().info(
+        #     f"[LIDAR RAW] "
+        #     f"idx0={self._ranges_debug[0]:.2f}m  "
+        #     f"idx_n4={self._ranges_debug[self._n_debug//4]:.2f}m  "
+        #     f"idx_n2={self._ranges_debug[self._n_debug//2]:.2f}m  "
+        #     f"idx_3n4={self._ranges_debug[3*self._n_debug//4]:.2f}m"
+        # )
     ################################################################################
 
 
@@ -392,7 +361,9 @@ class ActionToCmdVelNode(Node):
 
 
 
-
+    # ------------------------------------------------------------------
+    # Publish callback (smoothing + pubblicazione)
+    # ------------------------------------------------------------------
     def _publish_cb(self):
         # --- Scan timeout check ---
         scan_dt = (self.get_clock().now() - self._last_scan_time).nanoseconds / 1e9
