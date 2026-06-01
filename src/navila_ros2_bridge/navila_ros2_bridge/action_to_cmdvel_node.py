@@ -211,7 +211,7 @@ class ActionToCmdVelNode(Node):
         
         
         ##############################################################################
-        self._debug_timer = self.create_timer(1.0, self._debug_cb)  # 1 Hz
+        self._debug_timer = self.create_timer(3.0, self._debug_cb)  # 1 Hz
         ##############################################################################
 
 
@@ -289,6 +289,9 @@ class ActionToCmdVelNode(Node):
         ranges = list(msg.ranges)
         n = len(ranges)
 
+        self._ranges_debug = ranges # per debug, da rimuovere o limitare in futuro se troppo pesante
+        self._n_debug = n # per debug, da rimuovere
+
         angle_increment = msg.angle_increment
         samples_30deg = int(math.radians(30) / angle_increment)
 
@@ -365,6 +368,14 @@ class ActionToCmdVelNode(Node):
             f"right={self._right_min_dist:.2f}m ({'BLOCK' if self._right_blocked else 'ok'})  "
             f"rear={self._rear_min_dist:.2f}m ({'BLOCK' if self._rear_blocked else 'ok'})  "
             f"| target=({self._target_lin:.2f}, {self._target_ang:.2f})"
+        )
+        # Aggiungi temporaneamente per capire l'orientamento
+        self.get_logger().info(
+            f"[LIDAR RAW] "
+            f"idx0={self._ranges_debug[0]:.2f}m  "
+            f"idx_n4={self._ranges_debug[self._n_debug//4]:.2f}m  "
+            f"idx_n2={self._ranges_debug[self._n_debug//2]:.2f}m  "
+            f"idx_3n4={self._ranges_debug[3*self._n_debug//4]:.2f}m"
         )
     ################################################################################
 
