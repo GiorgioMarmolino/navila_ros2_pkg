@@ -106,14 +106,17 @@ class ActionToCmdVelNode(Node):
         self.declare_parameter("max_acc_linear",    DEFAULT_MAX_ACC_LIN)
         self.declare_parameter("max_acc_angular",   DEFAULT_MAX_ACC_ANG)
 
-        # Safety distances (m)
-        self.declare_parameter("front_stop_dist", DEFAULT_FRONT_STOP_DIST)
-        self.declare_parameter("front_slow_dist", DEFAULT_FRONT_SLOW_DIST)
-        self.declare_parameter("side_stop_dist", DEFAULT_SIDE_STOP_DIST)
-        self.declare_parameter("rear_stop_dist", DEFAULT_REAR_STOP_DIST)
+        # Safety layer ()
+        self.declare_parameter("front_stop_dist", DEFAULT_FRONT_STOP_DIST)  # [m]
+        self.declare_parameter("front_slow_dist", DEFAULT_FRONT_SLOW_DIST)  # [m]
+        self.declare_parameter("side_stop_dist", DEFAULT_SIDE_STOP_DIST)    # [m]
+        self.declare_parameter("rear_stop_dist", DEFAULT_REAR_STOP_DIST)    # [m]
 
-        self.declare_parameter("lidar_front_angle_deg", 90.0)  # angolo reale del fronte nel frame LiDAR
-        # self.declare_parameter("use_sim_time", True)
+        self.declare_parameter("front_fov_deg", 60.0)   # [degrees °]
+        self.declare_parameter("side_fov_deg",  20.0)   # [degrees °]
+        self.declare_parameter("rear_fov_deg",  10.0)   # [degrees °]
+
+        self.declare_parameter("lidar_front_angle_deg", 90.0)  # rotation to apply
         
         def p(name):
             return self.get_parameter(name).value
@@ -135,10 +138,18 @@ class ActionToCmdVelNode(Node):
         watchdog_rate     = p("watchdog_rate_sec")
         publish_rate      = p("publish_rate_sec")
 
+        # safet parameters
         self.front_stop_dist = p("front_stop_dist")
         self.front_slow_dist = p("front_slow_dist")
         self.side_stop_dist = p("side_stop_dist")
         self.rear_stop_dist = p("rear_stop_dist")
+
+        self.front_fov_deg = p("front_fov_deg")
+        self.side_fov_deg  = p("side_fov_deg")
+        self.rear_fov_deg  = p("rear_fov_deg")
+        self.lidar_front_angle_deg = p("lidar_front_angle_deg")
+
+
 
         # ------------------------------------------------------------------
         # Mappa token → (linear_x, angular_z)
@@ -291,12 +302,9 @@ class ActionToCmdVelNode(Node):
         n = len(ranges)
 
         angle_increment = msg.angle_increment
-        samples_30deg = int(math.radians(30) / angle_increment)
 
-        # Calcola l'indice del fronte reale in base al parametro
-        front_angle_deg = self.get_parameter("lidar_front_angle_deg").value
-        front_idx = int((math.radians(front_angle_deg) - msg.angle_min) / angle_increment) % n
-
+        # Indici calcolati una volta, usando il valore pre-calcolato nel __init__
+        front_idx = int((self.lidar_front_angle - msg.angle_min) / angle_increment) % n
         left_idx  = (front_idx + n//4)   % n
         rear_idx  = (front_idx + n//2)   % n
         right_idx = (front_idx + 3*n//4) % n
@@ -310,10 +318,14 @@ class ActionToCmdVelNode(Node):
             vals = [v for v in values if not math.isinf(v) and not math.isnan(v)]
             return min(vals) if vals else 999.0
 
-        self._front_min_dist = safe_min(safe_slice(front_idx, samples_30deg))
-        self._left_min_dist  = safe_min(safe_slice(left_idx,  samples_30deg))
-        self._rear_min_dist  = safe_min(safe_slice(rear_idx,  samples_30deg))
-        self._right_min_dist = safe_min(safe_slice(right_idx, samples_30deg))
+        samples_front = int(math.radians(self.front_fov_deg) / angle_increment)
+        samples_side  = int(math.radians(self.side_fov_deg)  / angle_increment)
+        samples_rear  = int(math.radians(self.rear_fov_deg)  / angle_increment)
+
+        self._front_min_dist = safe_min(safe_slice(front_idx, samples_front))
+        self._left_min_dist  = safe_min(safe_slice(left_idx,  samples_side))
+        self._rear_min_dist  = safe_min(safe_slice(rear_idx,  samples_rear))
+        self._right_min_dist = safe_min(safe_slice(right_idx, samples_side))
 
         self._front_blocked = self._front_min_dist < self.front_slow_dist
         self._left_blocked  = self._left_min_dist  < self.side_stop_dist
