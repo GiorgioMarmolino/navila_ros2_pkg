@@ -47,7 +47,8 @@ from rclpy.node import Node
 from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy, DurabilityPolicy
 from std_msgs.msg import String
 from geometry_msgs.msg import Twist
-from sensor_msgs.msg import LaserScan, Image
+from sensor_msgs.msg import LaserScan, Image, PointCloud2
+import sensor_msgs_py.point_cloud2 as pc2
 
 import numpy as np
 from cv_bridge import CvBridge
@@ -90,6 +91,10 @@ class ActionToCmdVelNode(Node):
         self.declare_parameter("cmd_vel_topic",     "/cmd_vel")
         self.declare_parameter("scan_topic",        "/sensors/lidar3d_0/scan")
         self.declare_parameter("depth_topic",       "/sensors/front_camera/depth/image_raw")
+        self.declare_parameter("lidar_topic",       "/velodyne_points")
+
+        self.declare_parameter("z_min", -0.1)   # escludi pavimento
+        self.declare_parameter("z_max",  0.5)   # escludi tetto/aria
 
         # Velocità per ogni token
         self.declare_parameter("linear_x",          DEFAULT_LINEAR_X)
@@ -125,6 +130,10 @@ class ActionToCmdVelNode(Node):
         cmd_vel_topic     = p("cmd_vel_topic")
         scan_topic        = p("scan_topic")
         depth_topic       = p("depth_topic")
+
+        lidar_topic       = p("lidar_topic")
+        self.z_min = p("z_min")
+        self.z_max = p("z_max")
 
         self.lin          = p("linear_x")
         self.lin_fast     = p("linear_x_fast")
@@ -201,8 +210,9 @@ class ActionToCmdVelNode(Node):
         # ------------------------------------------------------------------
         self.sub_action = self.create_subscription(String, action_topic, self._action_cb, 10)
         self.sub_depth = self.create_subscription(Image, depth_topic, self._depth_cb, 10)
-        self.sub_scan = self.create_subscription(LaserScan, scan_topic, self._scan_cb, 10)
-
+        # self.sub_scan = self.create_subscription(LaserScan, scan_topic, self._scan_cb, 10)
+        self.sub_scan = self.create_subscription(PointCloud2, lidar_topic, self._pointcloud_cb, 10)
+        
         qos_cmd_vel = QoSProfile(
             reliability=ReliabilityPolicy.RELIABLE,
             history=HistoryPolicy.KEEP_LAST,
@@ -295,42 +305,85 @@ class ActionToCmdVelNode(Node):
         self.get_logger().debug(
             f"target set [{label}] → "
             f"lin={lx:.3f}  ang={az:.3f}")
+        
 
-    def _scan_cb(self, msg: LaserScan):
+
+
+    def _pointcloud_cb(self, msg: PointCloud2):
         self._last_scan_time = self.get_clock().now()
-        ranges = list(msg.ranges)
-        n = len(ranges)
 
-        angle_increment = msg.angle_increment
+        front_dists, left_dists, right_dists, rear_dists = [], [], [], []
 
-        # Indici calcolati una volta, usando il valore pre-calcolato nel __init__
-        front_idx = int((self.lidar_front_angle - msg.angle_min) / angle_increment) % n
-        left_idx  = (front_idx + n//4)   % n
-        rear_idx  = (front_idx + n//2)   % n
-        right_idx = (front_idx + 3*n//4) % n
+        for x, y, z in pc2.read_points(msg, field_names=("x", "y", "z"), skip_nans=True):
+            if z < self.z_min or z > self.z_max:
+                continue
 
-        def safe_slice(center, half):
-            idxs = [(center + i) % n for i in range(-half, half)]
-            vals = [ranges[i] for i in idxs]
-            return vals
+            dist = math.sqrt(x*x + y*y)
 
-        def safe_min(values):
-            vals = [v for v in values if not math.isinf(v) and not math.isnan(v)]
-            return min(vals) if vals else 999.0
+            if x > 0 and abs(y) < x * math.tan(math.radians(self.front_fov_deg / 2)):
+                front_dists.append(dist)
+            elif y > 0 and abs(x) < y * math.tan(math.radians(self.side_fov_deg / 2)):
+                left_dists.append(dist)
+            elif y < 0 and abs(x) < abs(y) * math.tan(math.radians(self.side_fov_deg / 2)):
+                right_dists.append(dist)
+            elif x < 0 and abs(y) < abs(x) * math.tan(math.radians(self.rear_fov_deg / 2)):
+                rear_dists.append(dist)
 
-        samples_front = int(math.radians(self.front_fov_deg) / angle_increment)
-        samples_side  = int(math.radians(self.side_fov_deg)  / angle_increment)
-        samples_rear  = int(math.radians(self.rear_fov_deg)  / angle_increment)
-
-        self._front_min_dist = safe_min(safe_slice(front_idx, samples_front))
-        self._left_min_dist  = safe_min(safe_slice(left_idx,  samples_side))
-        self._rear_min_dist  = safe_min(safe_slice(rear_idx,  samples_rear))
-        self._right_min_dist = safe_min(safe_slice(right_idx, samples_side))
+        self._front_min_dist = min(front_dists) if front_dists else 999.0
+        self._left_min_dist  = min(left_dists)  if left_dists  else 999.0
+        self._right_min_dist = min(right_dists) if right_dists else 999.0
+        self._rear_min_dist  = min(rear_dists)  if rear_dists  else 999.0
 
         self._front_blocked = self._front_min_dist < self.front_slow_dist
         self._left_blocked  = self._left_min_dist  < self.side_stop_dist
         self._right_blocked = self._right_min_dist < self.side_stop_dist
         self._rear_blocked  = self._rear_min_dist  < self.rear_stop_dist
+
+
+
+
+
+
+
+
+
+
+
+        def _scan_cb(self, msg: LaserScan):
+            self._last_scan_time = self.get_clock().now()
+            ranges = list(msg.ranges)
+            n = len(ranges)
+
+            angle_increment = msg.angle_increment
+
+            # Indici calcolati una volta, usando il valore pre-calcolato nel __init__
+            front_idx = int((self.lidar_front_angle_deg - msg.angle_min) / angle_increment) % n
+            left_idx  = (front_idx + n//4)   % n
+            rear_idx  = (front_idx + n//2)   % n
+            right_idx = (front_idx + 3*n//4) % n
+
+            def safe_slice(center, half):
+                idxs = [(center + i) % n for i in range(-half, half)]
+                vals = [ranges[i] for i in idxs]
+                return vals
+
+            def safe_min(values):
+                vals = [v for v in values if not math.isinf(v) and not math.isnan(v)]
+                return min(vals) if vals else 999.0
+
+            samples_front = int(math.radians(self.front_fov_deg) / angle_increment)
+            samples_side  = int(math.radians(self.side_fov_deg)  / angle_increment)
+            samples_rear  = int(math.radians(self.rear_fov_deg)  / angle_increment)
+
+            self._front_min_dist = safe_min(safe_slice(front_idx, samples_front))
+            self._left_min_dist  = safe_min(safe_slice(left_idx,  samples_side))
+            self._rear_min_dist  = safe_min(safe_slice(rear_idx,  samples_rear))
+            self._right_min_dist = safe_min(safe_slice(right_idx, samples_side))
+
+            self._front_blocked = self._front_min_dist < self.front_slow_dist
+            self._left_blocked  = self._left_min_dist  < self.side_stop_dist
+            self._right_blocked = self._right_min_dist < self.side_stop_dist
+            self._rear_blocked  = self._rear_min_dist  < self.rear_stop_dist
 
     # ------------------------------------------------------------------
     # Watchdog callback
@@ -354,22 +407,10 @@ class ActionToCmdVelNode(Node):
             f"left={self._left_min_dist:.2f}m ({'BLOCK' if self._left_blocked else 'ok'})  "
             f"right={self._right_min_dist:.2f}m ({'BLOCK' if self._right_blocked else 'ok'})  "
             f"rear={self._rear_min_dist:.2f}m ({'BLOCK' if self._rear_blocked else 'ok'})  "
+            f"| lidar_timeout={'YES' if (self.get_clock().now() - self._last_scan_time).nanoseconds / 1e9 > DEFAULT_LIDAR_TIMEOUT else 'ok'}  "
             f"| target=({self._target_lin:.2f}, {self._target_ang:.2f})"
         )
-        # # Aggiungi temporaneamente per capire l'orientamento
-        # self.get_logger().info(
-        #     f"[LIDAR RAW] "
-        #     f"idx0={self._ranges_debug[0]:.2f}m  "
-        #     f"idx_n4={self._ranges_debug[self._n_debug//4]:.2f}m  "
-        #     f"idx_n2={self._ranges_debug[self._n_debug//2]:.2f}m  "
-        #     f"idx_3n4={self._ranges_debug[3*self._n_debug//4]:.2f}m"
-        # )
-    ################################################################################
-
-
-
-
-
+        
 
 
 
