@@ -23,6 +23,7 @@ def generate_launch_description():
             name='action_to_cmdvel_node',
             namespace='',
             output='screen',
+            emulate_tty=True,
             parameters=[{
                 "use_sim_time": True,
             }],
@@ -37,17 +38,19 @@ def generate_launch_description():
                 'echo DONE; read"'
             ],
             output='screen',
+            emulate_tty=True,
         ),
 
         # Start navila_super_node after 4 secs
         TimerAction(
-            period=4.0,
+            period=6.0,
             actions=[
                 Node(
                     package=navila_package,
                     executable='navila_super_node',
                     name='navila_super_node',
                     output='screen',
+                    emulate_tty=True,
                     parameters=[{
                         "use_sim_time":      True,
                         "use_phi3":          use_phi3,
