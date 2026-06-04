@@ -1,0 +1,26 @@
+========================================================================
+LISTA COMANDI NAVILA PER AMBIENTI SPECIFICI (OFFICE & ROBOTICS LAB)
+========================================================================
+
+------------------------------------------------------------------------
+1. OFFICE ENVIRONMENT
+------------------------------------------------------------------------
+- Go to the breakroom and stop near the coffee machine.
+- Navigate to the main conference room and enter through the glass door.
+- Move down the hallway and stop in front of the printer.
+- Find the manager's office and wait outside the door.
+- Walk past the reception desk and head towards the elevators.
+- Go straight ahead and turn left at the water dispenser.
+- Navigate to cubicle number five.
+
+------------------------------------------------------------------------
+2. ROBOTICS LAB ENVIRONMENT
+------------------------------------------------------------------------
+- Move to the center of the open hall and wait for instructions.
+- Navigate across the open hall, avoiding any temporary obstacles.
+- Go to the nearest fire extinguisher and stop in front of it.
+- Walk towards the main workbench desk on the right side of the lab.
+- Move carefully through the open space and stop near the charging station.
+- Go around the empty central area and reach the electronics desk.
+- Find the safety exit and position yourself next to the fire extinguisher.
+- Navigate to the robot testing area at the corner of the desks.

@@ -37,7 +37,7 @@ import numpy as np
 
 import rclpy
 from rclpy.node import Node
-from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy, DurabilityPolicy
+from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy, DurabilityPolicy, qos_profile_sensor_data
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import LaserScan, Image
 
@@ -167,9 +167,9 @@ class SafetyLayerNode(Node):
         # Subscriber / Publisher / Timer
         # ------------------------------------------------------------------
         self.sub_cmd  = self.create_subscription(Twist, cmd_in_topic, self._cmd_cb, 10)
-        self.sub_scan = self.create_subscription(LaserScan, scan_topic, self._scan_cb, 10)
+        self.sub_scan = self.create_subscription(LaserScan, scan_topic, self._scan_cb, qos_profile_sensor_data)
         if self.enable_depth:
-            self.sub_depth = self.create_subscription(Image, depth_topic, self._depth_cb, 10)
+            self.sub_depth = self.create_subscription(Image, depth_topic, self._depth_cb, qos_profile_sensor_data)
 
         # QoS allineato a twist_mux (come nel nodo originale)
         qos_cmd_vel = QoSProfile(

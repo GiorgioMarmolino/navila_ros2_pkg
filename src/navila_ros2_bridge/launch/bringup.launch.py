@@ -13,17 +13,10 @@ def generate_launch_description():
 
     navila_package = 'navila_ros2_bridge'
 
-    # Config file installed in share/<pkg>/config/
-    # config_file = os.path.join(
-    #     get_package_share_directory(navila_package),
-    #     'config',
-    #     'navila_params.yaml',
-    # )
-
     # -------------------------------------------------------------------------------
     # Launch Configurations and Expressions
     enable_safety = LaunchConfiguration("enable_safety")
-    env = LaunchConfiguration("env", default="sim")  # "sim" or "lab"
+    env = LaunchConfiguration("env")  # "sim" or "lab"
 
     #   safety ON  -> /cmd_vel_raw  (picked up by safety_layer_node)
     #   safety OFF -> /cmd_vel      (straight to twist_mux)
