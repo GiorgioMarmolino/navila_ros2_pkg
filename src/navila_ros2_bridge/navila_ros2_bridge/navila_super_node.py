@@ -18,6 +18,13 @@ Action resolution pipeline (cascading fallback):
         └─► Phi-3-mini classifier   (if loaded)
                 └─► regex parser    (fallback / always available)
                         └─► "stop"  (conservative default)
+
+
+                        
+                        
+                        
+                        
+ros2 topic pub --once /navila/reset std_msgs/msg/Empty "{}"
 """
 
 # =============================================================================
@@ -52,7 +59,7 @@ from rclpy.node import Node
 from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy
 
 from sensor_msgs.msg import CompressedImage
-from std_msgs.msg import String
+from std_msgs.msg import String, Empty
 from nav_msgs.msg import Odometry
 
 from cv_bridge import CvBridge
@@ -514,6 +521,11 @@ class NaViLANode(Node):
             String, 
             goal_topic, 
             self._goal_cb, 10)
+        
+        self.sub_reset = self.create_subscription(
+            Empty,
+            "/navila/reset",
+            self._reset_cb, 10)
 
         self.sub_odom  = self.create_subscription(
             Odometry, 
@@ -565,6 +577,11 @@ class NaViLANode(Node):
         with self._lock:
             self.last_goal = msg.data
         self.get_logger().info(f"New goal received: '{msg.data}'")
+
+    def _reset_cb(self, msg: Empty):
+        with self._lock:
+            self.last_goal = ""
+        self.get_logger().info("NaVILA goal reset.")
 
     def _odom_cb(self, msg: Odometry):
         with self._lock:
