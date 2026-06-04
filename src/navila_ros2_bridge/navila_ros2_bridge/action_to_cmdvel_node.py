@@ -90,7 +90,7 @@ class ActionToCmdVelNode(Node):
         self.declare_parameter("action_topic",      "/navila/action")
         self.declare_parameter("cmd_vel_topic",     "/cmd_vel")
         self.declare_parameter("scan_topic",        "/sensors/lidar3d_0/scan")
-        self.declare_parameter("depth_topic",       "/sensors/front_camera/depth/image_raw")
+        self.declare_parameter("depth_topic",       "/zed/depth/depth_registered")
         self.declare_parameter("lidar_topic",       "/velodyne_points")
 
         self.declare_parameter("z_min", -0.1)   # escludi pavimento

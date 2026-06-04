@@ -30,8 +30,10 @@ setup(
     entry_points={
         'console_scripts': [
             'navila_super_node = navila_ros2_bridge.navila_super_node:main',
-            'action_to_cmdvel_node = navila_ros2_bridge.action_to_cmdvel_node:main',
+            # 'action_to_cmdvel_node = navila_ros2_bridge.action_to_cmdvel_node:main',
             'instruction_node = navila_ros2_bridge.instruction_node:main',
+            'action_node = navila_ros2_bridge.action_node:main',
+            'safety_layer_node = navila_ros2_bridge.safety_layer_node:main',
         ],
     },
 )

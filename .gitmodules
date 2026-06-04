@@ -1,0 +1,3 @@
+[submodule "src/husky_navigation"]
+	path = src/husky_navigation
+	url = git@github.com:LeoBoticsHub/husky_navigation.git
