@@ -48,7 +48,7 @@ def generate_launch_description():
         ["'true' if '", env, "' == 'sim' else 'false'"]
     )
 
-    
+
     return LaunchDescription([
     # -------------------------------------------------------------------------------
     # Declare Launch Arguments and Include Other Launch Files
@@ -131,6 +131,7 @@ def generate_launch_description():
         # send goals while the rest of the pipeline keeps running -> looks like
         # "it doesn't work". Toggle off with goal_input:=false for headless tests.
         ExecuteProcess(
+            condition=IfCondition(goal_input),
             cmd=[
                 'xterm', '-title', 'NaVILA Goal Input', '-e',
                 'bash -c "source /opt/ros/humble/setup.bash && '

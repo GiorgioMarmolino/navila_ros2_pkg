@@ -67,6 +67,8 @@ import cv2
 import numpy as np
 from PIL import Image as PILImage
 
+from collections import deque
+
 
 # =============================================================================
 # Action vocabulary — must match action_to_cmdvel_node._action_map keys
@@ -373,38 +375,33 @@ def run_navila_inference(
     model,
     tokenizer,
     image_processor,
-    frame_rgb: np.ndarray,
+    frames_rgb: list,          # lista di N=num_video_frames frame RGB (H,W,3), oldest→newest
     goal: str,
-) -> tuple[str, str]:
+    num_video_frames: int,
+) -> str:
     """
-    Run one NaVILA inference step.
-
-    Args:
-        frame_rgb:  numpy array (H, W, 3) in RGB
-        goal:       natural-language navigation instruction
-
-    Returns:
-        (action, raw_output) — action is a VALID_ACTIONS token;
-        raw_output is the unprocessed model text (useful for logging/debug).
+    Un passo di inferenza NaVILA su una sequenza di frame (memoria + osservazione corrente).
+    Ritorna il testo grezzo del modello (es. "the next action is to move forward 75 cm").
     """
     import torch
-    from llava.mm_utils import process_images, tokenizer_image_token
-    from llava.constants import IMAGE_TOKEN_INDEX, DEFAULT_IMAGE_TOKEN
+    from llava.mm_utils import process_images, tokenizer_image_token, KeywordsStoppingCriteria
+    from llava.constants import IMAGE_TOKEN_INDEX
     from llava.conversation import conv_templates, SeparatorStyle
-    from llava.mm_utils import KeywordsStoppingCriteria
 
-    pil_img = PILImage.fromarray(frame_rgb)
-    image_tensor = process_images([pil_img], image_processor, model.config)
+    # Lista di PIL → tensore impilato (N, C, H, W). N DEVE essere == num_video_frames.
+    pil_images = [PILImage.fromarray(f) for f in frames_rgb]
+    image_tensor = process_images(pil_images, image_processor, model.config)
     image_tensor = image_tensor.to(dtype=torch.float16, device="cuda")
 
     conv = conv_templates["llama_3"].copy()
     image_token = "<image>\n"
 
+    # Prompt ufficiale NaVILA: storico + osservazione corrente.
     qs = (
-        f"Imagine you are a robot programmed for navigation tasks. "
-        f"You have been given a current observation <image>\n. "
-        f'Your assigned task is: "{goal}" '
-        f"Analyze this image to decide your next action, which could be turning left or right by a specific "
+        f"Imagine you are a robot programmed for navigation tasks. You have been given a video "
+        f"of historical observations {image_token * (num_video_frames - 1)}, and current observation <image>\n. "
+        f"Your assigned task is: \"{goal}\" "
+        f"Analyze this series of images to decide your next action, which could be turning left or right by a specific "
         f"degree, moving forward a certain distance, or stop if the task is completed."
     )
 
@@ -416,20 +413,14 @@ def run_navila_inference(
         prompt_text, tokenizer, IMAGE_TOKEN_INDEX, return_tensors="pt"
     ).unsqueeze(0).to("cuda")
 
-    attention_mask = torch.ones_like(input_ids)
-
     stop_str = conv.sep if conv.sep_style != SeparatorStyle.TWO else conv.sep2
     stopping_criteria = KeywordsStoppingCriteria([stop_str], tokenizer, input_ids)
-
 
     with torch.inference_mode():
         output_ids = model.generate(
             input_ids,
-            attention_mask=attention_mask,
             images=[image_tensor],
             do_sample=False,
-            temperature=1.0,
-            top_p=1.0,
             num_beams=1,
             max_new_tokens=64,
             use_cache=True,
@@ -438,9 +429,6 @@ def run_navila_inference(
         )
 
     raw_output = tokenizer.decode(output_ids[0], skip_special_tokens=True).strip().lower()
-
-    # Action resolution is handled by the caller (NaViLANode._inference_cb)
-    # so that the classifier / fallback chain is applied there.
     return raw_output
 
 
@@ -459,11 +447,14 @@ class NaViLANode(Node):
         self.declare_parameter("model_path", os.environ.get("NAVILA_MODEL_PATH", "/models"))
         self.declare_parameter("phi3_model_path", "/models/phi3mini")
         self.declare_parameter("inference_rate_hz", 2.0)
+        self.declare_parameter("num_video_frames", 8) # default N=8 frames (7 historical + 1 current) as per NaVILA paper
+        self.declare_parameter("max_history_frames", 64) # memory
 
         self.declare_parameter("image_topic",  "/zed/rgb/color/rect/image/compressed")
         self.declare_parameter("goal_topic",   "/goal_instruction")
         self.declare_parameter("odom_topic",   "/platform/odom")
         self.declare_parameter("action_topic", "/navila/action")
+        self.declare_parameter("reset_topic",  "/navila/reset")
 
         self.declare_parameter("use_phi3",     True)   # enable Phi-3 classifier
         self.declare_parameter("phi3_4bit",    False)    # quantize Phi-3 to 4-bit
@@ -473,10 +464,13 @@ class NaViLANode(Node):
 
         model_path        = p("model_path")
         inference_rate_hz = p("inference_rate_hz")
+        self._num_video_frames = p("num_video_frames")
+        max_history_frames = p("max_history_frames")
         image_topic       = p("image_topic")
         goal_topic        = p("goal_topic")
         odom_topic        = p("odom_topic")
         action_topic      = p("action_topic")
+        reset_topic       = p("reset_topic")
         self._use_phi3    = p("use_phi3")
         self._phi3_4bit   = p("phi3_4bit")
 
@@ -491,7 +485,7 @@ class NaViLANode(Node):
         # ------------------------------------------------------------------
         self.bridge        = CvBridge()
         self.last_frame    = None       # numpy RGB
-        self._last_image_msg = None # raw ROS Image message; processed lazily in inference thread
+        self._frame_history = deque(maxlen=max_history_frames)
 
         self.last_goal     = ""
         self.last_odom     = None
@@ -524,7 +518,7 @@ class NaViLANode(Node):
         
         self.sub_reset = self.create_subscription(
             Empty,
-            "/navila/reset",
+            reset_topic,
             self._reset_cb, 10)
 
         self.sub_odom  = self.create_subscription(
@@ -576,11 +570,13 @@ class NaViLANode(Node):
     def _goal_cb(self, msg: String):
         with self._lock:
             self.last_goal = msg.data
-        self.get_logger().info(f"New goal received: '{msg.data}'")
+            self._frame_history.clear()      # nuovo task → memoria pulita
+        self.get_logger().info(f"New goal received: '{msg.data}' (frame history reset)")
 
     def _reset_cb(self, msg: Empty):
         with self._lock:
             self.last_goal = ""
+            self._frame_history.clear()
         self.get_logger().info("NaVILA goal reset.")
 
     def _odom_cb(self, msg: Odometry):
@@ -642,59 +638,60 @@ class NaViLANode(Node):
     # ------------------------------------------------------------------
 
     def _inference_cb(self):
-
-        if self._inference_running: # if previous inference is still running, skip this cycle
+        if self._inference_running:        # inferenza precedente ancora in corso → salta
             return
-    
+
         with self._lock:
             ready      = self._model_ready
-            frame      = self.last_frame
             goal       = self.last_goal
             model      = self.model
             tok        = self.tokenizer
             iproc      = self.image_proc
             classifier = self.classifier
-            image_msg = self._last_image_msg
+            image_msg  = self._last_image_msg
 
         if not ready:
-            self.get_logger().info(
-                "Waiting for model to load...", throttle_duration_sec=30.0)
+            self.get_logger().info("Waiting for model to load...", throttle_duration_sec=30.0)
             return
         if image_msg is None:
-            self.get_logger().info(
-                "Waiting for camera frame...", throttle_duration_sec=30.0)
+            self.get_logger().info("Waiting for camera frame...", throttle_duration_sec=30.0)
             return
         if not goal:
-            self.get_logger().info(
-                "Waiting for goal instruction...", throttle_duration_sec=30.0)
+            self.get_logger().info("Waiting for goal instruction...", throttle_duration_sec=30.0)
             return
 
-        #--- Run inference in a separate thread to avoid blocking the ROS 2 timer ---
+        self._inference_running = True     # claim here - dectivate inside thread
+
         threading.Thread(
             target=self._run_inference_thread,
-            args=(model, tok, iproc, image_msg, goal, classifier),
+            args=(model, tok, iproc, image_msg, goal, classifier, self._num_video_frames),
             daemon=True,
         ).start()
 
-
-    def _run_inference_thread(self, model, tok, iproc, image_msg, goal, classifier):
-        self._inference_running = True
-
+    def _run_inference_thread(self, model, tok, iproc, image_msg, goal, classifier, num_video_frames):
         try:
             frame_rgb = self._process_image(image_msg)
             if frame_rgb is None:
                 self.get_logger().warn("Frame processing fallito, skip inferenza")
                 return
-                
-            raw_output = run_navila_inference(model, tok, iproc, frame_rgb, goal)
 
-            # --- Action resolution: Phi-3 → regex → stop ---
+            # Aggiungi l'osservazione corrente alla memoria, poi costruisci l'input
+            # video campionando uniformemente num_video_frames dallo storico.
+            with self._lock:
+                self._frame_history.append(frame_rgb)
+                frames = self._sample_history(list(self._frame_history), num_video_frames)
+
+            raw_output = run_navila_inference(model, tok, iproc, frames, goal, num_video_frames)
+
             if classifier is not None:
                 action = classifier.classify(raw_output, fallback_fn=parse_navila_output)
             else:
                 action = parse_navila_output(raw_output)
 
-            self.get_logger().info(f"raw='{raw_output}' → action='{action}'  (goal: '{goal}')")
+            self.get_logger().info(
+                f"raw='{raw_output}' → action='{action}'  "
+                f"(goal: '{goal}', history: {len(self._frame_history)})"
+            )
 
             msg = String()
             msg.data = action
@@ -704,6 +701,17 @@ class NaViLANode(Node):
         finally:
             self._inference_running = False
 
+    @staticmethod
+    def _sample_history(history, num_frames):
+        """Campiona uniformemente num_frames dallo storico (oldest→newest),
+        includendo sempre il primo e il più recente. Se i frame disponibili sono
+        meno di num_frames, duplica — così il numero restituito è SEMPRE esatto e
+        resta allineato ai token <image> del prompt (invariante critico)."""
+        n = len(history)
+        if n == 0:
+            return []
+        idxs = np.linspace(0, n - 1, num_frames)
+        return [history[int(round(float(i)))] for i in idxs]
 
 # =============================================================================
 # Entry point

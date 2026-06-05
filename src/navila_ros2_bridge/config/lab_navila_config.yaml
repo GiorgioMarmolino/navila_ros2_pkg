@@ -60,7 +60,7 @@ safety_layer_node:
     rear_fov_deg:  10.0    # deg
 
     # Front offset in the scan array (VLP-16 ~ 90 deg)
-    lidar_front_angle_deg: 90.0
+    lidar_front_angle_deg: 0.0
 
     # Timeouts / smoothing
     lidar_timeout_sec: 1.0   # s      — max time without a scan
@@ -85,8 +85,11 @@ navila_super_node:
     goal_topic:   "/goal_instruction"
     odom_topic:   "/platform/odom"
     action_topic: "/navila/action"
+    reset_topic:  "/navila/reset"
 
     # Inference
     inference_rate_hz: 2.0
+    num_video_frames : 8      # N=8 frames (7 historical + 1 current) as per NaVILA paper
+    max_history_frames: 64    # maximum number of historical frames to keep
     use_phi3:          false   # enable Phi-3 classifier
     phi3_4bit:         false    # quantize Phi-3 to 4-bit

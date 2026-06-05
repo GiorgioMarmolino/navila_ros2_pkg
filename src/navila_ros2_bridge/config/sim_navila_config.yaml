@@ -45,7 +45,7 @@ safety_layer_node:
     cmd_in_topic:  "/cmd_vel_raw"
     cmd_out_topic: "/cmd_vel"
     scan_topic:    "/scan"
-    depth_topic:   "/front_camer/depth/image_raw"
+    depth_topic:   "/sensors/front_camera/depth/image_war"
     enable_depth:  true
 
     # Safety distances
@@ -60,7 +60,7 @@ safety_layer_node:
     rear_fov_deg:  10.0    # deg
 
     # Front offset in the scan array (VLP-16 ~ 90 deg)
-    lidar_front_angle_deg: 90.0
+    lidar_front_angle_deg: 0.0
 
     # Timeouts / smoothing
     lidar_timeout_sec: 0.5   # s      — max time without a scan
@@ -81,10 +81,11 @@ navila_super_node:
     phi3_model_path: "/models/phi3mini"
 
     # Topics
-    image_topic:  "/zed/rgb/color/rect/image/compressed"
+    image_topic:  "/sensors/front_camera/color/image_raw/compressed"
     goal_topic:   "/goal_instruction"
     odom_topic:   "/platform/odom"
     action_topic: "/navila/action"
+    reset_topic:  "/navila/reset"
 
     # Inference
     inference_rate_hz: 2.0
