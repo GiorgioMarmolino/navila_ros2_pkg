@@ -89,5 +89,5 @@ navila_super_node:
 
     # Inference
     inference_rate_hz: 2.0
-    use_phi3:          false   # enable Phi-3 classifier
+    use_phi3:          true   # enable Phi-3 classifier
     phi3_4bit:         false    # quantize Phi-3 to 4-bit

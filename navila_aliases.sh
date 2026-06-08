@@ -136,10 +136,10 @@ _navila_status() {
     echo "=== NaVILA STATUS ==="
     echo ""
     echo "--- Active nodes ---"
-    ros2 node list 2>/dev/null | grep -E "navila|action_to_cmd|instruction|bridge" || echo "  no NaVILA nodes found"
+    ros2 node list 2>/dev/null || echo "  no NaVILA nodes found"
     echo ""
     echo "--- Active topics ---"
-    ros2 topic list 2>/dev/null | grep -E "navila|cmd_vel|goal|action|camera|lidar|instruction" || echo "  no topics found"
+    ros2 topic list 2>/dev/null || echo "  no topics found"
     echo ""
     echo "--- ROS_DOMAIN_ID: $ROS_DOMAIN_ID ---"
 }
