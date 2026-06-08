@@ -17,7 +17,7 @@ import numpy as np
 import cv2
 
 # importa la TUA funzione dal nodo (adatta il nome del modulo/pacchetto)
-from navila_ros2_bridge.navila_node import load_navila_model, run_navila_inference, parse_navila_output
+from navila_ros2_bridge.navila_super_node import load_navila_model, run_navila_inference, parse_navila_output
 
 NUM_VIDEO_FRAMES = 8
 
