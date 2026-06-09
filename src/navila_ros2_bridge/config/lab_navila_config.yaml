@@ -18,6 +18,9 @@ action_node:
 
     # Topics
     action_topic: "/navila/action"
+    odom_topic: "/platform/odom/filtered"
+    status_topic: "/navila/primitive_status"
+
     # cmd_vel_topic is NOT set here: it is dynamic (depends on enable_safety)
     # and is set by the launch file.
 
@@ -86,10 +89,11 @@ navila_super_node:
     odom_topic:   "/platform/odom"
     action_topic: "/navila/action"
     reset_topic:  "/navila/reset"
+    status_topic: "/navila/primitive_status"
 
     # Inference
     inference_rate_hz: 2.0
     num_video_frames : 8      # N=8 frames (7 historical + 1 current) as per NaVILA paper
-    max_history_frames: 64    # maximum number of historical frames to keep
-    use_phi3:          true   # enable Phi-3 classifier
+    max_history_frames: 512    # maximum number of historical frames to keep
+    use_phi3:          false   # enable Phi-3 classifier
     phi3_4bit:         false    # quantize Phi-3 to 4-bit

@@ -55,8 +55,8 @@ DEFAULT_PUBLISH_RATE    = 0.05   # s   — periodo pubblicazione (20 Hz)
 DEFAULT_MAX_ACC_LIN     = 1.0    # m/s²   — max accelerazione lineare
 DEFAULT_MAX_ACC_ANG     = 2.0    # rad/s² — max accelerazione angolare
 
-DEFAULT_FRONT_STOP_DIST = 1.5   # m   — distanza frontale per stop
-DEFAULT_FRONT_SLOW_DIST = 1.2    # m   — distanza frontale per inizio rallentamento
+DEFAULT_FRONT_STOP_DIST = 1.2   # m   — distanza frontale per stop
+DEFAULT_FRONT_SLOW_DIST = 1.5    # m   — distanza frontale per inizio rallentamento
 DEFAULT_SIDE_STOP_DIST  = 1.0    # m   — distanza laterale
 DEFAULT_REAR_STOP_DIST  = 1.2    # m   — distanza posteriore
 
@@ -66,7 +66,7 @@ DEFAULT_REAR_FOV_DEG    = 10.0   # °
 
 # Offset fisico del "davanti" del robot nell'array dello scan.
 # Per il Velodyne VLP-16 il fronte è ~90° (vedi anche idx = 3*n//4).
-DEFAULT_LIDAR_FRONT_ANGLE_DEG = 90.0
+DEFAULT_LIDAR_FRONT_ANGLE_DEG = 0.0
 
 DEFAULT_TURN_REDUCTION  = 0.4    # fattore di riduzione sterzata lato vicino
 
@@ -376,4 +376,4 @@ def main(args=None):
 
 
 if __name__ == "__main__":
-    main()#!/usr/bin/env python3
+    main()
