@@ -48,100 +48,7 @@ from PIL import Image as PILImage
 from collections import deque
 
 
-# =============================================================================
-# Action vocabulary — must match action_to_cmdvel_node._action_map keys
-# =============================================================================
 
-# VALID_ACTIONS = [
-#     "forward", "forward_fast", "backward",
-#     "turn_left", "turn_right",
-#     "curve_left", "curve_right",
-#     "stop",
-# ]
-
-
-# =============================================================================
-# Regex-based action parser
-# =============================================================================
-
-# Each entry: (regex_pattern, weight)
-# Patterns are evaluated with re.search() against the lowercased NaVILA output.
-# The action with the highest cumulative score wins.
-# Word boundaries (\b) prevent false positives like "alright" → "right".
-
-# _ACTION_PATTERNS: dict[str, list[tuple[str, int]]] = {
-#     # --- fast forward (checked before plain forward) ---
-#     "forward_fast": [
-#         (r"\bfast\b",               3),
-#         (r"\bquickly\b",            3),
-#         (r"\bspeed up\b",           3),
-#         (r"\bfull speed\b",         4),
-#         (r"\brapidly\b",            2),
-#         (r"\brun\b",                2),
-#         (r"\bhurry\b",              2),
-#         (r"\bacceler\w*\b",         2),   # accelerate / acceleration
-#     ],
-#     # --- backward ---
-#     "backward": [
-#         (r"\bbackward[s]?\b",       3),
-#         (r"\bback up\b",            3),
-#         (r"\breverse\b",            3),
-#         (r"\bretreat\b",            2),
-#         (r"\bback\b",               1),   # weak — "back" alone is ambiguous
-#     ],
-#     # --- curve left/right (higher weight than plain turn) ---
-#     "curve_left": [
-#         (r"\bcurve left\b",         4),
-#         (r"\bear left\b",           4),
-#         (r"\bveer left\b",          4),
-#         (r"\bslightly left\b",      4),
-#         (r"\bbear to the left\b",   4),
-#         (r"\bdiagonal.*left\b",     3),
-#     ],
-#     "curve_right": [
-#         (r"\bcurve right\b",        4),
-#         (r"\bear right\b",          4),
-#         (r"\bveer right\b",         4),
-#         (r"\bslightly right\b",     4),
-#         (r"\bbear to the right\b",  4),
-#         (r"\bdiagonal.*right\b",    3),
-#     ],
-#     # --- in-place turns ---
-#     "turn_left": [
-#         (r"\bturn left\b",          3),
-#         (r"\brotate left\b",        3),
-#         (r"\bspin left\b",          3),
-#         (r"\bleft\b",               1),
-#     ],
-#     "turn_right": [
-#         (r"\bturn right\b",         3),
-#         (r"\brotate right\b",       3),
-#         (r"\bspin right\b",         3),
-#         (r"\bright\b",              1),
-#     ],
-#     # --- forward ---
-#     "forward": [
-#         (r"\bforward\b",            2),
-#         (r"\bstraight\b",           2),
-#         (r"\bproceed\b",            1),
-#         (r"\bcontinue\b",           1),
-#         (r"\badvance\b",            1),
-#         (r"\bmove ahead\b",         2),
-#     ],
-#     # --- stop ---
-#     "stop": [
-#         (r"\bstop\b",               3),
-#         (r"\bhalt\b",               3),
-#         (r"\bwait\b",               2),
-#         (r"\bdo not move\b",        3),
-#         (r"\bstay\b",               1),
-#         (r"\bfreeze\b",             3),
-#         (r"\bstand still\b",        3),
-#     ],
-# }
-# ===============================================================================
-
-# FROM OFFICIAL REPO
 # Official patterns
 _OFFICIAL_PATTERNS = {
     "stop":       re.compile(r"\bstop\b", re.IGNORECASE),
@@ -153,47 +60,6 @@ _OFFICIAL_PATTERNS = {
 
 
 
-# # Pre-compile all patterns for performance
-# _COMPILED_PATTERNS: dict[str, list[tuple[re.Pattern, int]]] = {
-#     action: [(re.compile(pat), w) for pat, w in signals]
-#     for action, signals in _ACTION_PATTERNS.items()
-# }
-
-# # Forward signal patterns reused for forward_fast guard
-# _FORWARD_SIGNALS = [p for p, _ in _COMPILED_PATTERNS["forward"]]
-
-
-# def parse_navila_output(text: str) -> str:
-#     """
-#     QUESTO NON VA BENE PERCHÈ SCARTA LA MAGNITUDINE DI CUI NAVILA FA USO E TIENE IN CONSIDERAZIONE
-
-
-
-#     Map free-form NaVILA output text to a valid action token using
-#     weighted regex scoring.
-
-#     Args:
-#         text: raw lowercased string produced by NaVILA
-
-#     Returns:
-#         One of VALID_ACTIONS; defaults to "stop" if no pattern matches.
-#     """
-#     scores: dict[str, int] = {action: 0 for action in _COMPILED_PATTERNS}
-
-#     for action, signals in _COMPILED_PATTERNS.items():
-#         for pattern, weight in signals:
-#             if pattern.search(text):
-#                 scores[action] += weight
-
-#     # Guard: forward_fast requires at least one plain-forward signal.
-#     # Without it, words like "run" or "fast" could match unrelated sentences.
-#     if scores["forward_fast"] > 0:
-#         has_forward = any(p.search(text) for p in _FORWARD_SIGNALS)
-#         if not has_forward:
-#             scores["forward_fast"] = 0
-
-#     best_action = max(scores, key=lambda a: scores[a])
-#     return best_action if scores[best_action] > 0 else "stop"
 
 def parse_navila_output(text: str):
     """Ritorna (action, value, unit) come da repo ufficiale.
@@ -226,123 +92,7 @@ def parse_navila_output(text: str):
         return "turn_right", g, "deg"
     return "stop", 0, ""
 
-# =============================================================================
-# Phi-3-mini classifier (optional — loaded only if use_phi3=True)
-# =============================================================================
 
-# _PHI3_SYSTEM_PROMPT = f"""\
-# You are a robot navigation action classifier.
-# Given a navigation instruction, respond with exactly one word from this list:
-# {", ".join(VALID_ACTIONS)}
-
-# Definitions:
-# - forward:      move straight ahead at normal speed
-# - forward_fast: move straight ahead quickly
-# - backward:     move backwards / reverse
-# - turn_left:    rotate left in place (no forward motion)
-# - turn_right:   rotate right in place (no forward motion)
-# - curve_left:   move forward while steering left
-# - curve_right:  move forward while steering right
-# - stop:         do not move
-
-# Respond with ONLY the action word. No explanation. No punctuation.\
-# """
-
-
-# class Phi3Classifier:
-#     """
-#     Lightweight Phi-3-mini-based action classifier.
-#     Used as the primary parser when available; regex is always the fallback.
-#     """
-
-#     def __init__(self, device: str = "auto", use_4bit: bool = False, model_path: str = "/models/phi3mini"):
-#         import torch
-#         from transformers import (
-#             AutoTokenizer,
-#             AutoModelForCausalLM,
-#             #BitsAndBytesConfig,
-#         )
-#         from huggingface_hub import snapshot_download
-
-#         model_id = "microsoft/Phi-3-mini-4k-instruct"
-
-        
-
-#         # --- download if not found ---
-#         if not os.path.exists(os.path.join(model_path, "config.json")):
-#             print(f"[Phi3Classifier] Downloading {model_id} to {model_path} ...")
-#             snapshot_download(
-#                 repo_id=model_id,
-#                 local_dir=model_path,
-#             )
-#             print(f"[Phi3Classifier] Model saved to: {model_path}")
-#         else:
-#             print(f"[Phi3Classifier] Model found at: {model_path}")
-#         # --- --- --- --- --- --- --- ---
-
-#         print(f"[Phi3Classifier] Loading {model_id}...")
-
-#         self.tokenizer = AutoTokenizer.from_pretrained(model_path)
-#         self.model = AutoModelForCausalLM.from_pretrained(
-#             model_path,
-#             #quantization_config=quant_cfg,
-#             device_map=device,
-#             trust_remote_code=True,
-#             torch_dtype=torch.float16,
-#         )
-#         self.model.eval()
-#         print("[Phi3Classifier] Ready.")
-
-#     def classify(
-#         self,
-#         navila_output: str,
-#         fallback_fn: Optional[Callable[[str], str]] = None,
-#     ) -> str:
-#         """
-#         Classify raw NaVILA output into a valid action token.
-
-#         Args:
-#             navila_output: raw text from NaVILA
-#             fallback_fn:   called when Phi-3 produces an out-of-vocabulary token
-
-#         Returns:
-#             A valid action string from VALID_ACTIONS.
-#         """
-#         import torch
-
-#         messages = [
-#             {"role": "system", "content": _PHI3_SYSTEM_PROMPT},
-#             {"role": "user",   "content": navila_output},
-#         ]
-
-#         input_ids = self.tokenizer.apply_chat_template(
-#             messages,
-#             add_generation_prompt=True,
-#             return_tensors="pt",
-#         ).to(self.model.device)
-
-#         with torch.inference_mode():
-#             output_ids = self.model.generate(
-#                 input_ids,
-#                 max_new_tokens=8,
-#                 do_sample=False,
-#                 temperature=None,
-#                 top_p=None,
-#                 pad_token_id=self.tokenizer.eos_token_id,
-#             )
-
-#         new_tokens = output_ids[0][input_ids.shape[-1]:]
-#         result = self.tokenizer.decode(new_tokens, skip_special_tokens=True)
-#         result = result.strip().lower().split()[0] if result.strip() else ""
-
-#         if result in VALID_ACTIONS:
-#             return result
-
-#         # Out-of-vocabulary → fallback
-#         if fallback_fn is not None:
-#             return fallback_fn(navila_output)
-
-#         return "stop"
 
 
 # =============================================================================
@@ -563,12 +313,6 @@ class NaViLANode(Node):
             status_topic, 
             self._primitive_status_cb, 10)
 
-        # self.sub_odom  = self.create_subscription(
-        #     Odometry, 
-        #     odom_topic, 
-        #     self._odom_cb, 
-        #     qos_sensor)
-
         # ------------------------------------------------------------------
         # Publisher
         # ------------------------------------------------------------------
@@ -642,10 +386,6 @@ class NaViLANode(Node):
             self._queue = []
         self.get_logger().info("NaVILA reset (loop disarmed).")
 
-    # def _odom_cb(self, msg: Odometry):
-    #     with self._lock:
-    #         self.last_odom = msg
-
     # ------------------------------------------------------------------
     # Model loading (background thread)
     # ------------------------------------------------------------------
@@ -656,29 +396,6 @@ class NaViLANode(Node):
             self.get_logger().info("Loading NaVILA model...")
             model, tokenizer, image_proc = load_navila_model(model_path)
             self.get_logger().info("NaVILA model loaded successfully.")
-
-
-            # <--- Phi3 --->
-            # classifier = None
-            # if self._use_phi3:
-            #     self.get_logger().info(
-            #     f"use_phi3=True — loading Phi-3-mini "
-            #     f"(4bit={self._phi3_4bit})..."
-            #     )
-            #     try:
-            #         classifier = Phi3Classifier(
-            #             device="auto",
-            #             use_4bit=self._phi3_4bit,
-            #             model_path=self.get_parameter("phi3_model_path").value,
-            #         )
-            #         self.get_logger().info("Phi-3-mini classifier loaded successfully.")
-            #     except Exception as exc:
-            #         self.get_logger().error(
-            #             f"Phi-3 classifier FAILED: {exc}\n"
-            #             f"Falling back to regex parser."
-            #         )
-            # else:
-            #     self.get_logger().info("use_phi3=False — skipping Phi-3 classifier.")
 
             # --- Ready ---
             with self._lock:
@@ -696,89 +413,6 @@ class NaViLANode(Node):
 
         except Exception as exc:
             self.get_logger().error(f"Failed to load NaVILA model: {exc}")
-
-    # ------------------------------------------------------------------
-    # Inference callback
-    # ------------------------------------------------------------------
-
-    # def _inference_cb(self):
-    #     if self._inference_running:        # inferenza precedente ancora in corso → salta
-    #         return
-
-    #     with self._lock:
-    #         ready      = self._model_ready
-    #         goal       = self.last_goal
-    #         model      = self.model
-    #         tok        = self.tokenizer
-    #         iproc      = self.image_proc
-    #         classifier = self.classifier
-    #         image_msg  = self._last_image_msg
-
-    #     if not ready:
-    #         self.get_logger().info("Waiting for model to load...", throttle_duration_sec=30.0)
-    #         return
-    #     if image_msg is None:
-    #         self.get_logger().info("Waiting for camera frame...", throttle_duration_sec=30.0)
-    #         return
-    #     if not goal:
-    #         self.get_logger().info("Waiting for goal instruction...", throttle_duration_sec=30.0)
-    #         return
-
-    #     self._inference_running = True     # claim here - dectivate inside thread
-
-    #     threading.Thread(
-    #         target=self._run_inference_thread,
-    #         args=(model, tok, iproc, image_msg, goal, classifier, self._num_video_frames),
-    #         daemon=True,
-    #     ).start()
-
-    # def _run_inference_thread(self, model, tok, iproc, image_msg, goal, classifier, num_video_frames):
-    #     try:
-    #         frame_rgb = self._process_image(image_msg)
-    #         if frame_rgb is None:
-    #             self.get_logger().warn("Frame processing fallito, skip inferenza")
-    #             return
-
-    #         # Aggiungi l'osservazione corrente alla memoria, poi costruisci l'input
-    #         # video campionando uniformemente num_video_frames dallo storico.
-    #         with self._lock:
-    #             self._frame_history.append(frame_rgb)
-    #             frames = self._sample_history(list(self._frame_history), num_video_frames)
-
-    #         raw_output = run_navila_inference(model, tok, iproc, frames, goal, num_video_frames)
-
-    #         # if classifier is not None: # NON USO LLM MA QUELLO UFFICIALE
-    #         #     action = classifier.classify(raw_output, fallback_fn=parse_navila_output)
-    #         # else:
-    #         #     action = parse_navila_output(raw_output)
-    #         action, value, unit = parse_navila_output(raw_output)
-            
-    #         self.get_logger().info(
-    #             f"raw='{raw_output}' → action='{action}'  "
-    #             f"(goal: '{goal}', history: {len(self._frame_history)})"
-    #         )
-
-    #         self._save_debug_frame(frame_rgb, action, raw_output, goal)
-
-    #         msg = String()
-    #         msg.data = f"{action} {value} {unit}".strip()
-    #         self.pub_action.publish(msg)
-    #     except Exception as exc:
-    #         self.get_logger().error(f"Inference error: {exc}")
-    #     finally:
-    #         self._inference_running = False
-
-    # @staticmethod
-    # def _sample_history(history, num_frames):
-    #     """Campiona uniformemente num_frames dallo storico (oldest→newest),
-    #     includendo sempre il primo e il più recente. Se i frame disponibili sono
-    #     meno di num_frames, duplica — così il numero restituito è SEMPRE esatto e
-    #     resta allineato ai token <image> del prompt (invariante critico)."""
-    #     n = len(history)
-    #     if n == 0:
-    #         return []
-    #     idxs = np.linspace(0, n - 1, num_frames)
-    #     return [history[int(round(float(i)))] for i in idxs]
 
     # ------------------------------------------------------------------
     # Inference callback 09 / 06 / 2026 - versione con padding + debug
