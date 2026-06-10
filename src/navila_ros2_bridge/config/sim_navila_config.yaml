@@ -96,3 +96,5 @@ navila_super_node:
     max_history_frames: 512    # maximum number of historical frames to keep
     use_phi3:          false   # enable Phi-3 classifier
     phi3_4bit:         false    # quantize Phi-3 to 4-bit
+    frame_wait_timeout_sec: 1.0  # attesa max frame post-moto
+    frame_settle_sec: 0.0        # margine settling robot/camera
