@@ -35,6 +35,8 @@ import threading
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy
+from rclpy.time import Time
+from rclpy.duration import Duration
 
 from sensor_msgs.msg import CompressedImage
 from std_msgs.msg import String, Empty
@@ -225,6 +227,9 @@ class NaViLANode(Node):
         self.declare_parameter("inference_rate_hz", 2.0)
         self.declare_parameter("num_video_frames", 8) # default N=8 frames (7 historical + 1 current) as per NaVILA paper
         self.declare_parameter("max_history_frames", 512) # memory
+        self.declare_parameter("frame_wait_timeout_sec", 1.0)  # attesa max frame post-moto
+        self.declare_parameter("frame_settle_sec", 0.0)        # margine settling robot/camera
+
 
         self.declare_parameter("image_topic",  "/zed/rgb/color/rect/image/compressed")
         self.declare_parameter("goal_topic",   "/goal_instruction")
@@ -244,6 +249,8 @@ class NaViLANode(Node):
         inference_rate_hz = p("inference_rate_hz")                                              # NON UTILIZZATO
         self._num_video_frames = p("num_video_frames")
         max_history_frames = p("max_history_frames")
+        self._frame_wait_timeout = p("frame_wait_timeout_sec")
+        self._frame_settle       = p("frame_settle_sec")
 
         image_topic       = p("image_topic")
         goal_topic        = p("goal_topic")
@@ -268,6 +275,9 @@ class NaViLANode(Node):
         self.last_frame    = None       # numpy RGB
         self._last_image_msg = None 
         self._frame_history = deque(maxlen=max_history_frames)
+        self._frame_seq        = 0
+        self._motion_done_seq  = 0
+        self._motion_done_mono = time.monotonic()
 
         self._last_decision_frame   = None
         self._queue                 = []
@@ -340,6 +350,7 @@ class NaViLANode(Node):
     def _image_cb(self, msg: CompressedImage):
         with self._lock:
             self._last_image_msg = msg
+            self._frame_seq += 1
 
     def _process_image(self, msg: CompressedImage):
         try:
@@ -356,6 +367,9 @@ class NaViLANode(Node):
     def _primitive_status_cb(self, msg: String):
         status = msg.data.strip().lower()
         with self._lock:
+            if status in ("done", "aborted"):
+                self._motion_done_seq = self._frame_seq
+                self._motion_done_mono = time.monotonic()
             if status == "aborted":
                 self._queue = []                  # coda invalidata dall'ostacolo
                 self._last_decision_frame = None  # moto non avvenuto → fuori dallo storico
@@ -373,6 +387,8 @@ class NaViLANode(Node):
             self._queue = []
             self._active = True
             self._cycle_active = False
+            self._motion_done_seq  = self._frame_seq
+            self._motion_done_mono = time.monotonic()
         self.get_logger().info(f"New goal: '{msg.data}' (loop armed)")
         self._kick_drive()
 
@@ -397,18 +413,23 @@ class NaViLANode(Node):
             model, tokenizer, image_proc = load_navila_model(model_path)
             self.get_logger().info("NaVILA model loaded successfully.")
 
+            cfg_nvf = getattr(model.config, "num_video_frames", None)
             # --- Ready ---
             with self._lock:
                 self.model        = model
                 self.tokenizer    = tokenizer
                 self.image_proc   = image_proc
-                # self.classifier   = classifier
+                
+                if cfg_nvf is None:
+                    self.get_logger().warn(f"model.config.num_video_frames missing — keep ROS param ({self._num_video_frames}).")
+                elif cfg_nvf != self._num_video_frames:
+                    self.get_logger().warn(f"num_video_frames: param={self._num_video_frames} - checkpoint={cfg_nvf} → using checkpoint.")
+                    self._num_video_frames = cfg_nvf
+                else:
+                    self._num_video_frames = cfg_nvf
+                self.get_logger().info(f"num_video_frames correct = {self._num_video_frames}")
                 self._model_ready = True
 
-            # mode = "Phi-3 + regex fallback" if classifier else "regex parser"
-            # self.get_logger().info(
-            #     f"NaVILA ready — action parser: {mode}"
-            # )
             self.get_logger().info(f"NaVILA ready — action parser: REGEX PARSER")
 
         except Exception as exc:
@@ -434,10 +455,19 @@ class NaViLANode(Node):
                 if self._last_decision_frame is not None:
                     self._frame_history.append(self._last_decision_frame)
                     self._last_decision_frame = None
-                image_msg = self._last_image_msg
                 goal      = self.last_goal
                 model, tok, iproc = self.model, self.tokenizer, self.image_proc
                 queued = self._queue.pop(0) if self._queue else None
+                after_seq  = self._motion_done_seq
+                after_mono = self._motion_done_mono
+                settle     = self._frame_settle
+                timeout    = self._frame_wait_timeout
+
+            image_msg, stale = self._wait_fresh_frame(after_seq, after_mono, settle, timeout)
+            if stale:
+                self.get_logger().warn(
+                    "Nessun frame fresco entro il timeout — uso l'ultimo disponibile.",
+                    throttle_duration_sec=5.0)
 
             curr = self._process_image(image_msg)
             if curr is None:
@@ -491,8 +521,27 @@ class NaViLANode(Node):
             with self._lock:
                 self._cycle_active = False
 
-    
-
+# =============================================================================
+# HELPER METHODS
+# =============================================================================
+    def _wait_fresh_frame(self, after_seq, after_mono, settle_sec, timeout_sec, poll_sec=0.02):
+        """Primo frame RICEVUTO dopo after_seq e dopo (after_mono + settle_sec).
+        Gate locale al PC inferenza: solo contatore frame + time.monotonic, mai
+        header.stamp → robusto al setup dual-machine ZED(robot) ↔ PC(inferenza).
+        Con depth=1/KEEP_LAST, _last_image_msg è sempre il più recente, quindi a
+        settle scaduto è già post-settling. Ritorna (msg, stale)."""
+        deadline     = time.monotonic() + float(timeout_sec)
+        settle_until = after_mono + float(settle_sec)
+        while rclpy.ok():
+            with self._lock:
+                msg = self._last_image_msg
+                seq = self._frame_seq
+            if msg is not None and seq > after_seq and time.monotonic() >= settle_until:
+                return msg, False
+            if time.monotonic() >= deadline:
+                return msg, True
+            time.sleep(poll_sec)
+        return None, True
 
     @staticmethod # replica fedele di sample_and_pad_images (repo ufficiale)
     def _sample_history(history, num_frames, pad_h=512, pad_w=512):
