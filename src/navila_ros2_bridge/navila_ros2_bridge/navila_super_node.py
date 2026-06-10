@@ -145,9 +145,9 @@ from collections import deque
 # Official patterns
 _OFFICIAL_PATTERNS = {
     "stop":       re.compile(r"\bstop\b", re.IGNORECASE),
-    "forward":    re.compile(r"\bmove forward\b", re.IGNORECASE),
-    "turn_left":  re.compile(r"\bturn left\b", re.IGNORECASE),
-    "turn_right": re.compile(r"\bturn right\b", re.IGNORECASE),
+    "forward":    re.compile(r"\bis move forward\b", re.IGNORECASE),
+    "turn_left":  re.compile(r"\bis turn left\b", re.IGNORECASE),
+    "turn_right": re.compile(r"\bis turn right\b", re.IGNORECASE),
 }
 
 
@@ -204,7 +204,7 @@ def parse_navila_output(text: str):
             action = name
             break
     if action is None:
-        action = "forward"   # default ufficiale
+        action = "stop"   # default ufficiale
 
     if action == "forward":
         m = re.search(r"move forward (\d+) cm", text)
@@ -446,6 +446,7 @@ def run_navila_inference(
             input_ids,
             images=image_tensor,
             do_sample=False,
+            temperature=0.0,
             num_beams=1,
             max_new_tokens=32,
             use_cache=True,
