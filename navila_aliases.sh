@@ -12,6 +12,22 @@ source /opt/ros/humble/setup.bash
 cd /home/ros_ws
 source install/setup.bash
 
+python3 -m pip install src/camera_utils/. --break-system-packages --ignore-installed blinker
+apt-get update && apt-get install -y --no-install-recommends \
+    wget zstd udev sudo libgomp1 lsb-release
+wget -q -O ZED_SDK.run https://download.stereolabs.com/zedsdk/5.0/cu12/ubuntu22
+chmod +x ZED_SDK.run
+./ZED_SDK.run silent skip_cuda skip_drivers
+rm -f ZED_SDK.run
+
+
+
+
+
+
+
+apt install tree -y
+
 echo "[NaVILA] ROS2 environment sourced ✓"
 
 # =============================================================================

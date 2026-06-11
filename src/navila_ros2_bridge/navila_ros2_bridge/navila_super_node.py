@@ -30,17 +30,13 @@ for _mod in [
 import os
 import re
 import threading
-# from typing import Callable, Optional
 
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy
-from rclpy.time import Time
-from rclpy.duration import Duration
 
 from sensor_msgs.msg import CompressedImage
 from std_msgs.msg import String, Empty
-# from nav_msgs.msg import Odometry
 
 from cv_bridge import CvBridge
 import cv2
@@ -152,7 +148,7 @@ def run_navila_inference(
     model,
     tokenizer,
     image_processor,
-    frames_rgb: list,          # lista di N=num_video_frames frame RGB (H,W,3), oldest→newest
+    frames_rgb: list,
     goal: str,
     num_video_frames: int,
 ) -> str:
@@ -264,7 +260,6 @@ class NaViLANode(Node):
 
         self._inference_running = False
 
-        # self.declare_parameter("use_sim_time", True)
 
         self.get_logger().info(f"use_phi3 = {self.get_parameter('use_phi3').value}")
 
@@ -285,11 +280,9 @@ class NaViLANode(Node):
         self._cycle_active          = False
 
         self.last_goal     = ""
-        # self.last_odom     = None
         self.model         = None
         self.tokenizer     = None
         self.image_proc    = None
-        #self.classifier: Optional[Phi3Classifier] = None
         self._model_ready  = False
         self._lock         = threading.Lock()
 
@@ -331,7 +324,6 @@ class NaViLANode(Node):
         # ------------------------------------------------------------------
         # Inference timer
         # ------------------------------------------------------------------
-        # self.timer = self.create_timer(1.0 / inference_rate_hz, self._inference_cb)
         self.timer = self.create_timer(0.5, self._kick_drive)
 
         # ------------------------------------------------------------------
