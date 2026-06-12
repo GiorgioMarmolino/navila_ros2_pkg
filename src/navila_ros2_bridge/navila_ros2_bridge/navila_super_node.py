@@ -135,6 +135,10 @@ def load_navila_model(model_path: str):
         tokenizer.pad_token = tokenizer.eos_token
 
     model.eval()
+
+    llm = getattr(model, "llm", model)
+    print("attn impl:", llm.config._attn_implementation)
+
     print(f"[NaVILA] Model device: {next(model.parameters()).device}")
     print("[NaVILA] Model loaded successfully.")
     return model, tokenizer, image_processor
