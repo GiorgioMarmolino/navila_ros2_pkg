@@ -1,203 +1,303 @@
-Da quel momento, chi clona la repo dovrà fare:
+# navila_ros2_bridge
 
-git clone --recursive <repo>
+ROS 2 (Humble) bridge between the **NaVILA** Vision-Language-Action model and a wheeled mobile robot
+(Clearpath Husky), enabling autonomous navigation driven by natural-language instructions.
 
-oppure, se ha già clonato:
+The package takes a text instruction (e.g. *"go to the kitchen"*), queries NaVILA over a sequence of
+camera observations, and translates the model's decisions into velocity commands executed in
+**closed-loop** on odometry, with an optional anti-collision safety layer.
 
-git submodule update --init --recursive
-
-altrimenti src/husky_navigation risulterà vuota o non inizializzata.
-
-
-
-Un'altra cosa importante: quando modifichi il codice dentro src/husky_navigation, dovrai fare:
-
-cd src/husky_navigation
-git add .
-git commit -m "..."
-git push
-
-e poi tornare nella repo principale e aggiornare il puntatore del submodule:
-
-cd ../..
-git add src/husky_navigation
-git commit -m "Update husky_navigation submodule"
-git push
-
-Questo è il comportamento normale dei submodule e spesso è il punto che sorprende di più chi li usa per la prima volta.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Report modifiche — Allineamento alla repo ufficiale NaVILA
-
-**Data:** 09/06/2026
-**Obiettivo:** rendere il pipeline ROS 2 (NaVILA → Husky) il più fedele possibile all'inferenza
-della repo ufficiale `AnjieCheng/NaVILA` (`evaluation/vlnce_baselines/navila_trainer.py`),
-mantenendo però l'esecuzione su robot reale con controllo continuo e safety layer.
-
-Riferimento ufficiale: il modello è una policy **step-sincrona** (cattura frame → inferenza →
-esegue UNA primitiva di moto → cattura frame → ...), con quantizzazione delle azioni e history
-spaziata per primitiva. Checkpoint usato in inferenza: `a8cheng/navila-llama3-8b-8f`.
+The implementation aims for **maximum fidelity** to the official
+[`AnjieCheng/NaVILA`](https://github.com/AnjieCheng/NaVILA) inference, adapted for execution on a real
+robot (continuous control, waiting for physical completion of each primitive, obstacle handling).
 
 ---
 
-## 1. Nodo NaVILA (`navila_node.py`) — il cuore della fedeltà
+## Table of Contents
 
-### Caricamento e inferenza del modello
-- Allineato `model.generate(...)` all'ufficiale: tensore immagini passato diretto
-  (`images=image_tensor`, non in lista), `do_sample=False`, `num_beams=1`,
-  `max_new_tokens=32`, `use_cache=True`, stesso `KeywordsStoppingCriteria`.
-- Prompt identico all'ufficiale: template `llama_3`, testo "Imagine you are a robot programmed
-  for navigation tasks..." con `<image>` per gli N-1 frame storici + 1 osservazione corrente.
-- `process_images` + `tokenizer_image_token` + `IMAGE_TOKEN_INDEX` invariati rispetto all'ufficiale.
-
-### Parsing dell'output → con magnitudine (prima veniva scartata)
-- Sostituito il parser a punteggio pesato (`_ACTION_PATTERNS`) e il classificatore Phi-3 con la
-  logica ufficiale: 4 pattern (`stop`, `move forward`, `turn left`, `turn right`) + estrazione
-  del valore numerico.
-- `parse_navila_output` ora ritorna `(action, value, unit)` invece del solo token.
-- Quantizzazione ufficiale: distanze sui multipli di 25 cm `{25,50,75}`, angoli sui multipli di
-  15° `{15,30,45}`, applicata **solo se** il valore non è già multiplo. Default su parse fallito:
-  forward 25 cm / 15°.
-- **Rimosso del tutto Phi-3** (`Phi3Classifier`, `_PHI3_SYSTEM_PROMPT`) e il vocabolario esteso
-  (`forward_fast`, `backward`, `curve_*`): non esistono nella repo, NaVILA non li produce.
-
-### Campionamento + padding dello storico
-- Riscritto `_sample_history` come replica fedele di `sample_and_pad_images` ufficiale:
-  - padding in testa con **frame neri** (512×512) quando la storia è più corta di `num_video_frames`,
-    invece di duplicare frame reali;
-  - `num_frames-1` indici via `np.linspace(0, len-1, endpoint=False, dtype=int)` (troncamento),
-    invece di `endpoint=True` + `round()`;
-  - frame corrente sempre riservato all'ultima posizione.
-- `max_history_frames` alzato (512) perché l'ufficiale non cappa la history: il `linspace` campiona
-  su tutto l'episodio.
-
-### Loop event-driven (era timer wall-clock a 2 Hz)
-- Tolto il timer di inferenza come driver; ora il ciclo è **sincronizzato col moto**: una decisione →
-  esecuzione → osservazione → decisione successiva.
-- L'avanzamento avviene alla ricezione dello stato di completamento primitiva (vedi `action_node`),
-  non a tempo di orologio.
-- La history viene aggiornata **un frame per primitiva eseguita** (`_last_decision_frame` promosso
-  al ciclo successivo), replicando `past_rgbs.append(...)` che nell'ufficiale gira a ogni step del loop.
-- Timer residuo a 0.5 Hz mantenuto solo come poll di bootstrap idempotente (`_kick_drive`).
-
-### Action queue (replica di `queue_actions`)
-- Una decisione espande l'intera magnitudine in primitive: `value // 25` (forward) o `value // 15`
-  (turn), con `max(1, ...)` per non azzerare su valori sotto soglia.
-- Ne esegue 1 subito e accoda le restanti `(n-1)` in `self._queue`.
-- Finché la coda non è vuota, **si replica la primitiva senza re-inferire** — esattamente come
-  l'ufficiale consuma `queue_actions`. La re-inferenza riparte solo a coda esaurita.
-
-### Gestione stato e robustezza
-- Inizializzato `self._last_image_msg = None` (prima causava `AttributeError` al primo tick).
-- Phi-3 (quando ancora presente) caricato da `model_path` locale invece che da `model_id`,
-  per non sprecare il `snapshot_download` — poi rimosso del tutto.
+- [Architecture](#architecture)
+- [Model](#model)
+- [Nodes](#nodes)
+- [Topics](#topics)
+- [Parameters](#parameters)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Fidelity to the Official Repo](#fidelity-to-the-official-repo)
+- [Troubleshooting](#troubleshooting)
 
 ---
 
-## 2. Differenza voluta rispetto all'ufficiale (robot reale)
+## Architecture
 
-- L'ufficiale esegue la prima primitiva di una nuova decisione **nello stesso giro** (`envs.step`
-  immediato in simulazione). Sul robot reale si pubblica il comando e si **attende il completamento
-  fisico** prima di proseguire. La sequenza di azioni vista dal modello resta identica; cambia solo
-  che ogni primitiva è gated dal moto reale invece che da uno step di simulazione.
+```
+                    /goal_instruction (String)
+                              │
+                              ▼
+   /camera .../compressed ─► [ navila_node ] ─► /navila/action ─► [ action_node ]
+                              ▲                  (String:                  │
+                              │                   "forward 25 cm")         │ closed-loop
+                              │                                            │ on /odom
+              /navila/primitive_status ◄──────────────────────────────────┤
+                  (String: done|aborted)                                   │
+                                                                           ▼
+                                                                  /cmd_vel_raw (Twist)
+                                                                           │
+                                                                           ▼
+                                                              [ safety_layer_node ]
+                                                                  (anti-collision)
+                                                                           │
+                                                                           ▼
+                                                                  /cmd_vel ─► twist_mux
+```
 
----
+The system is an **event-driven loop synchronized with motion**, not a fixed-rate controller: one
+model decision → execute one primitive → observe the result → next decision. This replicates the
+step-synchronous nature of the NaVILA policy.
 
-## 3. Nodo Action (`action_node.py`) — esecuzione delle primitive
-
-### Formato messaggi e vocabolario
-- Parser dell'input riscritto per leggere `"<action> <value> <unit>"` (es. `forward 25 cm`,
-  `turn_left 15 deg`, `stop`).
-- Rimossi JSON, token nudi, `_action_map`, vocabolario esteso: tutto ciò che NaVILA non emette.
-
-### Da open-loop a closed-loop su odometria
-- Ogni primitiva esegue UN movimento misurato: si salva la posa iniziale da `/odom`, si calcola il
-  progresso reale (distanza euclidea per forward, delta-yaw normalizzato per turn) e ci si ferma al
-  raggiungimento del target (25 cm / 15°).
-- Yaw ricavato dal quaternione senza dipendenze esterne.
-- Margine anti-overshoot sul target (compensa la rampa di decelerazione).
-
-### Segnalazione completamento vs abort (topic con payload)
-- Pubblicato `/navila/primitive_status` (`std_msgs/String`) con payload `done` o `aborted`,
-  che fa avanzare il loop del nodo NaVILA.
-- `done`: completamento per misura odometrica → la coda prosegue, il frame entra nella history.
-- `aborted`: completamento per **deadline failsafe** (robot bloccato / odom fermo) → il nodo NaVILA
-  svuota la coda e **scarta** il frame della primitiva incompleta (movimento non avvenuto, fuori
-  dalla distribuzione "un frame per primitiva completata").
-
-### Failsafe e fix di robustezza
-- Aggiunta deadline per primitiva (`3× tempo ideale + 1s`): se odom non avanza, abort invece di
-  loop bloccato all'infinito.
-- Rimosso il watchdog a tempo (incompatibile con le pause di inferenza tra primitive).
-- Fix `TypeError` su `_deadline` None: guardia esplicita in `_publish_cb`, `_deadline` impostato
-  prima di `_executing`, reset a `None` alla chiusura di ogni primitiva.
-- Inizializzati `_executing`, `_start_pose`, `_prim_kind`, `_prim_target`, `_odom`, `_deadline`.
+When the safety layer is disabled, `action_node` publishes directly to `/cmd_vel`.
 
 ---
 
-## 4. Nodo Safety (`safety_layer_node.py`)
+## Model
 
-- Confermata corretta la struttura (settorizzazione LiDAR, `sector_min` con mezzo FOV, fusione
-  lidar+depth, fail-safe su timeout scan/cmd).
-- **Da correggere:** zone di frenata invertite (`front_stop_dist` deve essere < `front_slow_dist`,
-  altrimenti il rallentamento progressivo non si attiva e il denominatore dello scaling è negativo).
-- Interazione col loop: quando il safety azzera il `cmd_vel`, il robot non avanza, la primitiva non
-  si completa per misura e scatta l'`aborted` per deadline → NaVILA ridecide col nuovo frame.
-- Da verificare l'encoding della depth ZED (metri vs millimetri) sul topic reale.
+- **Checkpoint:** `a8cheng/navila-llama3-8b-8f` (downloaded automatically from HuggingFace on first
+  launch if not present in `model_path`).
+- **Backbone:** SigLIP vision encoder + LLaMA3-8B.
+- **Input:** a sequence of `num_video_frames` frames (default 8: 7 historical + 1 current).
+- **Output:** free-form text containing the action and its magnitude, e.g. *"the next action is to
+  move forward 75 cm"* or *"turn left 30 degrees"*.
 
----
-
-## 5. Punti aperti / da tarare nei test
-
-- **Odometria che integra lo slittamento:** se il robot è bloccato ma le ruote girano, un'odometria
-  a soli encoder fa crescere il `progress` e genera un `done` spurio. Usare la posa fusa con IMU
-  (`/odometry/filtered` da `robot_localization`) e/o aggiungere un rilevamento di stallo
-  (progresso che non avanza → abort).
-- **Taratura:** velocità lineare/angolare, margine anti-overshoot, moltiplicatore della deadline
-  failsafe.
-- **Tooling:** `ros2 topic info -v` / `echo` falliscono con `unknown tag 'rclpy.type_hash.TypeHash'`
-  per mismatch di versione `ros2cli` ↔ core nel container (non impatta il runtime). Workaround:
-  `--qos-reliability reliable`; fix: riallineare i pacchetti `ros-humble-*`.
+The model is already trained and ready for inference: **no training is required**. The datasets
+referenced in the official repo are only needed to reproduce or extend training.
 
 ---
 
-## Riepilogo: cosa rende il sistema fedele alla repo
+## Nodes
 
-| Aspetto | Ufficiale | Implementato |
+### `navila_node`
+The core of the package. Loads NaVILA, manages the frame history, runs inference, and implements the
+decision loop and the action queue.
+
+- Loads the model in a background thread (ROS spin is not blocked during loading).
+- Maintains an observation history that advances **one frame per executed primitive**.
+- Parses the model output, extracting action, value and unit; quantizes to the official primitives
+  (forward in multiples of 25 cm, turn in multiples of 15°).
+- Expands the magnitude into a queue of primitives: executes one, queues the rest, and **replays them
+  without re-running inference** until the queue is empty (replicating `queue_actions`).
+- Advances when it receives the primitive-completion status from `action_node`.
+
+### `action_node`
+Translates primitives into velocity commands and executes each motion in **closed-loop on odometry**.
+
+- Receives commands in the format `"<action> <value> <unit>"` (e.g. `forward 25 cm`, `turn_left 15 deg`).
+- Saves the start pose from `/odom`, measures actual progress (Euclidean distance for forward,
+  normalized delta-yaw for turn) and stops when the target is reached.
+- Command smoothing via acceleration ramp; anti-overshoot margin on the target.
+- Failsafe: if progress is not reached within a deadline, the primitive is aborted.
+- Publishes `/navila/primitive_status` with payload `done` (completed by measurement) or `aborted`
+  (completed by failsafe / robot blocked).
+
+### `safety_layer_node`
+Anti-collision velocity filter between `action_node` and `twist_mux`. Optional (toggled from the launch file).
+
+- Sectorizes the LiDAR (Velodyne VLP-16 via `pointcloud_to_laserscan`) into front / sides / rear and
+  computes the minimum distance per sector.
+- Hard front stop + progressive slowdown; rear protection while reversing; steering reduction in
+  narrow corridors.
+- Optional fusion with the ZED depth for low obstacles ahead.
+- Fail-safe on LiDAR timeout and a watchdog on the incoming command.
+
+---
+
+## Topics
+
+### `navila_node`
+| Direction | Topic | Type | Notes |
+|---|---|---|---|
+| Sub | `/zed/rgb/color/rect/image/compressed` | `sensor_msgs/CompressedImage` | camera observations |
+| Sub | `/goal_instruction` | `std_msgs/String` | navigation instruction (arms the loop) |
+| Sub | `/navila/reset` | `std_msgs/Empty` | disarms the loop and clears the history |
+| Sub | `/navila/primitive_status` | `std_msgs/String` | `done` / `aborted` from `action_node` |
+| Pub | `/navila/action` | `std_msgs/String` | primitive, e.g. `"forward 25 cm"` |
+
+### `action_node`
+| Direction | Topic | Type | Notes |
+|---|---|---|---|
+| Sub | `/navila/action` | `std_msgs/String` | primitive to execute |
+| Sub | `/odom` (or `/odometry/filtered`) | `nav_msgs/Odometry` | pose for closed-loop |
+| Pub | `/cmd_vel_raw` or `/cmd_vel` | `geometry_msgs/Twist` | velocity command |
+| Pub | `/navila/primitive_status` | `std_msgs/String` | `done` / `aborted` |
+
+### `safety_layer_node`
+| Direction | Topic | Type | Notes |
+|---|---|---|---|
+| Sub | `/cmd_vel_raw` | `geometry_msgs/Twist` | raw command |
+| Sub | `/scan` | `sensor_msgs/LaserScan` | 2D LiDAR |
+| Sub | `/zed/depth/depth_registered` | `sensor_msgs/Image` | depth (optional) |
+| Pub | `/cmd_vel` | `geometry_msgs/Twist` | filtered command toward twist_mux |
+
+---
+
+## Parameters
+
+Centralized in `navila_params.yaml`. The main ones:
+
+### `navila_node`
+| Parameter | Default | Description |
 |---|---|---|
-| Generazione | greedy, 32 token, tensore diretto | identico |
-| Prompt | template llama_3 + 7 storici + 1 corrente | identico |
-| Parsing azioni | 4 pattern + magnitudine + quantizzazione | identico |
-| Campionamento frame | sample_and_pad_images (nero, endpoint=False, int) | replica fedele |
-| Loop | step-sincrono, 1 primitiva per step | event-driven gated dal moto reale |
-| Coda azioni | queue_actions, replay senza re-inferire | replica fedele |
-| History | 1 frame per primitiva eseguita | identico (gated da done/aborted) |
-| Esecuzione fisica | envs.step istantaneo (sim) | closed-loop su odom + failsafe (reale) |
+| `model_path` | `/models` | local path of the NaVILA checkpoint |
+| `num_video_frames` | `8` | frames per inference (overridden by the checkpoint if present) |
+| `max_history_frames` | `512` | maximum history depth |
+| `image_topic` | `/zed/rgb/color/rect/image/compressed` | input camera topic |
+| `input_color_order` | `bgr` | channel order after `imdecode`: `bgr` → convert to RGB, `rgb` → leave unchanged |
+| `frame_wait_timeout_sec` | `1.0` | max wait for a fresh frame after motion |
+| `frame_settle_sec` | `0.0` | settling margin for robot/camera before grabbing the frame |
+
+### `action_node`
+| Parameter | Default | Description |
+|---|---|---|
+| `cmd_vel_topic` | `/cmd_vel` | output (`/cmd_vel_raw` if safety is active) |
+| `odom_topic` | `/odometry/filtered` | odometry source for closed-loop |
+| `linear_x` | `0.4` | forward linear velocity (m/s) |
+| `angular_z` | `0.35` | turn angular velocity (rad/s) |
+| `max_acc_linear` / `max_acc_angular` | `1.0` / `2.0` | acceleration ramp limits |
+
+### `safety_layer_node`
+| Parameter | Default | Description |
+|---|---|---|
+| `enable_depth` | `true` | enable fusion with the ZED depth |
+| `front_stop_dist` / `front_slow_dist` | — | **requires `stop < slow`** (see Troubleshooting) |
+| `front_fov_deg` / `side_fov_deg` / `rear_fov_deg` | `60` / `15` / `10` | sector widths |
+| `lidar_front_angle_deg` | `90` | offset of the robot's physical front in the scan array |
+
+---
+
+## Installation
+
+Requirements: ROS 2 Humble, a CUDA GPU with NaVILA installed (for Jetson AGX Orin use the
+torch/flash-attn wheels from the Jetson AI Lab index; for x86 use the standard wheels).
+
+```bash
+cd ~/ros_ws/src
+git clone <repo-url> navila_ros2_bridge
+cd ~/ros_ws
+colcon build --packages-select navila_ros2_bridge
+source install/setup.bash
+```
+
+The NaVILA checkpoint is downloaded on first launch if missing from `model_path`. Alternatively,
+download it manually:
+
+```bash
+huggingface-cli download a8cheng/navila-llama3-8b-8f --local-dir /models
+```
+
+---
+
+## Usage
+
+### Launch the pipeline
+
+```bash
+# With safety layer
+ros2 launch navila_ros2_bridge navila_bringup.launch.py enable_safety:=true
+
+# Without safety (recommended for the first isolated tests)
+ros2 launch navila_ros2_bridge navila_bringup.launch.py enable_safety:=false
+```
+
+Wait for the `NaVILA ready` log before proceeding.
+
+### Send a goal
+
+```bash
+ros2 topic pub --once /goal_instruction std_msgs/msg/String "{data: 'go to the kitchen'}"
+```
+
+Use `--once`: every message resets the history and re-arms the loop, so repeated publishing would
+prevent it from starting.
+
+### Reset
+
+```bash
+ros2 topic pub --once /navila/reset std_msgs/msg/Empty "{}"
+```
+
+### Monitoring
+
+```bash
+ros2 topic echo /navila/action          --qos-reliability reliable
+ros2 topic echo /navila/primitive_status --qos-reliability reliable
+```
+
+Debug frames with an overlay (action, raw output, goal) are saved to `/home/ros_ws/debug_frames`:
+useful to verify what the model sees and decides.
+
+### Expected log pattern
+
+```
+raw='...75 cm' → forward 25 cm ×3   (queued:2)
+[queue] forward 25 cm   (remaining:1)
+[queue] forward 25 cm   (remaining:0)
+raw='...' → <new decision>
+```
+
+---
+
+## Fidelity to the Official Repo
+
+| Aspect | Official | This package |
+|---|---|---|
+| Generation | greedy, 32 tokens, tensor passed directly | identical |
+| Prompt | `llama_3` template, 7 historical + 1 current | identical |
+| Action parsing | patterns + magnitude + quantization | identical |
+| Image preprocessing | `process_images` with the checkpoint config | identical (frames passed raw) |
+| Frame sampling | `sample_and_pad_images` (black padding, `endpoint=False`, int) | faithful replica |
+| Loop | step-synchronous, 1 primitive per step | event-driven gated by real motion |
+| Action queue | `queue_actions`, replay without re-inference | faithful replica |
+| History | 1 frame per executed primitive | identical (gated by `done`/`aborted`) |
+| Execution | instantaneous `envs.step` (simulation) | closed-loop on odometry + failsafe (real) |
+
+**Intentional difference:** on the real robot each primitive waits for physical completion before
+proceeding, instead of the simulator's instantaneous step. The action sequence seen by the model
+remains identical.
+
+---
+
+## Troubleshooting
+
+**The robot doesn't move / always receives `stop`.**
+Check the `raw='...'` output in the logs and the parser patterns: they must match what NaVILA
+actually emits. Verify how often parsing falls back to the default — if always, it's a regex issue,
+not the model.
+
+**Wrong colors / poor inference.**
+Open a frame in `/home/ros_ws/debug_frames`: if red and blue are swapped, the `input_color_order`
+value is wrong for that source. The real camera and the simulation pipeline may require different
+values; tune it by looking at the debug frame. Note: `cv2.imdecode` always returns BGR regardless of
+the encoding declared on the topic.
+
+**Model output identical on every cycle.**
+Indicates a history that isn't changing: check frame sampling and the promotion of
+`_last_decision_frame` into the history.
+
+**The loop stops after the first decision (a single `raw=` then silence).**
+`action_node` is not publishing `/navila/primitive_status`: without that signal the NaVILA node stays
+waiting. Verify that `action_node` is running and that odometry is being received.
+
+**Spurious `done` when the robot is blocked (wheels spinning in place).**
+Encoder-only odometry integrates the slip and believes the robot is advancing. Use the IMU-fused pose
+(`/odometry/filtered` from `robot_localization`) as `odom_topic`.
+
+**The safety layer doesn't slow down progressively.**
+Make sure `front_stop_dist < front_slow_dist`: if inverted, the progressive slowdown never triggers
+and the scaling has a negative denominator.
+
+**`ros2 topic echo` / `info -v` fail with `unknown tag 'rclpy.type_hash.TypeHash'`.**
+Version mismatch between `ros2cli` and the ROS core in the container (does not affect runtime).
+Workaround: add `--qos-reliability reliable`. Fix: realign the `ros-humble-*` packages.
+
+**Mediocre navigation decisions in Gazebo.**
+Visual domain gap: NaVILA is trained on photorealistic scenes (Habitat/Matterport), very different
+from the simulator's rendering. Evaluate *pipeline* correctness (loop, queue, primitive execution)
+separately from the *navigational quality* of the decisions.
