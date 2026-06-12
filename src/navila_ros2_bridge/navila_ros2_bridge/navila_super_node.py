@@ -229,7 +229,7 @@ class NaViLANode(Node):
         self.declare_parameter("max_history_frames", 512) # memory
         self.declare_parameter("frame_wait_timeout_sec", 1.0)  # attesa max frame post-moto
         self.declare_parameter("frame_settle_sec", 0.0)        # margine settling robot/camera
-
+        self.declare_parameter("input_color_order", "bgr")
 
         self.declare_parameter("image_topic",  "/zed/rgb/color/rect/image/compressed")
         self.declare_parameter("goal_topic",   "/goal_instruction")
@@ -246,21 +246,28 @@ class NaViLANode(Node):
             return self.get_parameter(name).value
 
         model_path        = p("model_path")
-        inference_rate_hz = p("inference_rate_hz")                                              # NON UTILIZZATO
+        # inference_rate_hz = p("inference_rate_hz")                                              # NON UTILIZZATO
         self._num_video_frames = p("num_video_frames")
         max_history_frames = p("max_history_frames")
         self._frame_wait_timeout = p("frame_wait_timeout_sec")
         self._frame_settle       = p("frame_settle_sec")
 
+
+        self._input_color_order = str(p("input_color_order")).strip().lower()
+        if self._input_color_order not in ("bgr", "rgb"):
+            self.get_logger().warn(f"input_color_order='{self._input_color_order}' not validido → use 'bgr'")
+            self._input_color_order = "bgr"
+        self.get_logger().info(f"input_color_order = {self._input_color_order}")
+
         image_topic       = p("image_topic")
         goal_topic        = p("goal_topic")
-        odom_topic        = p("odom_topic")
+        # odom_topic        = p("odom_topic")                                                     # NON UTILIZZATO
         action_topic      = p("action_topic")
         reset_topic       = p("reset_topic")
         status_topic        = p("status_topic")
 
-        self._use_phi3    = p("use_phi3")                                                       # NON UTILIZZATO
-        self._phi3_4bit   = p("phi3_4bit")                                                      # NON UTILIZZATO        
+        # self._use_phi3    = p("use_phi3")                                                       # NON UTILIZZATO
+        # self._phi3_4bit   = p("phi3_4bit")                                                      # NON UTILIZZATO        
 
         self._inference_running = False
 
@@ -351,11 +358,12 @@ class NaViLANode(Node):
     def _process_image(self, msg: CompressedImage):
         try:
             np_arr = np.frombuffer(msg.data, np.uint8)
-            frame_bgr = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)   # BGR diretto
-            if frame_bgr is None:
-                raise ValueError("cv2.imdecode returned None — frame corrotto?")
-            frame_rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
-            return frame_rgb
+            frame = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)   # BGR diretto
+            if frame is None:
+                raise ValueError("cv2.imdecode returned None — corrupted frame?")
+            if self._input_color_order == "bgr":
+                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            return frame
         except Exception as exc:
             self.get_logger().warn(f"Image conversion error: {exc}")
             return None

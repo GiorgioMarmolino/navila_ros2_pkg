@@ -27,7 +27,6 @@ def generate_launch_description():
     # -------------------------------------------------------------------------------
     # Launch Configurations and Expressions
     enable_safety = LaunchConfiguration("enable_safety")
-    goal_input =    LaunchConfiguration("goal_input")
     env =           LaunchConfiguration("env")  # "sim" or "lab"
 
     action_out_topic = PythonExpression(["'/cmd_vel_raw' if '", enable_safety, "' == 'true' else '/cmd_vel'"])
@@ -38,12 +37,6 @@ def generate_launch_description():
     config_file = PathJoinSubstitution(
         [FindPackageShare(navila_package), 'config', config_filename]
     )
-    # -------------------------------------------------------------------------------
-    # FIX 3: build the config path with substitutions instead of eval-ing a string
-    # that embeds an absolute path. Only the *filename* is chosen by PythonExpression;
-    # the path is assembled robustly with FindPackageShare + PathJoinSubstitution.
-
-    # sim -> use_sim_time:=true so the laserscan node shares Gazebo's clock.
     use_sim_time = PythonExpression(
         ["'true' if '", env, "' == 'sim' else 'false'"]
     )
@@ -60,28 +53,11 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             'env',
-            default_value='sim',
+            default_value='lab',
             choices=['sim', 'lab'],
             description='Environment configuration'
         ),
-        DeclareLaunchArgument(
-            "goal_input",
-            default_value="true",
-            choices=["true", "false"],
-            description="If true, open an xterm running instruction_node for manual goal input. Requires a reachable X display: export DISPLAY and mount the X socket into the container (-e DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix). Set 'false' for headless runs and publish goals directly on the topic instead."
-        ),
         
-        # FIX 2: husky_navigation/pointcloud_to_laserscan.launch.py does NOT declare
-        # a 'config_file' argument (only pcd_input, scan_output, lidar_frame,
-        # use_sim_time) and hardcodes its params inline. Passing 'config_file' there
-        # raises a RuntimeError that aborts the whole `ros2 launch`. Pass only what it
-        # actually declares. use_sim_time is critical in sim so the scan timestamps
-        # match Gazebo's clock and TF resolves.
-        #
-        # VERIFY against your Clearpath/Velodyne setup and override if needed:
-        #   - pcd_input : the actual VLP-16 topic (e.g. /sensors/lidar3d_0/points),
-        #                 not the default /velodyne_points
-        #   - lidar_frame : must match the lidar's TF frame exactly
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
                 os.path.join(
@@ -125,13 +101,7 @@ def generate_launch_description():
             parameters=[config_file],
         ),
 
-        # Goal input terminal
-        # FIX 1: goal input is now optional and X-dependent.
-        # In a headless container xterm fails silently, killing your ability to
-        # send goals while the rest of the pipeline keeps running -> looks like
-        # "it doesn't work". Toggle off with goal_input:=false for headless tests.
         ExecuteProcess(
-            condition=IfCondition(goal_input),
             cmd=[
                 'xterm', '-title', 'NaVILA Goal Input', '-e',
                 'bash -c "source /opt/ros/humble/setup.bash && '
