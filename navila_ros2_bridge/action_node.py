@@ -32,7 +32,7 @@ import math
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy, DurabilityPolicy
-from std_msgs.msg import String, Empty
+from std_msgs.msg import String, Empty, Bool
 from geometry_msgs.msg import Twist
 from nav_msgs.msg import Odometry
 
@@ -68,6 +68,7 @@ class ActionNode(Node):
         self.declare_parameter("cmd_vel_topic",  "/cmd_vel")
         self.declare_parameter("odom_topic", "/platform/odom/filtered")
         self.declare_parameter("status_topic", "/navila/primitive_status")
+        self.declare_parameter("path_blocked_topic", "/safety/path_blocked")
 
 
         self.declare_parameter("linear_x",       DEFAULT_LINEAR_X)
@@ -90,6 +91,8 @@ class ActionNode(Node):
         cmd_vel_topic = p("cmd_vel_topic")
         odom_topic    = p("odom_topic")
         status_topic  = p("status_topic")
+        path_blocked_topic = p("path_blocked_topic")
+
 
         self.lin       = p("linear_x")
         self.lin_fast  = p("linear_x_fast")
@@ -105,40 +108,22 @@ class ActionNode(Node):
         publish_rate     = p("publish_rate_sec")
 
         # ------------------------------------------------------------------
-        # Mappa token → (linear_x, angular_z)
-        # Estendibile senza toccare la logica del callback
-        # ------------------------------------------------------------------
-        # self._action_map: dict[str, tuple[float, float]] = {
-        #     "forward":      ( self.lin,       0.0),
-        #     "forward_fast": ( self.lin_fast,  0.0),
-        #     "backward":     (-self.lin_back,  0.0),
-        #     "turn_left":    ( 0.0,            self.ang),
-        #     "turn_right":   ( 0.0,           -self.ang),
-        #     "curve_left":   ( self.curve_lin, self.curve_ang),
-        #     "curve_right":  ( self.curve_lin,-self.curve_ang),
-        #     # alias brevi per compatibilità con nodi legacy
-        #     "left":         ( 0.0,            self.ang),
-        #     "right":        ( 0.0,           -self.ang),
-        #     "stop":         ( 0.0,            0.0),
-        # }
-
-        # ------------------------------------------------------------------
         # Stato interno
         # ------------------------------------------------------------------
-        self._target_lin: float  = 0.0   # velocità target (da azione)
+        self._target_lin: float  = 0.0   
         self._target_ang: float  = 0.0
-        self._current_lin: float = 0.0   # velocità smoothed corrente
+        self._current_lin: float = 0.0   
         self._current_ang: float = 0.0
-        # self._last_cmd_time = self.get_clock().now()
-        self._dt = publish_rate          # usato per la rampa di accelerazione
+        
+        self._dt = publish_rate
 
-        self._executing   = False    # True mentre una primitiva è in esecuzione
-        self._start_pose  = None     # (x0, y0, yaw0) all'avvio della primitiva
-        self._prim_kind   = None     # "forward" | "turn"
-        self._prim_target = 0.0      # target: metri (forward) o radianti (turn)
-        self._odom        = None     # ultimo Odometry ricevuto
+        self._executing   = False
+        self._start_pose  = None     
+        self._prim_kind   = None     
+        self._prim_target = 0.0      
+        self._odom        = None     
 
-        self._deadline = None     # deadline per completare la primitiva (ora + tempo massimo)
+        self._deadline = None   
 
         # ------------------------------------------------------------------
         # Subscriber / Publisher / Timer
@@ -152,9 +137,12 @@ class ActionNode(Node):
         qos_cmd_vel = QoSProfile(
                 reliability=ReliabilityPolicy.RELIABLE,
                 history=HistoryPolicy.KEEP_LAST,
-                depth=1,                              # match twist_mux
+                depth=1,                              
                 durability=DurabilityPolicy.VOLATILE,
             )
+        
+        self.sub_blocked = self.create_subscription(Bool, path_blocked_topic, self._path_blocked_cb, 10)
+        
         self.pub_cmd_vel = self.create_publisher(Twist, cmd_vel_topic, qos_cmd_vel)
         self.pub_status  = self.create_publisher(String, status_topic, 10)
 
@@ -170,33 +158,14 @@ class ActionNode(Node):
             f"  max_acc   : lin={self.max_acc_lin} m/s²  ang={self.max_acc_ang} rad/s²"
         )
 
-    # ------------------------------------------------------------------
-    # Action callback
-    # ------------------------------------------------------------------
-    # def _action_cb(self, msg: String):
-    #     raw = msg.data.strip()
-
-    #     # --- Parse as JSON -----------------------------------------------
-    #     if raw.startswith("{"):
-    #         try:
-    #             data = json.loads(raw)
-    #             lx = float(data.get("linear_x",  0.0))
-    #             az = float(data.get("angular_z", 0.0))
-    #             self._set_target(lx, az, label=f"JSON({lx:.2f},{az:.2f})")
-    #             return
-    #         except (json.JSONDecodeError, ValueError) as exc:
-    #             self.get_logger().warn(f"JSON malformato: '{raw}' — {exc} → STOP")
-    #             self._set_target(0.0, 0.0, label="JSON_ERROR→stop")
-    #             return
-
-    #     # --- Token string ------------------------------------------------
-    #     action = raw.lower()
-    #     if action in self._action_map:
-    #         lx, az = self._action_map[action]
-    #         self._set_target(lx, az, label=action)
-    #     else:
-    #         self.get_logger().warn(f"Azione non riconosciuta: '{action}' → STOP")
-    #         self._set_target(0.0, 0.0, label="unknown→stop")
+    def _path_blocked_cb(self, msg: Bool):
+        if msg.data and self._executing:
+            self.get_logger().warn("Path blocked → immediate ABORT")
+            self._target_lin = 0.0
+            self._target_ang = 0.0
+            self._executing = False
+            self._deadline = None
+            self._publish_status("aborted")
 
     def _action_cb(self, msg: String):
         parts = msg.data.strip().lower().split()
@@ -207,7 +176,7 @@ class ActionNode(Node):
         unit   = parts[2] if len(parts) > 2 else ""
 
         if action == "stop":
-            self._publish_status("done")        # chiude comunque il ciclo del loop
+            self._publish_status("done")
             return
         if action == "forward" and unit == "cm":
             self._start_primitive(kind="forward", magnitude=value / 100.0)   # m
@@ -227,11 +196,6 @@ class ActionNode(Node):
         msg.data = status
         self.pub_status.publish(msg)
 
-    # def _set_target(self, lx: float, az: float, label: str = ""):
-    #     self._target_lin = lx
-    #     self._target_ang = az
-    #     self._last_cmd_time = self.get_clock().now()
-    #     self.get_logger().debug(f"target set [{label}] → lin={lx:.3f}  ang={az:.3f}")
 
     def _start_primitive(self, kind: str, magnitude: float):
         if self._odom is None:
@@ -255,34 +219,8 @@ class ActionNode(Node):
         vel = self.lin if kind == "forward" else self.ang
         self._deadline = self.get_clock().now() + rclpy.duration.Duration(
             seconds=(self._prim_target / vel) * 3.0 + 1.0)
-        self._executing = True   # ← ultimo, dopo _deadline
+        self._executing = True  
 
-    # ------------------------------------------------------------------
-    # Watchdog callback
-    # ------------------------------------------------------------------
-    # def _watchdog_cb(self):
-    #     dt = (self.get_clock().now() - self._last_cmd_time).nanoseconds / 1e9
-    #     if dt > self.timeout_sec:
-    #         if self._target_lin != 0.0 or self._target_ang != 0.0:
-    #             self.get_logger().info(f"Watchdog: nessun comando da {dt:.2f}s → STOP")
-    #         self._target_lin = 0.0
-    #         self._target_ang = 0.0
-
-    # ------------------------------------------------------------------
-    # Publish callback (smoothing + pubblicazione)
-    # ------------------------------------------------------------------
-    # def _publish_cb(self):
-    #     # Smoothing con rampa di accelerazione verso il target
-    #     self._current_lin = self._ramp(self._current_lin, self._target_lin, self.max_acc_lin * self._dt)
-    #     self._current_ang = self._ramp(self._current_ang, self._target_ang, self.max_acc_ang * self._dt)
-
-    #     twist = Twist()
-    #     twist.linear.x  = self._current_lin
-    #     twist.angular.z = self._current_ang
-    #     self.pub_cmd_vel.publish(twist)
-
-    #     self.get_logger().debug(
-    #         f"cmd_vel -> lin={self._current_lin:.3f} ang={self._current_ang:.3f}")
     def _publish_cb(self):
         if self._executing and self._odom is not None and self._deadline is not None:
             x, y, yaw = self._pose_xy_yaw(self._odom)
@@ -291,7 +229,7 @@ class ActionNode(Node):
                 progress = math.hypot(x - x0, y - y0)
             else:
                 dyaw = yaw - yaw0
-                dyaw = math.atan2(math.sin(dyaw), math.cos(dyaw))  # normalizza
+                dyaw = math.atan2(math.sin(dyaw), math.cos(dyaw)) 
                 progress = abs(dyaw)
 
             if self.get_clock().now() >= self._deadline:

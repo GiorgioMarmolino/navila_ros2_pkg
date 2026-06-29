@@ -1,6 +1,110 @@
 #!/usr/bin/env python3
 """
-docstring da riscrivere
+navila_node.py
+
+ROS 2 node implementing the NaVILA Vision-Language-Action inference loop
+for autonomous robot navigation driven by natural-language instructions.
+
+Architecture
+------------
+The node implements an event-driven, step-synchronous control loop that
+replicates the official NaVILA inference pipeline:
+
+    /goal_instruction (String)
+              │
+              ▼
+    /zed/.../compressed ──► [ navila_node ] ──► /navila/action (String)
+                                  ▲                      │
+                                  │              [ action_node ]
+                                  │                      │
+                          /navila/primitive_status ◄──────┘
+                           (String: done | aborted)
+
+One model decision → execute one primitive → observe result → next decision.
+This replicates the step-synchronous nature of the NaVILA policy, where the
+history advances by exactly one frame per completed primitive.
+
+Subscribes
+----------
+    <image_topic>               (sensor_msgs/CompressedImage)
+        Camera observations. Default: /zed/rgb/color/rect/image/compressed
+
+    <goal_topic>                (std_msgs/String)
+        Natural-language navigation instruction. Receiving a new goal arms
+        the loop and clears the frame history.
+        Default: /goal_instruction
+
+    <reset_topic>               (std_msgs/Empty)
+        Disarms the loop and clears the frame history without sending a new goal.
+        Default: /navila/reset
+
+    <status_topic>              (std_msgs/String)
+        Primitive completion signal from action_node.
+        Accepted values: 'done' | 'aborted'
+        Default: /navila/primitive_status
+
+Publishes
+---------
+    <action_topic>              (std_msgs/String)
+        Primitive command in the format '<action> <value> <unit>'.
+        Examples: 'forward 25 cm', 'turn_left 15 deg', 'stop'
+        Default: /navila/action
+
+Parameters
+----------
+    model_path              str     Path to the NaVILA checkpoint directory.
+                                    Default: $NAVILA_MODEL_PATH or '/models'
+    num_video_frames        int     Number of frames per inference step
+                                    (7 historical + 1 current). Must match
+                                    the checkpoint config. Default: 8
+    max_history_frames      int     Maximum depth of the frame history deque.
+                                    Default: 512
+    frame_wait_timeout_sec  float   Maximum time to wait for a fresh frame
+                                    after a primitive completes. Default: 1.0
+    frame_settle_sec        float   Settling margin after motion before
+                                    grabbing the observation frame. Default: 0.0
+    input_color_order       str     Channel order after cv2.imdecode:
+                                    'bgr' (convert to RGB) or 'rgb' (keep).
+                                    Note: cv2.imdecode always returns BGR
+                                    regardless of the topic encoding.
+                                    Default: 'bgr'
+    image_topic             str     See Subscribes above.
+    goal_topic              str     See Subscribes above.
+    reset_topic             str     See Subscribes above.
+    action_topic            str     See Publishes above.
+    status_topic            str     See Subscribes above.
+
+Inference pipeline
+------------------
+    1. On 'done'/'aborted' from action_node, _kick_drive() is called.
+    2. _drive_thread() grabs a fresh frame (waiting up to frame_wait_timeout_sec).
+    3. If the action queue is non-empty, the next queued primitive is replayed
+       without running inference (replicating NaVILA's queue_actions).
+    4. If the queue is empty, run_navila_inference() is called with the current
+       frame history sampled via _sample_history() (faithful replica of
+       sample_and_pad_images from the official repo: black-frame padding,
+       endpoint=False linspace, integer indices).
+    5. parse_navila_output() extracts action, value and unit using the official
+       regex patterns and quantizes to the canonical magnitudes (25 cm / 15 deg).
+    6. _expand_primitives() splits the magnitude into N unit primitives;
+       the first is published immediately, the rest are queued.
+    7. On 'aborted', the queue is cleared and the decision frame is discarded
+       (motion did not occur, so it must not enter the history).
+
+Debug
+-----
+    Each inference step saves a JPEG frame with action overlay to:
+        /home/ros_ws/debug_frames/<timestamp>_<action>.jpg
+    Useful to verify the image the model receives and the decision it produces.
+
+Notes
+-----
+    - The model is loaded in a background thread so ROS spin is never blocked.
+    - num_video_frames is read from model.config at load time and overrides
+      the ROS parameter if different (the checkpoint is authoritative).
+    - The frame history gate uses time.monotonic() and a local frame counter,
+      never header.stamp, making it robust to the dual-machine ZED/inference
+      setup where clocks may differ.
 """
 
 # =============================================================================
@@ -38,14 +142,10 @@ from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy
 from sensor_msgs.msg import CompressedImage
 from std_msgs.msg import String, Empty
 
-from cv_bridge import CvBridge
 import cv2
 import numpy as np
-from PIL import Image as PILImage
 
 from collections import deque
-
-
 
 # Official patterns
 _OFFICIAL_PATTERNS = {
@@ -54,10 +154,6 @@ _OFFICIAL_PATTERNS = {
     "turn_left":  re.compile(r"\bis turn left\b", re.IGNORECASE),
     "turn_right": re.compile(r"\bis turn right\b", re.IGNORECASE),
 }
-
-
-
-
 
 def parse_navila_output(text: str):
     """Ritorna (action, value, unit) come da repo ufficiale.
@@ -89,8 +185,6 @@ def parse_navila_output(text: str):
             g = min([15, 30, 45], key=lambda x: abs(x - g))
         return "turn_right", g, "deg"
     return "stop", 0, ""
-
-
 
 
 # =============================================================================
@@ -223,30 +317,23 @@ class NaViLANode(Node):
         # ROS 2 parameters
         # ------------------------------------------------------------------
         self.declare_parameter("model_path", os.environ.get("NAVILA_MODEL_PATH", "/models"))
-        self.declare_parameter("phi3_model_path", "/models/phi3mini")                           # NON UTILIZZATO
-        self.declare_parameter("inference_rate_hz", 2.0)
-        self.declare_parameter("num_video_frames", 8) # default N=8 frames (7 historical + 1 current) as per NaVILA paper
-        self.declare_parameter("max_history_frames", 512) # memory
-        self.declare_parameter("frame_wait_timeout_sec", 1.0)  # attesa max frame post-moto
-        self.declare_parameter("frame_settle_sec", 0.0)        # margine settling robot/camera
+        self.declare_parameter("num_video_frames", 8) # default N=8 frames
+        self.declare_parameter("max_history_frames", 512) 
+        self.declare_parameter("frame_wait_timeout_sec", 1.0) 
+        self.declare_parameter("frame_settle_sec", 0.0)        
         self.declare_parameter("input_color_order", "bgr")
 
         self.declare_parameter("image_topic",  "/zed/rgb/color/rect/image/compressed")
         self.declare_parameter("goal_topic",   "/goal_instruction")
-        self.declare_parameter("odom_topic",   "/platform/odom")
 
         self.declare_parameter("action_topic", "/navila/action")
         self.declare_parameter("reset_topic",  "/navila/reset")
         self.declare_parameter("status_topic",   "/navila/primitive_status")
 
-        self.declare_parameter("use_phi3",     True)   # enable Phi-3 classifier                # NON UTILIZZATO
-        self.declare_parameter("phi3_4bit",    False)    # quantize Phi-3 to 4-bit              # NON UTILIZZATO
-
         def p(name):
             return self.get_parameter(name).value
 
         model_path        = p("model_path")
-        # inference_rate_hz = p("inference_rate_hz")                                              # NON UTILIZZATO
         self._num_video_frames = p("num_video_frames")
         max_history_frames = p("max_history_frames")
         self._frame_wait_timeout = p("frame_wait_timeout_sec")
@@ -261,24 +348,13 @@ class NaViLANode(Node):
 
         image_topic       = p("image_topic")
         goal_topic        = p("goal_topic")
-        # odom_topic        = p("odom_topic")                                                     # NON UTILIZZATO
         action_topic      = p("action_topic")
         reset_topic       = p("reset_topic")
         status_topic        = p("status_topic")
 
-        # self._use_phi3    = p("use_phi3")                                                       # NON UTILIZZATO
-        # self._phi3_4bit   = p("phi3_4bit")                                                      # NON UTILIZZATO        
-
-        self._inference_running = False
-
-
-        self.get_logger().info(f"use_phi3 = {self.get_parameter('use_phi3').value}")
-
         # ------------------------------------------------------------------
         # Internal state
         # ------------------------------------------------------------------
-        self.bridge        = CvBridge()
-        self.last_frame    = None       # numpy RGB
         self._last_image_msg = None 
         self._frame_history = deque(maxlen=max_history_frames)
         self._frame_seq        = 0
@@ -326,6 +402,8 @@ class NaViLANode(Node):
             String, 
             status_topic, 
             self._primitive_status_cb, 10)
+
+        
 
         # ------------------------------------------------------------------
         # Publisher
@@ -454,8 +532,6 @@ class NaViLANode(Node):
     def _drive_thread(self):
         try:
             with self._lock:
-                # La storia avanza a ogni primitiva (eseguita): append del frame della
-                # primitiva precedente, poi grab del corrente.
                 if self._last_decision_frame is not None:
                     self._frame_history.append(self._last_decision_frame)
                     self._last_decision_frame = None
@@ -479,7 +555,6 @@ class NaViLANode(Node):
                     self._cycle_active = False
                 return
 
-            # --- REPLAY: coda non vuota → esegui primitiva accodata, NIENTE inferenza ---
             if queued is not None:
                 cmd = queued
                 with self._lock:
@@ -489,9 +564,8 @@ class NaViLANode(Node):
                 self._save_debug_frame(curr, cmd, "[queued]", goal)
                 out = String(); out.data = cmd
                 self.pub_action.publish(out)
-                return   # resta in volo fino al prossimo primitive_done
+                return  
 
-            # --- DECISIONE: coda vuota → una inferenza, espandi, esegui 1, accoda il resto ---
             frames = self._sample_history(list(self._frame_history) + [curr], self._num_video_frames)
             raw_output = run_navila_inference(model, tok, iproc, frames, goal, self._num_video_frames)
             action, value, unit = parse_navila_output(raw_output)
@@ -510,7 +584,7 @@ class NaViLANode(Node):
 
             with self._lock:
                 self._last_decision_frame = curr
-                self._queue = [cmd] * (n_total - 1)   # 1 eseguita ora, (n-1) accodate
+                self._queue = [cmd] * (n_total - 1)  
 
             self.get_logger().info(
                 f"raw='{raw_output}' → {cmd} ×{n_total}  "
@@ -518,7 +592,7 @@ class NaViLANode(Node):
             self._save_debug_frame(curr, cmd, raw_output, goal)
             out = String(); out.data = cmd
             self.pub_action.publish(out)
-            # resta in volo fino al primitive_done
+            
 
         except Exception as exc:
             self.get_logger().error(f"Drive error: {exc}")
@@ -547,7 +621,7 @@ class NaViLANode(Node):
             time.sleep(poll_sec)
         return None, True
 
-    @staticmethod # replica fedele di sample_and_pad_images (repo ufficiale)
+    @staticmethod 
     def _sample_history(history, num_frames, pad_h=512, pad_w=512):
         """Replica fedele di sample_and_pad_images (repo ufficiale).
         history: frame RGB numpy oldest→newest, corrente = ultimo.

@@ -1,15 +1,14 @@
 # ============================================================================
 # sim_navila_config.yaml
 #
-# Configuration for simulation (Gazebo / Isaac / custom simulator).
+# Configuration tuned for simulation.
 #
 # Assumptions:
-# - Simulated clock (use_sim_time = true)
-# - Simulated lidar and ZED topics
-# - Safety layer enabled to mimic real robot behaviour
+# - sim robot (use_sim_time = true)
+# - Indoor environment with narrow passages and nearby obstacles
+# - depth camera available
+# - Velodyne VLP-16 PointCloud2 on /velodyne_points
 #
-# This profile aims to reproduce the real robot behaviour as closely as
-# possible while allowing faster experimentation.
 # ============================================================================
 
 action_node:
@@ -17,26 +16,27 @@ action_node:
     use_sim_time: true
 
     # Topics
-    action_topic: "/navila/action"
-    odom_topic: "/platform/odom/filtered"
-    status_topic: "/navila/primitive_status"
-    # cmd_vel_topic is NOT set here: it is dynamic (depends on enable_safety)
-    # and is set by the launch file.
+    action_topic:        "/navila/action"
+    odom_topic:          "/platform/odom/filtered"
+    status_topic:        "/navila/primitive_status"
+    path_blocked_topic:  "/safety/path_blocked"
+
+    # cmd_vel_topic is set dynamically by the launch file (depends on enable_safety)
 
     # Per-token velocities
-    linear_x:       0.5    # m/s    — "forward"
-    linear_x_fast:  1.0    # m/s    — "forward_fast"
-    linear_x_back:  0.2    # m/s    — "backward"
+    linear_x:       0.4    # m/s    — forward
+    linear_x_fast:  0.6    # m/s    — forward_fast
+    linear_x_back:  0.2    # m/s    — backward
     angular_z:      0.35   # rad/s  — in-place rotation
-    curve_linear:   0.2    # m/s    — linear component of "curve_*"
-    curve_angular:  0.4    # rad/s  — angular component of "curve_*"
+    curve_linear:   0.2    # m/s    — linear component of curve_*
+    curve_angular:  0.4    # rad/s  — angular component of curve_*
 
     # Watchdog / smoothing
-    cmd_timeout_sec:   1.0   # s      — watchdog: stop if no cmd
-    watchdog_rate_sec: 0.05  # s      — watchdog timer period (20 Hz)
-    publish_rate_sec:  0.05  # s      — publish period (20 Hz)
-    max_acc_linear:    1.0   # m/s²   — max linear acceleration
-    max_acc_angular:   2.0   # rad/s² — max angular acceleration
+    cmd_timeout_sec:   1.0   # s
+    watchdog_rate_sec: 0.05  # s  (20 Hz)
+    publish_rate_sec:  0.05  # s  (20 Hz)
+    max_acc_linear:    0.5   # m/s²
+    max_acc_angular:   1.0   # rad/s²
 
 
 safety_layer_node:
@@ -44,34 +44,56 @@ safety_layer_node:
     use_sim_time: true
 
     # Topics
-    cmd_in_topic:  "/cmd_vel_raw"
-    cmd_out_topic: "/cmd_vel"
-    scan_topic:    "/scan"
-    depth_topic:   "/sensors/front_camera/depth/image_war"
-    enable_depth:  true
+    cmd_in_topic:       "/cmd_vel_raw"
+    cmd_out_topic:      "/cmd_vel"
+    cloud_topic:        "/velodyne_points"
+    depth_topic:        "/zed/depth/depth_registered"
+    path_blocked_topic: "/safety/path_blocked"
+    occupancy_topic:    "/safety/occupancy"
+    enable_depth:       false
+    publish_grid:       true
+
+    # TF
+    base_frame: "base_link"
+
+    # Height band (ground removal)
+    ground_clip_z:   0.10   # m  — below this: floor, ignored
+    max_obstacle_z:  1.50   # m  — above this: overhead clearance, ignored
+
+    # Occupancy grid
+    grid_res:   0.05   # m
+    grid_range: 4.0    # m  (half-size of the local grid)
+
+    # Robot footprint (Husky ~0.99 x 0.67 m)
+    robot_half_length: 0.50   # m
+    robot_half_width:  0.34   # m
+    footprint_margin:  0.12   # m
+
+    # Predictive sweep
+    predict_horizon_sec: 2.0    # s
+    predict_turn_deg:    90.0   # deg
+    predict_dt:          0.10   # s
+    block_debounce:      3      # consecutive cycles before latching path_blocked
 
     # Safety distances
-    front_stop_dist: 1.2   # m   — front distance for hard stop
-    front_slow_dist: 1.5   # m   — front distance to start slowing down
-    side_stop_dist:  1.0   # m   — side distance
-    rear_stop_dist:  1.2   # m   — rear distance
+    front_stop_dist: 1.2   # m  — hard stop
+    front_slow_dist: 1.5   # m  — start slowing down
+    side_stop_dist:  1.0   # m
+    rear_stop_dist:  1.2   # m
 
     # Sector FOVs
     front_fov_deg: 60.0    # deg
-    side_fov_deg:  20.0    # deg
+    side_fov_deg:  15.0    # deg
     rear_fov_deg:  10.0    # deg
 
-    # Front offset in the scan array (VLP-16 ~ 90 deg)
-    lidar_front_angle_deg: 0.0
-
     # Timeouts / smoothing
-    lidar_timeout_sec: 0.5   # s      — max time without a scan
-    cmd_timeout_sec:   1.5   # s      — watchdog on the incoming command
-    depth_timeout_sec: 0.5   # s      — beyond this the depth is "stale"
-    publish_rate_sec:  0.05  # s      — publish period (20 Hz)
-    max_acc_linear:    1.0   # m/s²   — max linear acceleration
-    max_acc_angular:   2.0   # rad/s² — max angular acceleration
-    turn_reduction:    0.4   # near-side turn reduction factor
+    cloud_timeout_sec: 1.0    # s  — max time without a PointCloud2
+    cmd_timeout_sec:   3.0    # s  — watchdog on the incoming command
+    depth_timeout_sec: 1.4    # s  — beyond this the depth is stale
+    publish_rate_sec:  0.05   # s  (20 Hz)
+    max_acc_linear:    1.0    # m/s²
+    max_acc_angular:   2.0    # rad/s²
+    turn_reduction:    0.4    # near-side turn reduction factor
 
 
 navila_super_node:
@@ -83,7 +105,7 @@ navila_super_node:
     phi3_model_path: "/models/phi3mini"
 
     # Topics
-    image_topic:  "/sensors/front_camera/color/image_raw/compressed"
+    image_topic:  "/zed/rgb/color/rect/image/compressed"
     goal_topic:   "/goal_instruction"
     odom_topic:   "/platform/odom"
     action_topic: "/navila/action"
@@ -91,11 +113,8 @@ navila_super_node:
     status_topic: "/navila/primitive_status"
 
     # Inference
-    inference_rate_hz: 2.0
-    num_video_frames : 8      # N=8 frames (7 historical + 1 current) as per NaVILA paper
-    max_history_frames: 512    # maximum number of historical frames to keep
-    use_phi3:          false   # enable Phi-3 classifier
-    phi3_4bit:         false    # quantize Phi-3 to 4-bit
-    frame_wait_timeout_sec: 1.0  # attesa max frame post-moto
-    frame_settle_sec: 0.0        # margine settling robot/camera
-    input_color_order: "RGB"  # "RGB" or "BGR"
+    num_video_frames:       8      # 7 historical + 1 current (NaVILA paper)
+    max_history_frames:     512
+    frame_wait_timeout_sec: 1.0    # max wait for a fresh frame after motion
+    frame_settle_sec:       0.0    # settling margin before grabbing the frame
+    input_color_order:      "rgb"  # bgr or rgb
