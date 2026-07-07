@@ -548,7 +548,18 @@ class NaViLANode(Node):
                 self.get_logger().info("Waiting for camera frame...", throttle_duration_sec=5.0)
                 time.sleep(0.5)
             self.get_logger().info("Camera frame received")
-            self.get_logger().info("Waiting for goal instruction...")
+            # Wait for goal instruction
+            while rclpy.ok():
+                with self._lock:
+                    has_goal = bool(self.last_goal)
+                if has_goal:
+                    break
+                self.get_logger().info(
+                    "Waiting for goal instruction on "
+                    f"'{self.get_parameter('goal_topic').value}'...",
+                    throttle_duration_sec=5.0)
+                time.sleep(0.5)
+            self.get_logger().info(f"Goal received: '{self.last_goal}' — starting inference loop ✓")
 
         except Exception as exc:
             self.get_logger().error(f"Failed to load NaVILA model: {exc}")
@@ -560,7 +571,17 @@ class NaViLANode(Node):
         with self._lock:
             if self._cycle_active:
                 return
-            if not (self._model_ready and self._active and self._last_image_msg is not None):
+            if not self._model_ready:
+                return
+            if not self._active:
+                self.get_logger().info(
+                    "Waiting for goal instruction...",
+                    throttle_duration_sec=5.0)
+                return
+            if self._last_image_msg is None:
+                self.get_logger().info(
+                    "Waiting for camera frame...",
+                    throttle_duration_sec=5.0)
                 return
             self._cycle_active = True
         threading.Thread(target=self._drive_thread, daemon=True).start()
