@@ -143,6 +143,7 @@ from sensor_msgs.msg import CompressedImage
 from std_msgs.msg import String, Empty
 
 import cv2
+from PIL import Image as PILImage
 import numpy as np
 
 from collections import deque
@@ -416,6 +417,30 @@ class NaViLANode(Node):
         self.timer = self.create_timer(0.5, self._kick_drive)
 
         # ------------------------------------------------------------------
+        # Startup log
+        # ------------------------------------------------------------------
+        self.get_logger().info(
+            f"\n{'='*60}\n"
+            f"  NaViLANode starting\n"
+            f"  model_path        : {model_path}\n"
+            f"  num_video_frames  : {self._num_video_frames} (may be overridden by checkpoint)\n"
+            f"  max_history_frames: {max_history_frames}\n"
+            f"  input_color_order : {self._input_color_order}\n"
+            f"  frame_wait_timeout: {self._frame_wait_timeout}s\n"
+            f"  frame_settle      : {self._frame_settle}s\n"
+            f"  image_topic       : {image_topic}\n"
+            f"  goal_topic        : {goal_topic}\n"
+            f"  action_topic      : {action_topic}\n"
+            f"  status_topic      : {status_topic}\n"
+            f"  reset_topic       : {reset_topic}\n"
+            f"{'='*60}"
+        )
+
+        # ------------------------------------------------------------------
+        # Load models in a background thread (non-blocking for ROS 2 spin)
+        # ------------------------------------------------------------------
+
+        # ------------------------------------------------------------------
         # Load models in a background thread (non-blocking for ROS 2 spin)
         # ------------------------------------------------------------------
         self.get_logger().info(f"Loading NaVILA from: {model_path}")
@@ -513,6 +538,17 @@ class NaViLANode(Node):
                 self._model_ready = True
 
             self.get_logger().info(f"NaVILA ready — action parser: REGEX PARSER")
+            # Waiting for topics
+            self.get_logger().info("Waiting for camera frame...")
+            while rclpy.ok():
+                with self._lock:
+                    has_frame = self._last_image_msg is not None
+                if has_frame:
+                    break
+                self.get_logger().info("Waiting for camera frame...", throttle_duration_sec=5.0)
+                time.sleep(0.5)
+            self.get_logger().info("Camera frame received")
+            self.get_logger().info("Waiting for goal instruction...")
 
         except Exception as exc:
             self.get_logger().error(f"Failed to load NaVILA model: {exc}")
@@ -564,12 +600,19 @@ class NaViLANode(Node):
                 self._save_debug_frame(curr, cmd, "[queued]", goal)
                 out = String(); out.data = cmd
                 self.pub_action.publish(out)
-                return  
-
+                return 
+             
+            # Inference
             frames = self._sample_history(list(self._frame_history) + [curr], self._num_video_frames)
+
+            self.get_logger().info(f"[inference] goal='{goal}'  hist={len(self._frame_history)} frames")
+
             raw_output = run_navila_inference(model, tok, iproc, frames, goal, self._num_video_frames)
             action, value, unit = parse_navila_output(raw_output)
             cmd, n_total = self._expand_primitives(action, value)
+
+            self.get_logger().info(f"[inference] raw='{raw_output}' → action='{action}' "f"value={value}{unit} → cmd='{cmd}' ×{n_total}")
+            #- - - - - - - - - -
 
             if action == "stop":
                 with self._lock:

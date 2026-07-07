@@ -96,16 +96,15 @@ safety_layer_node:
     turn_reduction:    0.4    # near-side turn reduction factor
 
 
-navila_super_node:
+navila_node:
   ros__parameters:
     use_sim_time: true
 
     # Model paths
     model_path:      "/models"
-    phi3_model_path: "/models/phi3mini"
 
     # Topics
-    image_topic:  "/zed/rgb/color/rect/image/compressed"
+    image_topic:  "/sensors/front_camera/color/image_raw/compressed"
     goal_topic:   "/goal_instruction"
     odom_topic:   "/platform/odom"
     action_topic: "/navila/action"
