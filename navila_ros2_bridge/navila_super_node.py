@@ -410,6 +410,8 @@ class NaViLANode(Node):
         # Publisher
         # ------------------------------------------------------------------
         self.pub_action = self.create_publisher(String, action_topic, 10)
+        self.pub_status = self.create_publisher(String, status_topic, 10)
+
 
         # ------------------------------------------------------------------
         # Inference timer
@@ -641,9 +643,18 @@ class NaViLANode(Node):
                     self._active = False
                     self._cycle_active = False
                 self.get_logger().info(f"raw='{raw_output}' → STOP")
+                self.get_logger().info(
+                    f"\n{'='*60}\n"
+                    f"  MISSION COMPLETE\n"
+                    f"  goal   : '{goal}'\n"
+                    f"  history: {len(self._frame_history)} frames\n"
+                    f"{'='*60}"
+                )
                 self._save_debug_frame(curr, "stop", raw_output, goal)
-                out = String(); out.data = "stop"
-                self.pub_action.publish(out)
+                done_msg = String(); done_msg.data = "complete"
+                self.pub_status.publish(done_msg)
+                done_msg = String(); done_msg.data = "complete"
+                self.pub_status_out.publish(done_msg)
                 return
 
             with self._lock:
@@ -667,11 +678,33 @@ class NaViLANode(Node):
 # HELPER METHODS
 # =============================================================================
     def _wait_fresh_frame(self, after_seq, after_mono, settle_sec, timeout_sec, poll_sec=0.02):
-        """Primo frame RICEVUTO dopo after_seq e dopo (after_mono + settle_sec).
-        Gate locale al PC inferenza: solo contatore frame + time.monotonic, mai
-        header.stamp → robusto al setup dual-machine ZED(robot) ↔ PC(inferenza).
-        Con depth=1/KEEP_LAST, _last_image_msg è sempre il più recente, quindi a
-        settle scaduto è già post-settling. Ritorna (msg, stale)."""
+        """Wait for the first frame received AFTER after_seq and AFTER (after_mono + settle_sec).
+
+        Uses a local frame counter (_frame_seq) and time.monotonic() exclusively —
+        never header.stamp — making it robust to the dual-machine setup where the
+        ZED camera (robot PC) and the inference PC have unsynchronized clocks.
+
+        With QoS depth=1/KEEP_LAST, _last_image_msg always holds the most recent
+        frame: once the settle period has elapsed, the available frame is already
+        post-settling by construction.
+
+        Args:
+            after_seq   : value of _frame_seq at the last done/aborted event.
+                        The returned frame must have seq > after_seq.
+            after_mono  : time.monotonic() timestamp of the last done/aborted event.
+            settle_sec  : settling margin after motion completion (s). Allows the
+                        camera to stabilize before sampling the observation.
+            timeout_sec : maximum total wait time (s). If exceeded, returns the
+                        latest available frame with stale=True.
+            poll_sec    : polling interval (s). Default 0.02 (50 Hz).
+
+        Returns:
+            (msg, stale): msg   — most recent CompressedImage available, or None
+                                if no frame has ever been received.
+                        stale — True if the timeout expired before a fresh frame
+                                arrived, False if the frame is genuinely new
+                                relative to the previous motion primitive.
+        """
         deadline     = time.monotonic() + float(timeout_sec)
         settle_until = after_mono + float(settle_sec)
         while rclpy.ok():
@@ -685,12 +718,30 @@ class NaViLANode(Node):
             time.sleep(poll_sec)
         return None, True
 
-    @staticmethod 
+    @staticmethod
     def _sample_history(history, num_frames, pad_h=512, pad_w=512):
-        """Replica fedele di sample_and_pad_images (repo ufficiale).
-        history: frame RGB numpy oldest→newest, corrente = ultimo.
-        Pad in testa con frame NERI se la storia è più corta di num_frames,
-        poi campiona num_frames-1 indici (endpoint=False, int) + frame corrente."""
+        """Faithful replica of sample_and_pad_images from the official NaVILA repo.
+
+        Pads the frame list with black frames at the front when the history is
+        shorter than num_frames, then samples num_frames-1 uniformly spaced
+        indices (endpoint=False, integer linspace) and appends the latest frame.
+
+        This exactly replicates the official evaluation loop in navila_trainer.py:
+            - Black PIL/numpy padding at the front (not the back).
+            - np.linspace with endpoint=False and dtype=int for index selection.
+            - The current (most recent) frame is always the last element.
+
+        Args:
+            history   : list of RGB numpy frames, oldest → newest.
+                        The last element is the current observation.
+            num_frames: total number of frames to return. Must equal
+                        model.config.num_video_frames (typically 8).
+            pad_h     : height of black padding frames (px). Default 512.
+            pad_w     : width of black padding frames (px). Default 512.
+
+        Returns:
+            List of num_frames RGB numpy arrays: [hist_0, ..., hist_N-2, current].
+        """
         frames = list(history)
         while len(frames) < num_frames:
             frames.insert(0, np.zeros((pad_h, pad_w, 3), dtype=np.uint8))
