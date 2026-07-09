@@ -30,7 +30,7 @@ def generate_launch_description():
 
         DeclareLaunchArgument(
             "safety",
-            default_value="true",
+            default_value="false",
             choices=["true", "false"],
             description="If true, safety_layer_node sits between action_node and twist_mux.",
         ),
@@ -43,7 +43,12 @@ def generate_launch_description():
                     'pointcloud_to_laserscan.launch.py'
                 )
             ),
-            launch_arguments={'use_sim_time': 'true'}.items(),
+            launch_arguments={
+                'use_sim_time': 'true',
+                # 'pcd_input': '/sensors/lidar3d_0/points',
+                # 'scan_output': 'scan',
+                # 'lidar_frame': 'lidar3d_0_laser',
+            }.items()
         ),
 
         Node(
@@ -83,7 +88,7 @@ def generate_launch_description():
         ),
 
         TimerAction(
-            period=6.0,
+            period=2.0,
             actions=[
                 Node(
                     package=navila_package,

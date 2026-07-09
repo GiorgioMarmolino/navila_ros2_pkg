@@ -22,7 +22,6 @@ def generate_launch_description():
     action_out_topic = PythonExpression(
         ["'/cmd_vel_raw' if '", safety, "' == 'true' else '/cmd_vel'"]
     )
-
     config_file = PathJoinSubstitution(
         [FindPackageShare(navila_package), 'config', 'lab_navila_config.yaml']
     )
@@ -31,7 +30,7 @@ def generate_launch_description():
 
         DeclareLaunchArgument(
             "safety",
-            default_value="true",
+            default_value="false",
             choices=["true", "false"],
             description="If true, safety_layer_node sits between action_node and twist_mux.",
         ),
@@ -44,7 +43,12 @@ def generate_launch_description():
                     'pointcloud_to_laserscan.launch.py'
                 )
             ),
-            launch_arguments={'use_sim_time': 'false'}.items(),
+            launch_arguments={
+                'use_sim_time': 'false',
+                # 'pcd_input': '/sensors/lidar3d_0/points',
+                # 'scan_output': 'scan',
+                # 'lidar_frame': 'lidar3d_0_laser',
+            }.items()
         ),
 
         Node(
@@ -84,7 +88,7 @@ def generate_launch_description():
         ),
 
         TimerAction(
-            period=6.0,
+            period=2.0,
             actions=[
                 Node(
                     package=navila_package,

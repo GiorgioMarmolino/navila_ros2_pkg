@@ -1,14 +1,20 @@
 # ============================================================================
 # lab_navila_config.yaml
 #
-# Configuration tuned for indoor laboratory operation.
+# Configuration tuned for the real robot in the Vicon lab.
 #
 # Assumptions:
-# - Real robot (use_sim_time = false)
-# - Indoor environment with narrow passages and nearby obstacles
-# - depth camera available
+# - real robot (use_sim_time = false)
+# - confined indoor space (central hall, three desks, taped zone), people nearby
 # - Velodyne VLP-16 PointCloud2 on /velodyne_points
+# - ZED camera via camera_utils_ros
 #
+# VERIFY before first real run (open hardware points):
+#   - image_topic       : exact ZED compressed topic name
+#   - odom_topic        : that filtered odometry is actually published on hardware
+#   - cloud_topic + TF  : static TF base_link → velodyne must exist
+#   - is_frame_rgb      : confirm channel order on the debug frames
+#   - depth_topic       : only if enabling depth
 # ============================================================================
 
 action_node:
@@ -20,23 +26,22 @@ action_node:
     odom_topic:          "/platform/odom/filtered"
     status_topic:        "/navila/primitive_status"
     path_blocked_topic:  "/safety/path_blocked"
-
     # cmd_vel_topic is set dynamically by the launch file (depends on enable_safety)
 
-    # Per-token velocities
-    linear_x:       0.4    # m/s    — forward
-    linear_x_fast:  0.6    # m/s    — forward_fast
-    linear_x_back:  0.2    # m/s    — backward
-    angular_z:      0.35   # rad/s  — in-place rotation
-    curve_linear:   0.2    # m/s    — linear component of curve_*
-    curve_angular:  0.4    # rad/s  — angular component of curve_*
+    # Per-token velocities — reduced for a confined lab with people
+    linear_x:       0.30   # m/s    — forward
+    linear_x_fast:  0.40   # m/s    — forward_fast
+    linear_x_back:  0.15   # m/s    — backward
+    angular_z:      0.30   # rad/s  — in-place rotation
+    curve_linear:   0.15   # m/s    — linear component of curve_*
+    curve_angular:  0.35   # rad/s  — angular component of curve_*
 
     # Watchdog / smoothing
     cmd_timeout_sec:   1.0   # s
     watchdog_rate_sec: 0.05  # s  (20 Hz)
     publish_rate_sec:  0.05  # s  (20 Hz)
-    max_acc_linear:    0.5   # m/s²
-    max_acc_angular:   1.0   # rad/s²
+    max_acc_linear:    0.4   # m/s²  — gentler on real hardware
+    max_acc_angular:   0.8   # rad/s²
 
 
 safety_layer_node:
@@ -46,40 +51,40 @@ safety_layer_node:
     # Topics
     cmd_in_topic:       "/cmd_vel_raw"
     cmd_out_topic:      "/cmd_vel"
-    cloud_topic:        "/velodyne_points"
+    cloud_topic:        "/velodyne_points"           # requires static TF base_link→velodyne
     depth_topic:        "/zed/depth/depth_registered"
     path_blocked_topic: "/safety/path_blocked"
     occupancy_topic:    "/safety/occupancy"
-    enable_depth:       false
+    enable_depth:       false                         # enable only after depth_topic verified
     publish_grid:       true
 
     # TF
     base_frame: "base_link"
 
     # Height band (ground removal)
-    ground_clip_z:   0.10   # m  — below this: floor, ignored
-    max_obstacle_z:  1.50   # m  — above this: overhead clearance, ignored
+    ground_clip_z:   0.12   # m  — slightly higher: real floor noise
+    max_obstacle_z:  1.50   # m
 
     # Occupancy grid
     grid_res:   0.05   # m
-    grid_range: 4.0    # m  (half-size of the local grid)
+    grid_range: 3.0    # m  — smaller local grid for a confined lab
 
-    # Robot footprint (Husky ~0.99 x 0.67 m)
+    # Robot footprint (Husky ~0.99 x 0.67 m) — physical, unchanged
     robot_half_length: 0.50   # m
     robot_half_width:  0.34   # m
-    footprint_margin:  0.12   # m
+    footprint_margin:  0.15   # m  — a bit more margin around people
 
     # Predictive sweep
-    predict_horizon_sec: 2.0    # s
+    predict_horizon_sec: 1.5    # s  — shorter horizon at lower speeds
     predict_turn_deg:    90.0   # deg
     predict_dt:          0.10   # s
     block_debounce:      3      # consecutive cycles before latching path_blocked
 
-    # Safety distances
-    front_stop_dist: 1.2   # m  — hard stop
-    front_slow_dist: 1.5   # m  — start slowing down
-    side_stop_dist:  1.0   # m
-    rear_stop_dist:  1.2   # m
+    # Safety distances — tightened for the confined lab
+    front_stop_dist: 1.0   # m  — hard stop
+    front_slow_dist: 1.3   # m  — start slowing down
+    side_stop_dist:  0.8   # m
+    rear_stop_dist:  1.0   # m
 
     # Sector FOVs
     front_fov_deg: 60.0    # deg
@@ -87,34 +92,36 @@ safety_layer_node:
     rear_fov_deg:  10.0    # deg
 
     # Timeouts / smoothing
-    cloud_timeout_sec: 1.0    # s  — max time without a PointCloud2
-    cmd_timeout_sec:   3.0    # s  — watchdog on the incoming command
-    depth_timeout_sec: 1.4    # s  — beyond this the depth is stale
+    cloud_timeout_sec: 0.5    # s  — real VLP-16 ~10 Hz, tighter staleness check
+    cmd_timeout_sec:   3.0    # s
+    depth_timeout_sec: 1.4    # s
     publish_rate_sec:  0.05   # s  (20 Hz)
-    max_acc_linear:    1.0    # m/s²
-    max_acc_angular:   2.0    # rad/s²
+    max_acc_linear:    0.8    # m/s²
+    max_acc_angular:   1.5    # rad/s²
     turn_reduction:    0.4    # near-side turn reduction factor
 
 
-navila_super_node:
+navila_node:
   ros__parameters:
     use_sim_time: false
 
     # Model paths
-    model_path:      "/models"
+    model_path: "/models"
 
     # Topics
-    # image_topic:  "/zed/rgb/color/rect/image/compressed"
-    image_topic: "/sensors/front_camera/color/image_raw/compressed"
-    goal_topic:   "/goal_instruction"
-    odom_topic:   "/platform/odom"
-    action_topic: "/navila/action"
-    reset_topic:  "/navila/reset"
-    status_topic: "/navila/primitive_status"
+    image_topic:    "/zed/rgb/color/rect/image/compressed"   # VERIFY exact ZED topic
+    goal_topic:     "/goal_instruction"
+    action_topic:   "/navila/action"
+    reset_topic:    "/navila/reset"
+    status_topic:   "/navila/primitive_status"
+    complete_topic: "/navila/complete"
+
+    # Debug
+    debug_dir: "/home/ros_ws/tmp/navila_debug"
 
     # Inference
     num_video_frames:       8      # 7 historical + 1 current (NaVILA paper)
     max_history_frames:     512
-    frame_wait_timeout_sec: 1.0    # max wait for a fresh frame after motion
-    frame_settle_sec:       0.0    # settling margin before grabbing the frame
-    input_color_order:      "bgr"  # bgr or rgb
+    frame_wait_timeout_sec: 1.5    # slightly higher: real camera + network jitter
+    frame_settle_sec:       0.3    # let the robot settle before sampling (real inertia)
+    is_frame_rgb:           false  # native decoded frame is BGR → convert to RGB for the model

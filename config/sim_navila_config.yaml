@@ -8,7 +8,6 @@
 # - Indoor environment with narrow passages and nearby obstacles
 # - depth camera available
 # - Velodyne VLP-16 PointCloud2 on /velodyne_points
-#
 # ============================================================================
 
 action_node:
@@ -20,7 +19,6 @@ action_node:
     odom_topic:          "/platform/odom/filtered"
     status_topic:        "/navila/primitive_status"
     path_blocked_topic:  "/safety/path_blocked"
-
     # cmd_vel_topic is set dynamically by the launch file (depends on enable_safety)
 
     # Per-token velocities
@@ -47,7 +45,9 @@ safety_layer_node:
     cmd_in_topic:       "/cmd_vel_raw"
     cmd_out_topic:      "/cmd_vel"
     cloud_topic:        "/velodyne_points"
+    
     depth_topic:        "/zed/depth/depth_registered"
+
     path_blocked_topic: "/safety/path_blocked"
     occupancy_topic:    "/safety/occupancy"
     enable_depth:       false
@@ -101,19 +101,22 @@ navila_node:
     use_sim_time: true
 
     # Model paths
-    model_path:      "/models"
+    model_path: "/models"
 
     # Topics
-    image_topic:  "/sensors/front_camera/color/image_raw/compressed"
-    goal_topic:   "/goal_instruction"
-    odom_topic:   "/platform/odom"
-    action_topic: "/navila/action"
-    reset_topic:  "/navila/reset"
-    status_topic: "/navila/primitive_status"
+    image_topic:    "/sensors/front_camera/color/image_raw/compressed"
+    goal_topic:     "/goal_instruction"
+    action_topic:   "/navila/action"
+    reset_topic:    "/navila/reset"
+    status_topic:   "/navila/primitive_status"
+    complete_topic: "/navila/complete"
+
+    # Debug
+    debug_dir: "/home/ros_ws/tmp/navila_debug"
 
     # Inference
     num_video_frames:       8      # 7 historical + 1 current (NaVILA paper)
     max_history_frames:     512
     frame_wait_timeout_sec: 1.0    # max wait for a fresh frame after motion
     frame_settle_sec:       0.0    # settling margin before grabbing the frame
-    input_color_order:      "rgb"  # bgr or rgb
+    is_frame_rgb:           false  # native decoded frame is BGR → convert to RGB for the model
