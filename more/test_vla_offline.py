@@ -17,7 +17,7 @@ import os
 import cv2
 
 # Import diretto dal nodo: stesse funzioni del runtime → fedeltà garantita.
-from navila_ros2_bridge.navila_super_node import (
+from navila_ros2_bridge.navila_node import (
     NaViLANode,
     load_navila_model,
     run_navila_inference,

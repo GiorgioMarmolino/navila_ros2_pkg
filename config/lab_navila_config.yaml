@@ -102,10 +102,10 @@ navila_super_node:
 
     # Model paths
     model_path:      "/models"
-    phi3_model_path: "/models/phi3mini"
 
     # Topics
-    image_topic:  "/zed/rgb/color/rect/image/compressed"
+    # image_topic:  "/zed/rgb/color/rect/image/compressed"
+    image_topic: "/sensors/front_camera/color/image_raw/compressed"
     goal_topic:   "/goal_instruction"
     odom_topic:   "/platform/odom"
     action_topic: "/navila/action"
@@ -117,4 +117,4 @@ navila_super_node:
     max_history_frames:     512
     frame_wait_timeout_sec: 1.0    # max wait for a fresh frame after motion
     frame_settle_sec:       0.0    # settling margin before grabbing the frame
-    input_color_order:      "rgb"  # bgr or rgb
+    input_color_order:      "bgr"  # bgr or rgb
