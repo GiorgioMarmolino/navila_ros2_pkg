@@ -30,6 +30,13 @@ from PIL import Image as PILImage
 
 log = logging.getLogger("navila_agent")
 
+_NAVILA_REPO = os.environ.get(
+    "NAVILA_REPO",
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "NaVILA"),
+)
+if _NAVILA_REPO not in sys.path:
+    sys.path.insert(0, _NAVILA_REPO)
+
 _OFFICIAL_PATTERNS = {
     "stop":       re.compile(r"\bstop\b", re.IGNORECASE),
     "forward":    re.compile(r"\bis move forward\b", re.IGNORECASE),
