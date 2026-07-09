@@ -392,6 +392,8 @@ class NaViLANode(Node):
                 return
 
             tag = "queue" if r["from_queue"] else "inference"
+            if tag == "inference":
+                self.get_logger().info(f"NaViLA raw: {r['raw']}")
             self.get_logger().info(
                 f"[{tag}] cmd='{r['cmd']}' ×{r['n_total']} "
                 f"(coda:{len(self.agent._queue)}, hist:{r['hist_len']})")
