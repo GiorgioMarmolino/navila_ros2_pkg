@@ -123,7 +123,7 @@ from std_msgs.msg import String, Empty, Bool
 import cv2
 import numpy as np
 
-from third_party.navila_agent import NaViLAAgent
+from navila_ros2_bridge.third_party.navila_agent import NaViLAAgent
 
 class NaViLANode(Node):
 

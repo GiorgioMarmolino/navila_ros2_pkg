@@ -8,7 +8,7 @@ package_name = 'navila_ros2_bridge'
 setup(
     name='navila-ros2-bridge',
     version='0.0.1',
-    packages=[package_name],
+    packages=[package_name, f'{package_name}.third_party'],
     data_files=[
         ('share/ament_index/resource_index/packages',       # package index
             ['resource/' + package_name]),
