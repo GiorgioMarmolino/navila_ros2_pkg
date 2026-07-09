@@ -14,9 +14,9 @@ replicates the official NaVILA inference pipeline:
               │
               ▼
     /zed/.../compressed ──► [ navila_node ] ──► /navila/action (String)
-                                  ▲                      │
+                                  ▲                       │
                                   │              [ action_node ]
-                                  │                      │
+                                  │                       │
                           /navila/primitive_status ◄──────┘
                            (String: done | aborted)
 
