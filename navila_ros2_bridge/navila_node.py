@@ -386,6 +386,9 @@ class NaViLANode(Node):
                     self._cycle_active = False
                 self.get_logger().info(f"raw='{r['raw']}' → STOP (hist:{r['hist_len']})")
                 self._publish_complete()
+                msg = String
+                msg.data = "stop"
+                self.pub_action.publish(msg)
                 return
 
             tag = "queue" if r["from_queue"] else "inference"

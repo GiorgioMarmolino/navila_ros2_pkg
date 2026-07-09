@@ -159,7 +159,7 @@ class ActionNode(Node):
         )
 
     def _path_blocked_cb(self, msg: Bool):
-        if msg.data and self._executing:
+        if msg.data and self._executing and self._prim_kind == "forward":
             self.get_logger().warn("Path blocked → immediate ABORT")
             self._target_lin = 0.0
             self._target_ang = 0.0
@@ -176,6 +176,10 @@ class ActionNode(Node):
         unit   = parts[2] if len(parts) > 2 else ""
 
         if action == "stop":
+            self._target_lin = 0.0
+            self._target_ang = 0.0
+            self._executing = False
+            self._deadline = None
             self._publish_status("done")
             return
         if action == "forward" and unit == "cm":
