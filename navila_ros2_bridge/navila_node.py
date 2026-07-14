@@ -302,7 +302,7 @@ class NaViLANode(Node):
     def _publish_complete(self):
         msg = Bool()
         msg.data = True
-        self.pub_complete._publish(msg)
+        self.pub_complete.publish(msg)
 
     # ------------------------------------------------------------------
     # Model loading (background thread)

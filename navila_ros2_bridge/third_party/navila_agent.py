@@ -64,6 +64,7 @@ class NaViLAAgent:
         from huggingface_hub import snapshot_download
 
         HF_MODEL_ID = "a8cheng/navila-llama3-8b-8f"
+        # HF_MODEL_ID = "navila-qwen2-7b-64k-64f"
         torch.cuda.empty_cache()
         os.environ["DS_SKIP_CUDA_CHECK"] = "1"
         os.environ["DS_ACCELERATOR"] = "cpu"
@@ -180,8 +181,13 @@ class NaViLAAgent:
 
         with torch.inference_mode():
             out_ids = self.model.generate(
-                input_ids, images=image_tensor, do_sample=False, temperature=0.0,
-                num_beams=1, max_new_tokens=32, use_cache=True,
+                input_ids, 
+                images=image_tensor, 
+                do_sample=False, 
+                temperature=0.0,
+                num_beams=1, 
+                max_new_tokens=32, 
+                use_cache=True,
                 pad_token_id=self.tokenizer.eos_token_id,
                 stopping_criteria=[stopping],
             )
