@@ -214,7 +214,7 @@ class NaViLANode(Node):
         # Publisher
         # ------------------------------------------------------------------
         self.pub_action     = self.create_publisher(String, action_topic,   10)
-        self.pub_complete   = self.create_publisher(Bool,   complete_topic, 10)
+        self.pub_complete   = self.create_publisher(String, complete_topic, 10)
 
 
         # ------------------------------------------------------------------
@@ -300,8 +300,8 @@ class NaViLANode(Node):
         self.get_logger().info("NaVILA reset (loop disarmed).")
 
     def _publish_complete(self):
-        msg = Bool()
-        msg.data = True
+        msg = String()
+        msg.data = "stop"
         self.pub_complete.publish(msg)
 
     # ------------------------------------------------------------------

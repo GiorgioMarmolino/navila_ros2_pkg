@@ -109,7 +109,7 @@ navila_node:
     action_topic:   "/navila/action"
     reset_topic:    "/navila/reset"
     status_topic:   "/navila/primitive_status"
-    complete_topic: "/navila/complete"
+    complete_topic: "/benchmark/command"
 
     # Debug
     debug_dir: "/home/ros_ws/tmp/navila_debug"
