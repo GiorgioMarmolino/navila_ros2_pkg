@@ -23,16 +23,16 @@ action_node:
 
     # Topics
     action_topic:        "/navila/action"
-    odom_topic:          "/platform/odom/filtered"
+    odom_topic:          "/platform/odom"
     status_topic:        "/navila/primitive_status"
     path_blocked_topic:  "/safety/path_blocked"
     # cmd_vel_topic is set dynamically by the launch file (depends on enable_safety)
 
     # Per-token velocities — reduced for a confined lab with people
-    linear_x:       0.30   # m/s    — forward
-    linear_x_fast:  0.40   # m/s    — forward_fast
+    linear_x:       0.15   # m/s    — forward
+    linear_x_fast:  0.15   # m/s    — forward_fast
     linear_x_back:  0.15   # m/s    — backward
-    angular_z:      0.30   # rad/s  — in-place rotation
+    angular_z:      0.1   # rad/s  — in-place rotation
     curve_linear:   0.15   # m/s    — linear component of curve_*
     curve_angular:  0.35   # rad/s  — angular component of curve_*
 
@@ -109,7 +109,7 @@ navila_node:
     model_path: "/models"
 
     # Topics
-    image_topic:    "/zed/rgb/color/rect/image/compressed"   # VERIFY exact ZED topic
+    image_topic:    "/realsense/color/image_raw/compressed"
     goal_topic:     "/goal_instruction"
     action_topic:   "/navila/action"
     reset_topic:    "/navila/reset"

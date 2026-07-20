@@ -18,10 +18,17 @@ from launch_ros.substitutions import FindPackageShare
 def generate_launch_description():
 
     navila_package = 'navila_ros2_bridge'
-    safety    = LaunchConfiguration("safety")
+
+    safety = LaunchConfiguration("safety")
     action_out_topic = PythonExpression(
         ["'/cmd_vel_raw' if '", safety, "' == 'true' else '/cmd_vel'"]
     )
+
+    # instruction_node params (esposti come launch args perché il nodo gira in xterm)
+    use_llm = LaunchConfiguration("use_llm")
+    llm_timeout = LaunchConfiguration("llm_timeout")
+    require_confirmation = LaunchConfiguration("require_confirmation")
+
     config_file = PathJoinSubstitution(
         [FindPackageShare(navila_package), 'config', 'lab_navila_config.yaml']
     )
@@ -33,6 +40,24 @@ def generate_launch_description():
             default_value="false",
             choices=["true", "false"],
             description="If true, safety_layer_node sits between action_node and twist_mux.",
+        ),
+
+        DeclareLaunchArgument(
+            "use_llm",
+            default_value="true",
+            choices=["true", "false"],
+            description="If false, instruction_node publishes raw goals (bypass Ollama).",
+        ),
+        DeclareLaunchArgument(
+            "llm_timeout",
+            default_value="15.0",  # deve restare float: il nodo dichiara timeout come DOUBLE
+            description="Timeout (s) for the Ollama refine request.",
+        ),
+        DeclareLaunchArgument(
+            "require_confirmation",
+            default_value="false",
+            choices=["true", "false"],
+            description="If true, ask before publishing a refined goal.",
         ),
 
         IncludeLaunchDescription(
@@ -78,10 +103,18 @@ def generate_launch_description():
         ExecuteProcess(
             cmd=[
                 'xterm', '-title', 'NaVILA Goal Input', '-e',
-                'bash -c "source /opt/ros/humble/setup.bash && '
-                'source /home/ros_ws/install/setup.bash && '
-                'ros2 run navila_ros2_bridge instruction_node; '
-                'echo DONE; read"'
+                # NB: singolo token concatenato -> le substitution vengono espanse
+                # testualmente dentro il comando bash -c.
+                [
+                    'bash -c "',
+                    'source /opt/ros/humble/setup.bash && ',
+                    'source /home/ros_ws/install/setup.bash && ',
+                    'ros2 run navila_ros2_bridge instruction_node --ros-args',
+                    ' -p use_llm:=', use_llm,
+                    ' -p timeout:=', llm_timeout,
+                    ' -p require_confirmation:=', require_confirmation,
+                    '; echo DONE; read"',
+                ],
             ],
             output='screen',
             emulate_tty=True,
