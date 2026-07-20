@@ -16,6 +16,22 @@ deciderlo in base al flag della safety:
     - safety ON  -> /cmd_vel_raw  (lo prende il safety node)
     - safety OFF -> /cmd_vel      (va diretto a twist_mux)
 
+SCALING DELLA MAGNITUDO
+-----------------------
+NaVILA quantizza sempre l'output su multipli fissi:
+    - lineare : 25 / 50 / 75 cm   (unità base 25 cm)
+    - angolare: 15 / 30 / 45 deg  (unità base 15 deg)
+
+Questo nodo NON esegue direttamente il valore ricevuto: lo converte prima in
+numero di step (value / unità_base) e poi lo ri-scala sulla magnitudo custom
+definita dai parametri `step_linear_cm` / `step_angular_deg`. Esempio con
+step_linear_cm=10:
+    - comando 25 cm -> 1 step -> 10 cm
+    - comando 50 cm -> 2 step -> 20 cm
+    - comando 75 cm -> 3 step -> 30 cm
+Idem per le rotazioni con `step_angular_deg`. Con i default (25 cm / 15 deg) il
+comportamento resta identico a quello nativo di NaVILA.
+
 Subscribes:
     /navila/action (std_msgs/String)
         1) JSON:   {"linear_x": 0.3, "angular_z": 0.2}
@@ -55,6 +71,14 @@ DEFAULT_PUBLISH_RATE   = 0.05   # s      — periodo pubblicazione (20 Hz)
 DEFAULT_MAX_ACC_LIN    = 1.0    # m/s²   — max accelerazione lineare
 DEFAULT_MAX_ACC_ANG    = 2.0    # rad/s² — max accelerazione angolare
 
+# Magnitudo custom per singolo step (default = unità native NaVILA -> no scaling)
+DEFAULT_STEP_LINEAR_CM   = 25.0   # cm   — spostamento eseguito per ogni step lineare
+DEFAULT_STEP_ANGULAR_DEG = 15.0   # deg  — rotazione eseguita per ogni step angolare
+
+# Quantizzazione nativa di NaVILA (fissa: NON è un parametro utente)
+NAVILA_UNIT_LINEAR_CM    = 25.0   # cm   — comandi in {25, 50, 75}
+NAVILA_UNIT_ANGULAR_DEG  = 15.0   # deg  — comandi in {15, 30, 45}
+
 
 class ActionNode(Node):
 
@@ -84,6 +108,10 @@ class ActionNode(Node):
         self.declare_parameter("max_acc_linear",    DEFAULT_MAX_ACC_LIN)
         self.declare_parameter("max_acc_angular",   DEFAULT_MAX_ACC_ANG)
 
+        # Magnitudo custom per step (ri-scalatura rispetto alla quantizzazione NaVILA)
+        self.declare_parameter("step_linear_cm",   DEFAULT_STEP_LINEAR_CM)
+        self.declare_parameter("step_angular_deg", DEFAULT_STEP_ANGULAR_DEG)
+
         def p(name):
             return self.get_parameter(name).value
 
@@ -106,6 +134,9 @@ class ActionNode(Node):
         self.max_acc_ang = p("max_acc_angular")
         watchdog_rate    = p("watchdog_rate_sec")
         publish_rate     = p("publish_rate_sec")
+
+        self.step_lin_cm  = p("step_linear_cm")
+        self.step_ang_deg = p("step_angular_deg")
 
         # ------------------------------------------------------------------
         # Stato interno
@@ -155,6 +186,7 @@ class ActionNode(Node):
             f"  topic out : {cmd_vel_topic}\n"
             f"  odom      : {odom_topic}\n"
             f"  vel       : lin={self.lin} m/s  ang={self.ang} rad/s\n"
+            f"  step      : lin={self.step_lin_cm} cm/step  ang={self.step_ang_deg} deg/step\n"
             f"  max_acc   : lin={self.max_acc_lin} m/s²  ang={self.max_acc_ang} rad/s²"
         )
 
@@ -183,10 +215,16 @@ class ActionNode(Node):
             self._publish_status("done")
             return
         if action == "forward" and unit == "cm":
-            self._start_primitive(kind="forward", magnitude=value / 100.0)   # m
+            # value NaVILA (25/50/75) -> n_step -> magnitudo custom
+            n_steps = round(value / NAVILA_UNIT_LINEAR_CM)
+            scaled_cm = n_steps * self.step_lin_cm
+            self._start_primitive(kind="forward", magnitude=scaled_cm / 100.0)   # m
         elif action in ("turn_left", "turn_right") and unit == "deg":
             sign = +1.0 if action == "turn_left" else -1.0
-            self._start_primitive(kind="turn", magnitude=sign * math.radians(value))  # rad
+            # value NaVILA (15/30/45) -> n_step -> magnitudo custom
+            n_steps = round(value / NAVILA_UNIT_ANGULAR_DEG)
+            scaled_deg = n_steps * self.step_ang_deg
+            self._start_primitive(kind="turn", magnitude=sign * math.radians(scaled_deg))  # rad
         else:
             self.get_logger().warn(f"Azione non gestita: '{msg.data}' → done")
             self._publish_status("done")
