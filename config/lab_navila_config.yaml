@@ -28,6 +28,9 @@ action_node:
     path_blocked_topic:  "/safety/path_blocked"
     # cmd_vel_topic is set dynamically by the launch file (depends on enable_safety)
 
+    step_linear_cm: 0.1 # m
+    step_angular_deg: 10  # deg
+    
     # Per-token velocities — reduced for a confined lab with people
     linear_x:       0.15   # m/s    — forward
     linear_x_fast:  0.15   # m/s    — forward_fast
